@@ -5,9 +5,10 @@ var pkg = require('./package.json');
 var fs = require("fs");
 var util = require("util");
 
-var gulp = require("gulp");
-var clean = require("gulp-clean");
 var runSequence = require("run-sequence");
+
+var gulp = require("gulp");
+var rimraf = require("gulp-rimraf");
 var concat = require("gulp-concat");
 var replace = require("gulp-replace");
 var header = require("gulp-header");
@@ -42,7 +43,7 @@ var paths = {
 gulp.task("clean", function() {
     return gulp
     	.src(folders.build, { read: false })
-    	.pipe(clean());
+    	.pipe(rimraf());
 });
 
 gulp.task("build-scripts", function() {

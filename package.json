@@ -29,11 +29,12 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "^3.8.1",
-    "gulp-clean": "^0.3.0",
     "gulp-concat": "^2.2.0",
     "gulp-header": "^1.0.2",
     "gulp-jscs": "^0.5.0",
+    "gulp-jshint": "^1.6.3",
     "gulp-replace": "^0.3.0",
+    "gulp-rimraf": "^0.1.0",
     "gulp-uglify": "^0.3.1",
     "jshint-summary": "^0.4.0",
     "run-sequence": "^0.3.6"
