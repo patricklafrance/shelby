@@ -1,0 +1,26 @@
+{
+	"unused": true,
+	"undef": true,
+	"bitwise": true,
+	"browser": true,
+	"curly": true,
+	"jquery": true,
+	"noarg": true,
+	"noempty": true,
+	"nonew": true,
+	"devel": true,
+	"plusplus": true,
+	"sub": true,
+	"predef": [
+		"module",
+		"exports",
+		"define",
+		"require",
+		"ko",
+		"koViewModel",
+		"jQuery",
+		"Shelby",
+
+		"console"
+	]
+}

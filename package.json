@@ -1,0 +1,45 @@
+{
+  "name": "shelby",
+  "title": "Shelby",
+  "version": "0.2.0",
+  "description": "Base view models for knockout.js",
+  "main": "/dist/shelby.js",
+  "homepage": "https://github.com/patricklafrance/shelby",
+  "author": "Patrick Lafrance",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patricklafrance/shelby.git"
+  },
+  "keywords": [
+    "ko",
+    "knockout",
+    "javascript",
+    "view",
+    "models"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/patricklafrance/shelby/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.1",
+    "gulp-clean": "^0.3.0",
+    "gulp-concat": "^2.2.0",
+    "gulp-header": "^1.0.2",
+    "gulp-jscs": "^0.5.0",
+    "gulp-replace": "^0.3.0",
+    "gulp-uglify": "^0.3.1",
+    "jshint-summary": "^0.4.0",
+    "run-sequence": "^0.3.6"
+  },
+  "scripts": {
+    "build": "gulp",
+    "start": "gulp dev"
+  }
+}

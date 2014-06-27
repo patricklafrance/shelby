@@ -1,9 +1,17 @@
 (function(factory) {
     "use strict";
     
-    if (typeof module === "object" && typeof module.exports === "object") {
-        // Register as a CommonJS module.
-        module.exports = factory(window.jQuery, window.ko, window.ko.viewmodel);
+    if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
+        var target = module.exports || exports;
+
+        // "knockout.viewmodel" is not available as Node.js package or CommonJS module.
+        target = function(koViewModel) {
+            if (!koViewModel) {
+                throw new Error("A valid instance of the \"knockout viewmodel\" plugin must be provided.");
+            }
+
+            return factory(require("jquery"), require("knockout"), koViewModel);
+        };
     }
     else if (typeof define === "function" && define.amd) {
         // Register as a named AMD module.
@@ -78,7 +86,7 @@
                         return true;
                     }
                 }
-                catch(e) {
+                catch (e) {
                 }
 
                 return false;
@@ -86,6 +94,7 @@
             
             // Custom hasOwnProperty function providing a fallback if the original function
             // is not available for the current browser.
+            /* jshint -W001 */
             hasOwnProperty: function(obj, key) {
                 if (!objectHasOwnPropertySupported) {
                     return key in obj;
@@ -93,6 +102,7 @@
                 
                 return obj.hasOwnProperty(key);
             },
+            /* jshint +W001 */
             
             hasProperty: function(obj, key) {
                 return key in obj;
@@ -243,8 +253,8 @@
             
             // Tokens start at index 1. Ex. {1}, {2}...
             stringFormat: function() {
-                var args = arguments,
-                    str = args[0];
+                var args = arguments;
+                var str = args[0];
 
                 return str.replace(/\{(\d+)\}/g, function(m, n) {
                     return args[n];
@@ -289,13 +299,17 @@
         // Function use by some of the Shelby object to let you extend them with
         // additional instance properties.
         Shelby.extend = function(/* objects */) {
-            if (arguments.length === 0) throw new Error("At least 1 non-null plain object is required to extend a Shelby object.");
+            if (arguments.length === 0) {
+                throw new Error("At least 1 non-null plain object is required to extend a Shelby object.");
+            }
             
             var objects = [];
             
             // Find all the objects that will extend the parent object.
             $.each(arguments, function(index, obj) {
-                if (!utils.isObject(obj)) throw new Error("Only non-null literal or prototyped object can extend a Shelby object.");
+                if (!utils.isObject(obj)) {
+                    throw new Error("Only non-null literal or prototyped object can extend a Shelby object.");
+                }
                 
                 objects.push(utils.isNull(obj.prototype) ? obj : obj.prototype);
             });
@@ -347,7 +361,9 @@
         
         Shelby.Parser.prototype = {
             parse: function(obj, options, context) {
-                if (utils.isNull(obj)) throw new Error("\"obj\" must be a non-null object.");
+                if (utils.isNull(obj)) {
+                    throw new Error("\"obj\" must be a non-null object.");
+                }
 
                 this._reset(obj, options, context);
                 this._next("", obj, "", null);
@@ -556,7 +572,7 @@
                         try {
                             pattern = new RegExp(path.replace(/\/i/g, "[^]+"));
                         }
-                        catch(e) {
+                        catch (e) {
                             // IE8 cause a RegExpError exception when the ']' character is not escaped.
                             pattern = new RegExp(path.replace(/\/i/g, "[^]]+"));
                         }
@@ -614,19 +630,18 @@
         Shelby.Filter.extend = extend;
     })();
     
-    // Shelby extenders
+    // Shelby.Extenders - Core
     // ---------------------------------
+
+    var PropertyType = Shelby.PropertyType = {
+        Object: 0,
+        Array: 1,
+        Scalar: 2
+    };
     
     (function() {
-        var PropertyType = Shelby.PropertyType = {
-            Object: 0,
-            Array: 1,
-            Scalar: 2
-        };
-        
         Shelby.Extenders = {};
         
-        // Shelby.Extenders.base
         // ---------------------------------
         
         Shelby.Extenders.base = function() {
@@ -641,10 +656,191 @@
         };
         
         Shelby.Extenders.base.fn.extend = extend;
-        
-        // Shelby.Extenders.subscribe
+
         // ---------------------------------
+        
+        Shelby.PropertyExtender = function() {
+        };
+        
+        Shelby.PropertyExtender.prototype = {
+            add: function(target, extenders) {
+                if (utils.isNull(target)) {
+                    throw new Error("\"target\" must be an object.");
+                }
+
+                if (utils.isNull(extenders)) {
+                    throw new Error("\"extenders\" must be an object literal.");
+                }
             
+                // Prevent multiple extends.
+                if (!utils.hasProperty(target, namespace)) {
+                    var that = this;
+                
+                    var action = function(type) {
+                        return function(property) {
+                            that._extendProperty(property, type, extenders);
+                        };
+                    };
+                    
+                    // Iterate on the target properties to extend all the objects and observables matching criterias.
+                    factory.parser().parse(target, {
+                        filter: function(key, value) {
+                            // A property can be extended if it is an observable or an object.
+                            return key !== namespace && (ko.isObservable(value) || utils.isObject(value));
+                        },
+                        onObject: action(PropertyType.Object),
+                        onArray: action(PropertyType.Array),
+                        onFunction: action(PropertyType.Scalar)
+                    });
+                }
+            },
+            
+            remove: function(target) {
+                if (utils.isNull(target)) {
+                    throw new Error("\"target\" must be an object.");
+                }
+            
+                var action = function(property) {
+                    delete property.value[namespace];
+                };
+            
+                // Iterate on the target properties to remove shelby extenders.
+                factory.parser().parse(target, {
+                    filter: function(key, value) {
+                        // A property can have extender to remove if it is an observable or an object and has
+                        // been extend by Shelby.
+                        return (ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value);
+                    },
+                    onObject: action,
+                    onArray: action,
+                    onFunction: action
+                });
+            },
+            
+            _extendProperty: function(property, type, extenders) {
+                property.value[namespace] = {};
+            
+                // Retrieve all the extenders to apply. This is done by doing a concatenation
+                // of the "common" extenders which are defined in the "*" property and specifics
+                // extenders which are defined in a property matching the current property path.
+                var propertyExtenders = extenders["*"] || {};
+                
+                if (utils.isObject(extenders[property.path])) {
+                    $.extend(propertyExtenders, extenders[property.path]);
+                }
+                
+                // Apply the retrieved extenders.
+                $.each(propertyExtenders, function() {
+                    this.apply(this, [property.value, type]);
+                });
+            }
+        };
+        
+        Shelby.PropertyExtender.extend = extend;
+    })();
+
+    // Shelby.Extenders - Subscribe
+    // ---------------------------------
+
+    (function() {
+        ko.extenders.shelbySubscribe = function(target) {
+            // When true, all the subscriptions are pause.
+            var pauseAllSubscriptions = false;
+            
+            $.extend(target[namespace], {
+                subscribe: function(callback /*, [callbackTarget], [event] */) {
+                    if (!$.isFunction(callback)) {
+                        throw new Error("First argument must be a callback function.");
+                    }
+                
+                    // Must keep a locally scoped variable of the callback otherwise IE 8 and 9 cause stack
+                    // overflow error.
+                    var originalCallback = callback;
+
+                    arguments[0] = function(value) {
+                        if (!pauseAllSubscriptions && !pausableSubscription.isPause) {
+                            // If this observable is not paused globally or this subscription is not paused,
+                            // call the original callback with the original arguments.
+                            originalCallback.apply(this, [value]);
+                        }
+                    };
+
+                    // Call the original knockout subscription function.
+                    var subscription = target.subscribe.apply(target, arguments);
+                    
+                    var pausableSubscription = {
+                        isPause: false,
+                    
+                        pause: function() {
+                            this.isPause = true;
+                        },
+                        resume: function() {
+                            this.isPause = false;
+                        },
+                        dispose: function() {
+                            subscription.dispose();
+                        }
+                    };
+                    
+                    return pausableSubscription;
+                },
+                
+                pause: function() {
+                    pauseAllSubscriptions = true;
+                },
+                
+                resume: function() {
+                    pauseAllSubscriptions = false;
+                },
+                
+                isPause: function() {
+                    return pauseAllSubscriptions;
+                }
+            });
+            
+            return target;
+        };
+
+        // ---------------------------------
+
+        ko.extenders.shelbyArraySubscribe = function(target) {
+            var originalSubscribe = target[namespace].subscribe;
+
+            if (!$.isFunction(originalSubscribe)) {
+                throw new Error("The observable must be extended with \"ko.extenders.shelbySubscribe\".");
+            }
+
+            $.extend(target[namespace], {
+                subscribe: function(callback /*, [callbackTarget], [event], [options] */) {
+                    var evaluateChanges = !utils.isObject(arguments[3]) || arguments[3].evaluateChanges !== false;
+
+                    if (evaluateChanges) {
+                        if (!$.isFunction(callback)) {
+                            throw new Error("First argument must be a callback function.");
+                        }
+
+                        // Must keep a locally scoped variable of the callback otherwise IE 8 and 9 cause stack
+                        // overflow error.
+                        var originalCallback = callback;
+
+                        // Proxy callback function adding the array changes behavior.
+                        arguments[0] = function(value) {
+                            originalCallback.apply(this, [{ value: value }, true, "shelbyArraySubscribe"]);
+                        };
+
+                        // To activate the native array changes evaluation, the event must be "arrayChange",
+                        // otherwise the standard observable subscription behaviour is applied.
+                        arguments[2] = "arrayChange";
+                    }
+
+                    // Add the subscription.
+                    return originalSubscribe.apply(this, arguments);
+                }
+            });
+        };
+
+        // ---------------------------------
+
         Shelby.Extenders.subscribe = function(target, type) {
             // Apply the observable extenders to everything that is an observable.
             if (type !== PropertyType.Object) {
@@ -673,7 +869,9 @@
             },
         
             subscribe: function(callback, options) {
-                if (utils.isNull(callback)) throw new Error("\"callback\" must be a function.");
+                if (utils.isNull(callback)) {
+                    throw new Error("\"callback\" must be a function.");
+                }
                 
                 var that = this;
                 
@@ -788,11 +986,10 @@
                 
                 // Iterate on the target properties to subscribe on all the observables matching criterias.
                 factory.parser().parse(target, {
-                    filter: function(key, value, path) {
+                    filter: function(key, value) {
                         // A property can be a candidate if it is an observable and has been extended with Shelby. Object cannot 
                         // be ignore because it will prevent us from parsing their children.
-                        return key !== namespace 
-                            && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
+                        return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
                     },
                     onArray: action,
                     onFunction: action
@@ -817,11 +1014,10 @@
             
                 // Iterate on the target properties to dispose the subscriptions from all the observables matching criterias.
                 factory.parser().parse(target, {
-                    filter: function(key, value, path) {
+                    filter: function(key, value) {
                         // A property can be a candidate if it is an observable and has been extended with Shelby. Object cannot 
                         // be ignore because it will prevent us from parsing their children.
-                        return key !== namespace 
-                            && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
+                        return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
                     },
                     onArray: action,
                     onFunction: action
@@ -833,8 +1029,7 @@
 
                 // In case of an array, if a specific event has been specified, the array changes evaluation
                 // will not be applied.
-                if ($.isArray(property.value.peek()) 
-                    && (options.array.evaluateChanges === false || !utils.isNullOrEmpty(options.event))) {
+                if ($.isArray(property.value.peek()) && (options.array.evaluateChanges === false || !utils.isNullOrEmpty(options.event))) { 
                     subscriptionOptions = { evaluateChanges: false };
                 }
 
@@ -915,10 +1110,119 @@
                 shelbyArraySubscribe: true
             }
         };
+    })();
         
-        // Shelby.Extenders.edit
+    // Shelby.Extenders - Edit
+    // ---------------------------------
+
+    (function() {
+        ko.extenders.shelbyEdit = function(target) {
+            if (!$.isFunction(target[namespace].pause) || !$.isFunction(target[namespace].resume)) {
+                throw new Error(utils.stringFormat("\"shelbyEditable\" can only extends an observable having \"{1}.pause\" and \"{1}.resume\" functions.", namespace));
+            }
+
+            var wasPause = false;
+        
+            $.extend(target[namespace], {
+                current: target.peek(),
+                
+                hasMutated: false,
+                isEditing: false,
+                deferNotifications: false,
+                
+                beginEdit: function(deferNotifications) {
+                    if (!this.isEditing) {
+                        this.current = target.peek();
+                        this.deferNotifications = deferNotifications !== false ? true : false;
+
+                        if (this.deferNotifications) {
+                            // Must keep track of the subscription "pause" status at the beginning of the edition
+                            // to prevent resuming the subscription at the end of the edition if it was originally pause.
+                            wasPause = target[namespace].isPause();
+
+                            if (!wasPause) {
+                                // Prevent the propagation of the notifications to subscribers before an
+                                // explicit call to "endEdit" function has been made.
+                                target[namespace].pause();
+                            }
+                        }
+
+                        // Start edition.
+                        this.isEditing = true;
+                    }
+                },
+                
+                endEdit: function(canNotify) {
+                    var that = this;
+
+                    if (this.isEditing && this.hasMutated) {
+                        this.current = target.peek();
+                    }
+                    
+                    if (this.isEditing) {
+                        if (!wasPause && this.deferNotifications !== false) {
+                            var hasMutated = that.hasMutated;
+
+                            // Defer the "resume" to prevent synchronization problem with the UI.
+                            setTimeout(function() {
+                                target[namespace].resume();
+
+                                // When the notifications are resumed, if the observable has been edited and the mute options
+                                // is not specified, force a notification since the previous notifications has been "eat" because
+                                // the notifications were paused.
+                                if (hasMutated && canNotify !== false) {
+                                    target.valueWillMutate();
+                                    target.valueHasMutated();
+                                }
+
+                                
+                            }, 10);
+                        }
+                    }
+                               
+                    this.hasMutated = false;     
+                    this.isEditing = false;
+                },
+
+                resetEdit: function() {
+                    if (this.isEditing && this.hasMutated) {
+                        target(this.current);
+                    }
+                },
+                
+                cancelEdit: function() {
+                    target[namespace].resetEdit();
+
+                    if (this.isEditing) {
+                        if (!wasPause && this.deferNotifications !== false) {
+                            // Defer the "resume" to prevent synchronization problem with the UI.
+                            setTimeout(function() {
+                                target[namespace].resume();
+                            }, 10);
+                        }
+                    }
+                    
+                    this.isEditing = false;
+                    this.hasMutated = false;
+                }
+            });
+            
+            target.subscribe(function(value) {
+                if (!utils.isNull(target[namespace]) && target[namespace].isEditing && !target[namespace].hasMutated) {
+                    if ($.isArray(value)) {
+                        target[namespace].hasMutated = ko.utils.compareArrays(target[namespace].current, value).length === 0;
+                    }
+                    else {
+                        target[namespace].hasMutated = value !== target[namespace].current;
+                    }
+                }
+            });
+            
+            return target;
+        };
+
         // ---------------------------------
-        
+
         Shelby.Extenders.edit = function(target, type) {
             if (type !== PropertyType.Object) {
                 target.extend(this.observableExtenders);
@@ -1045,11 +1349,10 @@
             
                 // Iterate on the target properties to execute the action on all the observables matching criterias.
                 factory.parser().parse(this._target(), {
-                    filter: function(key, value, path) {
+                    filter: function(key, value) {
                         // A property can be edited if it is an observable and has been extended with Shelby. Object cannot 
                         // be ignore because it will prevent us from parsing their children.
-                        return key !== namespace 
-                            && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
+                        return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
                     },
                     onArray: execute,
                     onFunction: execute
@@ -1062,10 +1365,12 @@
         Shelby.Extenders.edit.observableExtenders = {
             shelbyEdit: true
         };
-        
-        // Shelby.Extenders.utility
-        // ---------------------------------
-        
+    })();
+            
+    // Shelby.Extenders - Utility
+    // ---------------------------------
+
+    (function() {
         Shelby.Extenders.utility = function(target, type) {
             if (type !== PropertyType.Scalar) {
                 // Copy all the functions to the target.
@@ -1100,302 +1405,30 @@
             
                 // Iterate on the target properties to reset all the observables matching criterias.
                 factory.parser().parse(this._target(), {
-                    filter: function(key, propertyValue, path) {
+                    filter: function(key, propertyValue) {
                         // A property can be reset if it is an observable and has been extended with Shelby. Object cannot 
                         // be ignore because it will prevent us from parsing their children.
-                        return key !== namespace 
-                            && ((ko.isObservable(propertyValue) || utils.isObject(propertyValue)) && utils.isImplementingShelby(propertyValue));
+                        return key !== namespace && ((ko.isObservable(propertyValue) || utils.isObject(propertyValue)) && utils.isImplementingShelby(propertyValue));
                     },
                     onFunction: action
                 });
             },
             
             updateFrom: function(obj) {
-                if (!utils.isObject(obj)) throw new Error("\"obj\" must be an object.");
+                if (!utils.isObject(obj)) {
+                    throw new Error("\"obj\" must be an object.");
+                }
 
                 try {
                     factory.mapper().update(this._target(), obj);
                 }
-                catch(e) {
+                catch (e) {
                     throw new Error("An error occurred while updating the target object. Make sure that all the observables properties of the target object has been created by the Shelby mapper.");
                 }
             }
         });
         
         Shelby.Extenders.utility.fn.extend = extend;
-
-        // Shelby.PropertyExtender
-        // ---------------------------------
-        
-        Shelby.PropertyExtender = function() {
-        };
-        
-        Shelby.PropertyExtender.prototype = {
-            add: function(target, extenders) {
-                if (utils.isNull(target)) throw new Error("\"target\" must be an object.");
-                if (utils.isNull(extenders)) throw new Error("\"extenders\" must be an object literal.");
-            
-                // Prevent multiple extends.
-                if (!utils.hasProperty(target, namespace)) {
-                    var that = this;
-                
-                    var action = function(type) {
-                        return function(property) {
-                            that._extendProperty(property, type, extenders);
-                        };
-                    };
-                    
-                    // Iterate on the target properties to extend all the objects and observables matching criterias.
-                    factory.parser().parse(target, {
-                        filter: function(key, value) {
-                            // A property can be extended if it is an observable or an object.
-                            return key !== namespace && (ko.isObservable(value) || utils.isObject(value));
-                        },
-                        onObject: action(PropertyType.Object),
-                        onArray: action(PropertyType.Array),
-                        onFunction: action(PropertyType.Scalar)
-                    });
-                }
-            },
-            
-            remove: function(target) {
-                if (utils.isNull(target)) throw new Error("\"target\" must be an object.");
-            
-                var action = function(property) {
-                    delete property.value[namespace];
-                };
-            
-                // Iterate on the target properties to remove shelby extenders.
-                factory.parser().parse(target, {
-                    filter: function(key, value) {
-                        // A property can have extender to remove if it is an observable or an object and has
-                        // been extend by Shelby.
-                        return (ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value);
-                    },
-                    onObject: action,
-                    onArray: action,
-                    onFunction: action
-                });
-            },
-            
-            _extendProperty: function(property, type, extenders) {
-                property.value[namespace] = {};
-            
-                // Retrieve all the extenders to apply. This is done by doing a concatenation
-                // of the "common" extenders which are defined in the "*" property and specifics
-                // extenders which are defined in a property matching the current property path.
-                var propertyExtenders = extenders["*"] || {};
-                
-                if (utils.isObject(extenders[property.path])) {
-                    $.extend(propertyExtenders, extenders[property.path]);
-                }
-                
-                // Apply the retrieved extenders.
-                $.each(propertyExtenders, function() {
-                    this.apply(this, [property.value, type]);
-                });
-            }
-        };
-        
-        Shelby.PropertyExtender.extend = extend;
-    })();
-
-    // Knockout observable extenders
-    // ---------------------------------
-    (function() {
-        ko.extenders.shelbySubscribe = function(target) {
-            // When true, all the subscriptions are pause.
-            var pauseAllSubscriptions = false;
-            
-            $.extend(target[namespace], {
-                subscribe: function(callback /*, [callbackTarget], [event] */) {
-                    if (!$.isFunction(callback)) throw new Error("First argument must be a callback function.");
-                
-                    // Must keep a locally scoped variable of the callback otherwise IE 8 and 9 cause stack
-                    // overflow error.
-                    var originalCallback = callback;
-
-                    arguments[0] = function(value) {
-                        if (!pauseAllSubscriptions && !pausableSubscription.isPause) {
-                            // If this observable is not paused globally or this subscription is not paused,
-                            // call the original callback with the original arguments.
-                            originalCallback.apply(this, [value]);
-                        }
-                    };
-
-                    // Call the original knockout subscription function.
-                    var subscription = target.subscribe.apply(target, arguments);
-                    
-                    var pausableSubscription = {
-                        isPause: false,
-                    
-                        pause: function() {
-                            this.isPause = true;
-                        },
-                        resume: function() {
-                            this.isPause = false;
-                        },
-                        dispose: function() {
-                            subscription.dispose();
-                        }
-                    };
-                    
-                    return pausableSubscription;
-                },
-                
-                pause: function() {
-                    pauseAllSubscriptions = true;
-                },
-                
-                resume: function() {
-                    pauseAllSubscriptions = false;
-                },
-                
-                isPause: function() {
-                    return pauseAllSubscriptions;
-                }
-            });
-            
-            return target;
-        };
-
-        ko.extenders.shelbyArraySubscribe = function(target) {
-            var originalSubscribe = target[namespace].subscribe;
-
-            if (!$.isFunction(originalSubscribe)) {
-                throw new Error("The observable must be extended with \"ko.extenders.shelbySubscribe\".");
-            }
-
-            $.extend(target[namespace], {
-                subscribe: function(callback /*, [callbackTarget], [event], [options] */) {
-                    var evaluateChanges = !utils.isObject(arguments[3]) || arguments[3].evaluateChanges !== false;
-
-                    if (evaluateChanges) {
-                        if (!$.isFunction(callback)) throw new Error("First argument must be a callback function.");
-
-                        // Must keep a locally scoped variable of the callback otherwise IE 8 and 9 cause stack
-                        // overflow error.
-                        var originalCallback = callback;
-
-                        // Proxy callback function adding the array changes behavior.
-                        arguments[0] = function(value) {
-                            originalCallback.apply(this, [{ value: value }, true, "shelbyArraySubscribe"]);
-                        };
-
-                        // To activate the native array changes evaluation, the event must be "arrayChange",
-                        // otherwise the standard observable subscription behaviour is applied.
-                        arguments[2] = "arrayChange";
-                    }
-
-                    // Add the subscription.
-                    return originalSubscribe.apply(this, arguments);
-                }
-            });
-        };
-        
-        ko.extenders.shelbyEdit = function(target) {
-            if (!$.isFunction(target[namespace].pause) || !$.isFunction(target[namespace].resume)) 
-                throw new Error(utils.stringFormat("\"shelbyEditable\" can only extends an observable having \"{1}.pause\" and \"{1}.resume\" functions.", namespace));
-
-            var wasPause = false;
-        
-            $.extend(target[namespace], {
-                current: target.peek(),
-                
-                hasMutated: false,
-                isEditing: false,
-                deferNotifications: false,
-                
-                beginEdit: function(deferNotifications) {
-                    if (!this.isEditing) {
-                        this.current = target.peek();
-                        this.deferNotifications = deferNotifications !== false ? true : false;
-
-                        if (this.deferNotifications) {
-                            // Must keep track of the subscription "pause" status at the beginning of the edition
-                            // to prevent resuming the subscription at the end of the edition if it was originally pause.
-                            wasPause = target[namespace].isPause();
-
-                            if (!wasPause) {
-                                // Prevent the propagation of the notifications to subscribers before an
-                                // explicit call to "endEdit" function has been made.
-                                target[namespace].pause();
-                            }
-                        }
-
-                        // Start edition.
-                        this.isEditing = true;
-                    }
-                },
-                
-                endEdit: function(canNotify) {
-                    var that = this;
-
-                    if (this.isEditing && this.hasMutated) {
-                        this.current = target.peek();
-                    }
-                    
-                    if (this.isEditing) {
-                        if (!wasPause && this.deferNotifications !== false) {
-                            var hasMutated = that.hasMutated;
-
-                            // Defer the "resume" to prevent synchronization problem with the UI.
-                            setTimeout(function() {
-                                target[namespace].resume();
-
-                                // When the notifications are resumed, if the observable has been edited and the mute options
-                                // is not specified, force a notification since the previous notifications has been "eat" because
-                                // the notifications were paused.
-                                if (hasMutated && canNotify !== false) {
-                                    target.valueWillMutate();
-                                    target.valueHasMutated();
-                                }
-
-                                
-                            }, 10);
-                        }
-                    }
-                               
-                    this.hasMutated = false;     
-                    this.isEditing = false;
-                },
-
-                resetEdit: function() {
-                    if (this.isEditing && this.hasMutated) {
-                        target(this.current);
-                    }
-                },
-                
-                cancelEdit: function() {
-                    target[namespace].resetEdit();
-
-                    if (this.isEditing) {
-                        if (!wasPause && this.deferNotifications !== false) {
-                            // Defer the "resume" to prevent synchronization problem with the UI.
-                            setTimeout(function() {
-                                target[namespace].resume();
-                            }, 10);
-                        }
-                    }
-                    
-                    this.isEditing = false;
-                    this.hasMutated = false;
-                }
-            });
-            
-            target.subscribe(function(value) {
-                if (!utils.isNull(target[namespace]) && target[namespace].isEditing && !target[namespace].hasMutated) {
-                    if ($.isArray(value)) {
-                        target[namespace].hasMutated = ko.utils.compareArrays(target[namespace].current, value).length === 0;
-                    }
-                    else {
-                        target[namespace].hasMutated = value !== target[namespace].current;
-                    }
-                }
-            });
-            
-            return target;
-        };
     })();
     
     // Shelby.Ajax
@@ -1410,12 +1443,20 @@
             //  - options: Any jQuery AJAX options (http://api.jquery.com/jQuery.ajax),
             //    options "url" and "type" are mandatory.
             send: function(options) {
-                if (utils.isNull(options)) throw new Error("\"options\" must be a non null object literal.");
-                if (utils.isNullOrEmpty(options.url)) throw new Error("\"options.url\" must be a non null or empty string.");
-                if (utils.isNullOrEmpty(options.type)) throw new Error("\"options.type\" must be a non null or empty string.");
+                if (utils.isNull(options)) {
+                    throw new Error("\"options\" must be a non null object literal.");
+                }
+
+                if (utils.isNullOrEmpty(options.url)) {
+                    throw new Error("\"options.url\" must be a non null or empty string.");
+                }
+
+                if (utils.isNullOrEmpty(options.type)) {
+                    throw new Error("\"options.type\" must be a non null or empty string.");
+                }
                 
-                var mergedOptions = $.extend({}, $.ajaxSettings, Ajax.options, options),
-                    hasData = utils.isObject(options.data);
+                var mergedOptions = $.extend({}, $.ajaxSettings, Ajax.options, options);
+                var hasData = utils.isObject(options.data);
 
                 if (!hasData) {
                     mergedOptions.contentType = null;
@@ -1620,17 +1661,17 @@
             
             // If defined by you, it will be invoked when disposing the view model.
             _handleDispose: null,
-        
+
             // Apply the KO bindings with the view model.
             //  - element : a DOM or jQuery element to use as the root.
             bind: function(element) {
-				var that = this;
-				var deferred = new $.Deferred();
-				
-				var applyBindings = function() {
-					that._applyBindings();
-					deferred.resolve();
-				};
+                var that = this;
+                var deferred = new $.Deferred();
+
+                var applyBindings = function() {
+                    that._applyBindings();
+                    deferred.resolve();
+                };
 			
                 this.element = this._getDomElement(element);
                 
@@ -1638,14 +1679,14 @@
                     var isAsync = this._beforeBind.call(this, applyBindings);
 					
                     if (isAsync !== true) {
-						applyBindings();
+                        applyBindings();
                     }
                 }
                 else {
-					applyBindings();
+                    applyBindings();
                 }
 				
-				return deferred.promise();
+                return deferred.promise();
             },
             
             _getDomElement: function(element) {
@@ -1695,12 +1736,14 @@
             },
 
             _send: function(options, handlers) {
-                if (utils.isNullOrEmpty(options.request.url)) throw new Error("\"options.request.url\" must be a non null or empty string.");
+                if (utils.isNullOrEmpty(options.request.url)) {
+                    throw new Error("\"options.request.url\" must be a non null or empty string.");
+                }
             
                 var that = this;
 
-                var request = $.extend({ context: this }, options.request),
-                    operationContext = this._createOperationContext(request);
+                var request = $.extend({ context: this }, options.request);
+                var operationContext = this._createOperationContext(request);
 
                 if ($.isFunction(handlers.onBefore)) {
                     request.beforeSend = function() {
@@ -1773,8 +1816,13 @@
             },
 
             _fetch: function(options) {
-                if (utils.isNull(options)) throw new Error("\"options\" must be a non null object literal.");
-                if (utils.isNull(options.request)) throw new Error("\"options.request\" must be a non null object literal.");
+                if (utils.isNull(options)) {
+                    throw new Error("\"options\" must be a non null object literal.");
+                }
+
+                if (utils.isNull(options.request)) {
+                    throw new Error("\"options.request\" must be a non null object literal.");
+                }
 
                 options.request.type = options.request.type || "GET";
 
@@ -1789,9 +1837,17 @@
             },
 
             _save: function(options) {
-                if (utils.isNull(options)) throw new Error("\"options\" must be a non null object literal.");
-                if (utils.isNull(options.request)) throw new Error("\"options.request\" must be a non null object literal.");
-                if (utils.isNullOrEmpty(options.request.type)) throw new Error("\"options.request.type\" must be a non nullor empty string.");
+                if (utils.isNull(options)) {
+                    throw new Error("\"options\" must be a non null object literal.");
+                }
+
+                if (utils.isNull(options.request)) {
+                    throw new Error("\"options.request\" must be a non null object literal.");
+                }
+
+                if (utils.isNullOrEmpty(options.request.type)) {
+                    throw new Error("\"options.request.type\" must be a non nullor empty string.");
+                }
 
                 return this._send(options, {
                     onBefore: this._beforeSave,
@@ -1807,8 +1863,13 @@
             },
 
             _remove: function(options) {
-                if (utils.isNull(options)) throw new Error("\"options\" must be a non null object literal.");
-                if (utils.isNull(options.request)) throw new Error("\"options.request\" must be a non null object literal.");
+                if (utils.isNull(options)) {
+                    throw new Error("\"options\" must be a non null object literal.");
+                }
+
+                if (utils.isNull(options.request)) {
+                    throw new Error("\"options.request\" must be a non null object literal.");
+                }
 
                 options.request.type = options.request.type || "DELETE";
 
@@ -1833,7 +1894,9 @@
             },
             
             detail: function(id, options) {
-                if (utils.isNullOrEmpty(id)) throw new Error("\"id\" must be a non null or empty string.");
+                if (utils.isNullOrEmpty(id)) {
+                    throw new Error("\"id\" must be a non null or empty string.");
+                }
 
                 var url = this._getUrl("detail");
 
@@ -1843,14 +1906,16 @@
                         data: {
                             id: id
                         }
-                    },
+                    }
                 };
 
                 return this._fetch($.extend(requestOptions, options));
             },
 
             add: function(model, options) {
-                if (utils.isNull(model)) throw new Error("\"model\" must be a non null object.");
+                if (utils.isNull(model)) {
+                    throw new Error("\"model\" must be a non null object.");
+                }
 
                 var url = this._getUrl("add");
 
@@ -1866,14 +1931,14 @@
             },
 
             update: function(/* [id], model, [options] */) {
-                var id = null,
-                    model = null,
-                    options = null,
-                    url = this._getUrl("update"),
-                    isRest = url.type === UrlType.Rest;
+                var id = null;
+                var model = null;
+                var options = null;
+                var url = this._getUrl("update");
+                var isRest = url.type === UrlType.Rest;
 
                 if (isRest) {
-                    switch(arguments.length) {
+                    switch (arguments.length) {
                         case 3:
                             id = arguments[0];
                             model = arguments[1];
@@ -1957,8 +2022,7 @@
                 factory.parser().parse(this, {
                     filter: function(key, value) {
                         // A property can be dispose if it is an observable or an object and has been extend by Shelby.
-                        return key !== namespace 
-                            && ((ko.isObservable(value) || (utils.isObject(value)) && utils.isImplementingShelby(value)));
+                        return key !== namespace && ((ko.isObservable(value) || (utils.isObject(value)) && utils.isImplementingShelby(value)));
                     },
                     onObject: action
                 });
@@ -1974,7 +2038,9 @@
                     this._handleDispose.call(this);
                 }
 
+                /* jshint -W051 */
                 delete this;
+                /* jshint +W051 */
             },
             
             // Create a new operation context with the following structure:

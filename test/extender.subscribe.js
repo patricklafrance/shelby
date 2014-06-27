@@ -7,7 +7,7 @@
 		beforeEach(function() {
 			obs = ko.observable(dataSampler.generateString(5));
 
-			obs[Shelby.NAMESPACE] = {};
+			obs[Shelby.namespace] = {};
 
 			obs.extend({
 				shelbySubscribe: true
@@ -171,7 +171,7 @@
 		beforeEach(function() {
 			obs = ko.observableArray([]);
 
-			obs[Shelby.NAMESPACE] = {};
+			obs[Shelby.namespace] = {};
 
 			obs.extend({
 				shelbySubscribe: true,

@@ -25,8 +25,8 @@
 
 			propertyExtender.add(obj, {});
 
-			expect($.isPlainObject(obj[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isPlainObject(obj.prop[Shelby.NAMESPACE])).toBeTruthy();
+			expect($.isPlainObject(obj[Shelby.namespace])).toBeTruthy();
+			expect($.isPlainObject(obj.prop[Shelby.namespace])).toBeTruthy();
 		});
 
 		describe("Extenders type parameter always match the property type", function() {
@@ -88,7 +88,7 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					}
 				}
 			});
@@ -96,16 +96,16 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender: function(target) {
-						target[Shelby.NAMESPACE].fct2 = $.noop;
+						target[Shelby.namespace].fct2 = $.noop;
 					}
 				}
 			});
 
-			expect($.isPlainObject(obj[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isFunction(obj[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj.prop[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj[Shelby.NAMESPACE].fct2)).toBeFalsy();
-			expect($.isFunction(obj.prop[Shelby.NAMESPACE].fct2)).toBeFalsy();
+			expect($.isPlainObject(obj[Shelby.namespace])).toBeTruthy();
+			expect($.isFunction(obj[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj[Shelby.namespace].fct2)).toBeFalsy();
+			expect($.isFunction(obj.prop[Shelby.namespace].fct2)).toBeFalsy();
 		});
 
 		it("Extend all properties that are observables, ignore all other property types", function() {
@@ -120,17 +120,17 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					}
 				}
 			});
 
-			expect($.isPlainObject(obj.obsProp[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isFunction(obj.obsProp[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isPlainObject(obj.intProp[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.strProp,[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.fctProp[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.boolProp[Shelby.NAMESPACE])).toBeFalsy();
+			expect($.isPlainObject(obj.obsProp[Shelby.namespace])).toBeTruthy();
+			expect($.isFunction(obj.obsProp[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isPlainObject(obj.intProp[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.strProp,[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.fctProp[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.boolProp[Shelby.namespace])).toBeFalsy();
 		});
 
 		it("Extend deep properties", function() {
@@ -145,15 +145,15 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					}
 				}
 			});
 
-			expect($.isPlainObject(obj[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isPlainObject(obj.nested1[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isPlainObject(obj.nested1.nested2[Shelby.NAMESPACE])).toBeTruthy();
-			expect($.isFunction(obj.nested1.nested2.prop[Shelby.NAMESPACE].fct1)).toBeTruthy();
+			expect($.isPlainObject(obj[Shelby.namespace])).toBeTruthy();
+			expect($.isPlainObject(obj.nested1[Shelby.namespace])).toBeTruthy();
+			expect($.isPlainObject(obj.nested1.nested2[Shelby.namespace])).toBeTruthy();
+			expect($.isFunction(obj.nested1.nested2.prop[Shelby.namespace].fct1)).toBeTruthy();
 		});
 
 		it("Wildcard extenders are applied to all the observable properties", function() {
@@ -165,18 +165,18 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender1: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					},
 					extender2: function(target) {
-						target[Shelby.NAMESPACE].fct2 = $.noop;
+						target[Shelby.namespace].fct2 = $.noop;
 					}
 				}
 			});
 
-			expect($.isFunction(obj.prop1[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj.prop2[Shelby.NAMESPACE].fct2)).toBeTruthy();
-			expect($.isFunction(obj.prop1[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj.prop2[Shelby.NAMESPACE].fct2)).toBeTruthy();
+			expect($.isFunction(obj.prop1[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop2[Shelby.namespace].fct2)).toBeTruthy();
+			expect($.isFunction(obj.prop1[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop2[Shelby.namespace].fct2)).toBeTruthy();
 		});
 
 		it("Specific extenders are applied only when the property path match", function() {
@@ -188,13 +188,13 @@
 			propertyExtender.add(obj, {
 				"/prop2": {
 					extender: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					}
 				}
 			});
 
-			expect($.isFunction(obj.prop1[Shelby.NAMESPACE].fct1)).toBeFalsy();
-			expect($.isFunction(obj.prop2[Shelby.NAMESPACE].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop1[Shelby.namespace].fct1)).toBeFalsy();
+			expect($.isFunction(obj.prop2[Shelby.namespace].fct1)).toBeTruthy();
 		});
 
 		it("When wildcard and specific extenders are bot specified, they are all applied", function() {
@@ -206,19 +206,19 @@
 			propertyExtender.add(obj, {
 				"*": {
 					extender1: function(target) {
-						target[Shelby.NAMESPACE].fct1 = $.noop;
+						target[Shelby.namespace].fct1 = $.noop;
 					}
 				},
 				"/prop2": {
 					extender2: function(target) {
-						target[Shelby.NAMESPACE].fct2 = $.noop;
+						target[Shelby.namespace].fct2 = $.noop;
 					}
 				}
 			});
 
-			expect($.isFunction(obj.prop1[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj.prop2[Shelby.NAMESPACE].fct1)).toBeTruthy();
-			expect($.isFunction(obj.prop2[Shelby.NAMESPACE].fct2)).toBeTruthy();
+			expect($.isFunction(obj.prop1[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop2[Shelby.namespace].fct1)).toBeTruthy();
+			expect($.isFunction(obj.prop2[Shelby.namespace].fct2)).toBeTruthy();
 		});
 	});
 
@@ -265,11 +265,11 @@
 			propertyExtender.add(obj, {});
 			propertyExtender.remove(obj);
 
-			expect($.isPlainObject(obj[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.prop1[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.nested1[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.nested1.nested2[Shelby.NAMESPACE])).toBeFalsy();
-			expect($.isPlainObject(obj.nested1.nested2.prop2[Shelby.NAMESPACE])).toBeFalsy();
+			expect($.isPlainObject(obj[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.prop1[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.nested1[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.nested1.nested2[Shelby.namespace])).toBeFalsy();
+			expect($.isPlainObject(obj.nested1.nested2.prop2[Shelby.namespace])).toBeFalsy();
 		});
 	});
 })(jQuery);

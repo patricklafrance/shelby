@@ -638,4 +638,4 @@
             expect(guid2).not.toBe(guid3);
         });
     });
-})(jQuery, Shelby.Utils);
+})(jQuery, Shelby.utils);
