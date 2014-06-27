@@ -67,16 +67,16 @@ gulp.task("build-scripts", function() {
 gulp.task("jscs", function() {
     return gulp
     	.src(paths.scripts)
-        
+    	.pipe(jscs());
 });
 
 gulp.task("lint", function() {
 	var reporterOptions = {
 		verbose: true,
-			reasonCol: "cyan,bold"
+		reasonCol: "cyan,bold"
 	};
 
-    return gulp
+	return gulp
     	.src(paths.scripts)
         .pipe(jshint())
 		.pipe(jshint.reporter("jshint-summary", reporterOptions))
