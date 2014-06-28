@@ -2,7 +2,7 @@
   "name": "shelby",
   "title": "Shelby",
   "version": "0.2.0",
-  "description": "Base view models for knockout.js",
+  "description": "Base view models for Knockout",
   "main": "/dist/shelby.js",
   "homepage": "https://github.com/patricklafrance/shelby",
   "author": "Patrick Lafrance",
@@ -33,6 +33,7 @@
     "gulp-header": "^1.0.2",
     "gulp-jscs": "^0.5.0",
     "gulp-jshint": "^1.6.3",
+    "gulp-rename": "^1.2.0",
     "gulp-replace": "^0.3.0",
     "gulp-rimraf": "^0.1.0",
     "gulp-uglify": "^0.3.1",
@@ -40,7 +41,7 @@
     "run-sequence": "^0.3.6"
   },
   "scripts": {
-    "build": "gulp",
+    "prepublish": "gulp",
     "start": "gulp dev"
   }
 }

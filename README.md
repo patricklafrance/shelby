@@ -1,12 +1,14 @@
-shelby
+Shelby
 ======
 
 Base view models for knockout.js
 
 
-NPM
+Installation
 ======
 
+git clone https://github.com/patricklafrance/shelby.git
+cd shelby
+
 npm install -g gulp
-npm install gulp --save-dev
-npm install gulp-uglify
+npm install
