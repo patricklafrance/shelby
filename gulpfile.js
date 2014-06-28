@@ -100,7 +100,7 @@ gulp.task("build-specifications-scripts", function() {
 });
 
 gulp.task("build-release-scripts", function() {
-	var sourceFile = util.format("%s/%s", folders.build, filenames.build);
+	var sourceFile = util.format("%s/%s", folders.build, filenames.shelby.build);
 	var banner = util.format("%s%s", fs.readFileSync(paths.fragments.banner), "\r\n\r\n");
 
 	return gulp
@@ -149,10 +149,10 @@ gulp.task("watch", function() {
 
 // Default task
 gulp.task("default", function() {
-	gulp.start("release");
+	return gulp.start("release");
 });
 
 // Development task
 gulp.task("dev", ["build"], function() {
-	gulp.start("watch");
+	return gulp.start("watch");
 });
