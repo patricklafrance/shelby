@@ -1,7 +1,7 @@
 Shelby
 ======
 
-Base view models for knockout.js
+Base view models for Knockout.
 
 
 Installation
