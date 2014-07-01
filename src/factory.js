@@ -6,7 +6,7 @@
 
 (function(extend, utils) {
     Shelby.Factory = function() {
-        this._filter = null;
+        this._filters = null;
         this._propertyExtender = null;
         this._parser = null;
         this._ajax = null;
@@ -15,12 +15,12 @@
     };
     
     Shelby.Factory.prototype = {
-        filter: function() {
-            if (utils.isNull(this._filter)) {
-                this._filter = new Shelby.Filter();
+        filters: function() {
+            if (utils.isNull(this._filters)) {
+                this._filters = new Shelby.Filters();
             }
             
-            return this._filter;
+            return this._filters;
         },
 
         propertyExtender: function() {

@@ -1,11 +1,25 @@
-// Shelby.Filter
+// Shelby.Filters
 // ---------------------------------
 
-(function(extend, utils) {
-    Shelby.Filter = function() {
+(function(namespace, extend, utils) {
+    Shelby.Filters = function() {
     };
 
-    Shelby.Filter.prototype = {
+    Shelby.Filters.prototype = {
+        getExtendablePropertyFilter: function() {
+            return function(key, value) {
+                // Object must be added to the filter, otherwise if they are rejected, their child properties would be ignored.
+                return key !== namespace && (ko.isObservable(value) || utils.isObject(value));
+            };
+        },
+
+        getExtendedPropertyFilter: function() {
+            return function(key, value) {
+                // Object must be added to the filter, otherwise if they are rejected, their child properties would be ignored.
+                return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
+            };
+        },
+
         getPathFilter: function(includePaths, excludePaths) {
             if ($.isArray(includePaths)) {
                 return this._getIncludePathFilter(includePaths);
@@ -148,6 +162,7 @@
         }
     };
 
-    Shelby.Filter.extend = extend;
-})(Shelby.extend,
+    Shelby.Filters.extend = extend;
+})(Shelby.namespace,
+   Shelby.extend,
    Shelby.utils);

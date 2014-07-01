@@ -1,29 +1,31 @@
 (function(factory) {
     "use strict";
     
-    if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
-        var target = module.exports || exports;
+    if (typeof require === "function") {
+        var instance = factory(require("jquery"), require("knockout"));
 
-        // "knockout.viewmodel" is not available as Node.js package or CommonJS module.
-        target = function(koViewModel) {
-            if (!koViewModel) {
-                throw new Error("A valid instance of the \"knockout viewmodel\" plugin must be provided.");
-            }
+        // CommonJS
+        if (typeof exports === "object") {
+            exports = instance;
+        }
 
-            return factory(require("jquery"), require("knockout"), koViewModel);
-        };
+        // Node.js and Browserify
+        if (typeof module === "object") {
+            module.exports = instance;
+        }
     }
     else if (typeof define === "function" && define.amd) {
         // Register as a named AMD module.
         define("shelby", [
             "jquery",
-            "knockout",
-            "knockout.viewmodel"
+            "knockout"
         ], factory);
     } 
     else {
+        var target = window || global;
+
         // Expose as a global object.
-        window.Shelby = factory(window.jQuery, window.ko, window.ko.viewmodel);
+        window.Shelby = factory(window.jQuery, window.ko);
     }
-})(function($, ko, koViewModel) {
+})(function($, ko) {
     "use strict";

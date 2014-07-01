@@ -414,10 +414,7 @@
         
             // Iterate on the view model properties to dispose all the subscriptions.
             factory.parser().parse(this, {
-                filter: function(key, value) {
-                    // A property can be dispose if it is an observable or an object and has been extend by Shelby.
-                    return key !== namespace && ((ko.isObservable(value) || (utils.isObject(value)) && utils.isImplementingShelby(value)));
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onObject: action
             });
             

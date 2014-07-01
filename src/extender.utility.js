@@ -5,11 +5,11 @@
     Shelby.Extenders.utility = function(target, type) {
         if (type !== PropertyType.Scalar) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.utility.fn(target));
+            $.extend(target[namespace], new Shelby.Extenders.utility._ctor(target));
         }
     };
     
-    Shelby.Extenders.utility.fn = Shelby.Extenders.base.fn.extend({
+    Shelby.Extenders.utility._ctor = Shelby.Extenders.base.extend({
         reset: function() {
             var value = null;
             var options = {};
@@ -36,11 +36,7 @@
         
             // Iterate on the target properties to reset all the observables matching criterias.
             factory.parser().parse(this._target(), {
-                filter: function(key, propertyValue) {
-                    // A property can be reset if it is an observable and has been extended with Shelby. Object cannot 
-                    // be ignore because it will prevent us from parsing their children.
-                    return key !== namespace && ((ko.isObservable(propertyValue) || utils.isObject(propertyValue)) && utils.isImplementingShelby(propertyValue));
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onFunction: action
             });
         },
@@ -59,7 +55,7 @@
         }
     });
     
-    Shelby.Extenders.utility.fn.extend = extend;
+    Shelby.Extenders.utility._ctor.extend = extend;
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils,

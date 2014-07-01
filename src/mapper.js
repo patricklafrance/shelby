@@ -7,15 +7,15 @@
 
     Shelby.Mapper.prototype = {
         fromJS: function() {
-            return koViewModel.fromModel.apply(koViewModel, arguments);
+            return ko.viewmodel.fromModel.apply(ko.viewmodel, arguments);
         },
         
         toJS: function() {
-            return koViewModel.toModel.apply(koViewModel, arguments);
+            return ko.viewmodel.toModel.apply(ko.viewmodel, arguments);
         },
         
         update: function() {
-            return koViewModel.updateFromModel.apply(koViewModel, arguments);
+            return ko.viewmodel.updateFromModel.apply(ko.viewmodel, arguments);
         }
     };
     

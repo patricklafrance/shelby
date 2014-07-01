@@ -16,6 +16,7 @@ var header = require("gulp-header");
 var uglify = require("gulp-uglify");
 var jshint = require("gulp-jshint");
 var jscs = require("gulp-jscs");
+var browserify = require("gulp-browserify");
 
 var filenames = {
 	shelby: {
@@ -23,12 +24,18 @@ var filenames = {
 		debug: util.format("shelby-%s.js", pkg.version),
 		minified: util.format("shelby-%s.min.js", pkg.version)
 	},
-	specifications: "test.specifications.js"
+	test: {
+		specifications: "test.specifications.js",
+		browserify: "test.browserify.js"
+	}
 };
 
 var folders = {
 	build: "build",
-	release: "dist"
+	release: "dist",
+	node: {
+		modules: "node_modules"
+	}
 };
 
 var paths = {
@@ -39,29 +46,33 @@ var paths = {
 			"src/extend.js",
 			"src/factory.js",
 			"src/parser.js",
-			"src/filter.js",
+			"src/filters.js",
 			"src/extender.core.js",
 			"src/extender.subscribe.js",
 			"src/extender.edit.js",
 			"src/extender.utility.js",
 			"src/ajax.js",
 			"src/mapper.js",
-			"src/viewmodel.js",
-			"src/mediator.js"
+			"src/viewmodel.js"
 		],
-		specifications: [
-			"test/utils.js",
-			"test/extend.js",
-			"test/parser.js",
-			"test/extender.core.js",
-			"test/extender.subscribe.js",
-			"test/extender.edit.js",
-			"test/extender.utility.js",
-			"test/ajax.js",
-			"test/mediator.js",
-			"test/viewmodel.js",
-			"test/runner.html.js",
-		]
+		test: {
+			specifications: [
+				"test/utils.js",
+				"test/extend.js",
+				"test/parser.js",
+				"test/extender.core.js",
+				"test/extender.subscribe.js",
+				"test/extender.edit.js",
+				"test/extender.utility.js",
+				"test/ajax.js",
+				"test/viewmodel.js",
+				"test/runner.html.js",
+			],
+			browsersify: ["test/exports/browserify.main.js"],
+			node: {
+				modules: ["test/exports/node_modules/**/*.js"]
+			}
+		}
 	},
 	fragments: {
 		pre: ["build/fragments/intro.js"],
@@ -71,7 +82,10 @@ var paths = {
 };
 
 gulp.task("clean-build", function() {
-	var files = [util.format("%s/*.js", folders.build), util.format("!%s/fragments", folders.build)];
+	var files = [
+		util.format("%s/*.js", folders.build), util.format("!%s/fragments", folders.build),
+		util.format("%s/%s", folders.build, folders.node.modules)
+	];
 
     return gulp
     	.src(files, { read: false })
@@ -94,9 +108,24 @@ gulp.task("build-src-scripts", function() {
 
 gulp.task("build-specifications-scripts", function() {
 	return gulp
-		.src(paths.scripts.specifications)
-		.pipe(concat(filenames.specifications, { newLine: "\r\n\r\n" }))
+		.src(paths.scripts.test.specifications)
+		.pipe(concat(filenames.test.specifications, { newLine: "\r\n\r\n" }))
 		.pipe(gulp.dest(folders.build));
+});
+
+gulp.task("copy-fake-node-modules", function() {
+	var dest = util.format("%s/%s", folders.build, folders.node.modules);
+
+	return gulp
+		.src(paths.scripts.test.node.modules)
+		.pipe(gulp.dest(dest));
+});
+
+gulp.task("build-browsersify-tests-scripts", ["copy-fake-node-modules"], function() {
+    return gulp.src(paths.scripts.test.browsersify)
+    	.pipe(browserify({ debug : true }))
+    	.pipe(rename(filenames.test.browserify))
+        .pipe(gulp.dest(folders.build));
 });
 
 gulp.task("build-release-scripts", function() {
@@ -134,7 +163,7 @@ gulp.task("lint", function() {
 });
 
 gulp.task("build", function(callback) {
-	runSequence("clean-build", "build-src-scripts", "build-specifications-scripts", callback);
+	runSequence("clean-build", "build-src-scripts", "build-specifications-scripts", "build-browsersify-tests-scripts", callback);
 });
 
 gulp.task("release", function(callback) {
