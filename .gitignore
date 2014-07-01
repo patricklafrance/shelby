@@ -1,6 +1,6 @@
-node_modules
-dist
-build/node_modules
-build/shelby.js
-build/test.specifications.js
-build/test.browserify.js
+/node_modules
+/dist
+/build/node_modules
+/build/shelby.js
+/build/test.specifications.js
+/build/test.browserify.js
