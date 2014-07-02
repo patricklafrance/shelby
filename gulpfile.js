@@ -33,10 +33,7 @@ var filenames = {
 
 var folders = {
 	build: "build",
-	release: "dist",
-	node: {
-		modules: "node_modules"
-	}
+	release: "dist"
 };
 
 var paths = {
@@ -69,10 +66,7 @@ var paths = {
 				"test/viewmodel.js",
 				"test/runner.html.js",
 			],
-			browsersify: ["./test/exports/browserify.main.js"],
-			node: {
-				modules: ["test/exports/node_modules/**/*.js"]
-			}
+			browsersify: ["./test/exports/browserify.main.js"]
 		}
 	},
 	fragments: {
@@ -83,10 +77,7 @@ var paths = {
 };
 
 gulp.task("clean-build", function() {
-	var files = [
-		util.format("%s/*.js", folders.build), util.format("!%s/fragments", folders.build),
-		util.format("%s/%s", folders.build, folders.node.modules)
-	];
+	var files = [util.format("%s/*.js", folders.build), util.format("!%s/fragments", folders.build)];
 
     return gulp
     	.src(files, { read: false })
@@ -114,21 +105,9 @@ gulp.task("build-specifications-scripts", function() {
 		.pipe(gulp.dest(folders.build));
 });
 
-gulp.task("copy-fake-node-modules", function() {
-	var dest = util.format("%s/%s", folders.build, folders.node.modules);
-
-	return gulp
-		.src(paths.scripts.test.node.modules)
-		.pipe(gulp.dest(dest));
-});
-
 gulp.task("build-browsersify-tests-scripts", function() {
 	return browserify(paths.scripts.test.browsersify)
 		.bundle({ debug: true })
-		.on("file", function(file, id) {
-			console.log(id);
-			console.log(file);
-		})
       	.pipe(source(filenames.test.browserify))
       	.pipe(gulp.dest(folders.build));
 });
