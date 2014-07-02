@@ -2,3 +2,4 @@ node_modules
 dist
 build/shelby.js
 build/test.specifications.js
+build/test.browserify.js
