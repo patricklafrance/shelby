@@ -107,10 +107,10 @@
     Shelby.Extenders.subscribe = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
-            target.extend(this.observableExtenders["*"]);
+            target.extend(this._observableExtenders["*"]);
             
             if (type === PropertyType.Array) {
-                var arrayExtenders = this.observableExtenders["array"];
+                var arrayExtenders = this._observableExtenders["array"];
 
                 if (!utils.isNull(arrayExtenders)) {
                     target.extend(arrayExtenders);
@@ -122,11 +122,11 @@
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.subscribe.fn(target));
+            $.extend(target[namespace], new Shelby.Extenders.subscribe._ctor(target));
         }
     };
     
-    Shelby.Extenders.subscribe.fn = Shelby.Extenders.base.fn.extend({
+    Shelby.Extenders.subscribe._ctor = Shelby.Extenders.base.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -141,10 +141,7 @@
             options = options || {};
             options.array = options.array || {};
 
-            // Filter that handles the include / exclude options by evaluating the property
-            // paths against the specified options and filter out the paths that doesn't match the 
-            // options.
-            var propertyFilter = factory.filter().getPathFilter(options.include, options.exclude);
+            var propertyFilter = factory.filters().getPathFilter(options.include, options.exclude);
             
             var subscription = {
                 // Unique identifier of the subscription.
@@ -189,6 +186,7 @@
             var subscriber = $.isFunction(options.subscriber) ? options.subscriber : this._propertySubscriber;
         
             var action = function(property) {
+                // Must do this check because of the automatic subscription of array's new items.
                 if (utils.isImplementingShelby(property.value)) {
                     // Must consider a contextual path and parent to fully support the automatic subscription of array's new items.
                     var path = property.path === "/" && !utils.isNullOrEmpty(context.path) ? context.path : context.path + property.path;
@@ -249,11 +247,7 @@
             
             // Iterate on the target properties to subscribe on all the observables matching criterias.
             factory.parser().parse(target, {
-                filter: function(key, value) {
-                    // A property can be a candidate if it is an observable and has been extended with Shelby. Object cannot 
-                    // be ignore because it will prevent us from parsing their children.
-                    return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -277,11 +271,7 @@
         
             // Iterate on the target properties to dispose the subscriptions from all the observables matching criterias.
             factory.parser().parse(target, {
-                filter: function(key, value) {
-                    // A property can be a candidate if it is an observable and has been extended with Shelby. Object cannot 
-                    // be ignore because it will prevent us from parsing their children.
-                    return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -363,9 +353,9 @@
         }
     });
     
-    Shelby.Extenders.subscribe.fn.extend = extend;
+    Shelby.Extenders.subscribe._ctor.extend = extend;
     
-    Shelby.Extenders.subscribe.observableExtenders = { 
+    Shelby.Extenders.subscribe._observableExtenders = { 
         "*": {
             shelbySubscribe: true
         },

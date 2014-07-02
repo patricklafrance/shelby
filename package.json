@@ -26,8 +26,24 @@
   "bugs": {
     "url": "https://github.com/patricklafrance/shelby/issues"
   },
+  "browser": {
+    "jquery": "./lib/jquery-1.10.2.js",
+    "knockout": "./lib/knockout-3.0.0.js",
+    "knockout.viewmodel": "./lib/knockout.viewmodel"
+  },
+  "browserify-shim": {
+    "jquery": "$",
+    "knockout": "ko"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
   "dependencies": {},
   "devDependencies": {
+    "browserify": "^4.2.0",
+    "browserify-shim": "^3.6.0",
     "gulp": "^3.8.1",
     "gulp-concat": "^2.2.0",
     "gulp-header": "^1.0.2",
@@ -38,7 +54,8 @@
     "gulp-rimraf": "^0.1.0",
     "gulp-uglify": "^0.3.1",
     "jshint-summary": "^0.4.0",
-    "run-sequence": "^0.3.6"
+    "run-sequence": "^0.3.6",
+    "vinyl-source-stream": "^0.1.1"
   },
   "scripts": {
     "prepublish": "gulp",

@@ -111,16 +111,16 @@
 
     Shelby.Extenders.edit = function(target, type) {
         if (type !== PropertyType.Object) {
-            target.extend(this.observableExtenders);
+            target.extend(this._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.edit.fn(target));
+            $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
         }
     };
     
-    Shelby.Extenders.edit.fn = Shelby.Extenders.base.fn.extend({
+    Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
         _initialize: function() {
             this.isEditing = false;
         
@@ -225,7 +225,7 @@
             // Filter that handles the include / exclude options by evaluating the property
             // paths against the specified options and filter out the paths that doesn't match the 
             // options.
-            var propertyEvaluator = factory.filter().getPathFilter(this._editOptions.include, this._editOptions.exclude);
+            var propertyEvaluator = factory.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
         
             var execute = function(property) {
                 if (propertyEvaluator(property.path).isPerfectMatch) {
@@ -235,20 +235,16 @@
         
             // Iterate on the target properties to execute the action on all the observables matching criterias.
             factory.parser().parse(this._target(), {
-                filter: function(key, value) {
-                    // A property can be edited if it is an observable and has been extended with Shelby. Object cannot 
-                    // be ignore because it will prevent us from parsing their children.
-                    return key !== namespace && ((ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value));
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onArray: execute,
                 onFunction: execute
             });
         }
     });
     
-    Shelby.Extenders.edit.fn.extend = extend;
+    Shelby.Extenders.edit._ctor.extend = extend;
     
-    Shelby.Extenders.edit.observableExtenders = {
+    Shelby.Extenders.edit._observableExtenders = {
         shelbyEdit: true
     };
 })(Shelby.namespace,

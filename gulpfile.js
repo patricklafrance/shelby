@@ -5,7 +5,9 @@ var pkg = require('./package.json');
 var fs = require("fs");
 var util = require("util");
 
-var runSequence = require("run-sequence");
+var sequence = require("run-sequence");
+var browserify = require("browserify");
+var source = require("vinyl-source-stream");
 
 var gulp = require("gulp");
 var rimraf = require("gulp-rimraf");
@@ -23,7 +25,10 @@ var filenames = {
 		debug: util.format("shelby-%s.js", pkg.version),
 		minified: util.format("shelby-%s.min.js", pkg.version)
 	},
-	specifications: "test.specifications.js"
+	test: {
+		specifications: "test.specifications.js",
+		browserify: "test.browserify.js"
+	}
 };
 
 var folders = {
@@ -39,7 +44,7 @@ var paths = {
 			"src/extend.js",
 			"src/factory.js",
 			"src/parser.js",
-			"src/filter.js",
+			"src/filters.js",
 			"src/extender.core.js",
 			"src/extender.subscribe.js",
 			"src/extender.edit.js",
@@ -47,21 +52,24 @@ var paths = {
 			"src/ajax.js",
 			"src/mapper.js",
 			"src/viewmodel.js",
-			"src/mediator.js"
+			"src/viewmodel.http.js"
 		],
-		specifications: [
-			"test/utils.js",
-			"test/extend.js",
-			"test/parser.js",
-			"test/extender.core.js",
-			"test/extender.subscribe.js",
-			"test/extender.edit.js",
-			"test/extender.utility.js",
-			"test/ajax.js",
-			"test/mediator.js",
-			"test/viewmodel.js",
-			"test/runner.html.js",
-		]
+		test: {
+			specifications: [
+				"test/utils.js",
+				"test/extend.js",
+				"test/parser.js",
+				"test/extender.core.js",
+				"test/extender.subscribe.js",
+				"test/extender.edit.js",
+				"test/extender.utility.js",
+				"test/ajax.js",
+				"test/viewmodel.js",
+				"test/viewmodel.http.js",
+				"test/runner.html.js",
+			],
+			browsersify: ["./test/exports/browserify.main.js"]
+		}
 	},
 	fragments: {
 		pre: ["build/fragments/intro.js"],
@@ -94,9 +102,16 @@ gulp.task("build-src-scripts", function() {
 
 gulp.task("build-specifications-scripts", function() {
 	return gulp
-		.src(paths.scripts.specifications)
-		.pipe(concat(filenames.specifications, { newLine: "\r\n\r\n" }))
+		.src(paths.scripts.test.specifications)
+		.pipe(concat(filenames.test.specifications, { newLine: "\r\n\r\n" }))
 		.pipe(gulp.dest(folders.build));
+});
+
+gulp.task("build-browsersify-tests-scripts", function() {
+	return browserify(paths.scripts.test.browsersify)
+		.bundle({ debug: true })
+      	.pipe(source(filenames.test.browserify))
+      	.pipe(gulp.dest(folders.build));
 });
 
 gulp.task("build-release-scripts", function() {
@@ -134,11 +149,11 @@ gulp.task("lint", function() {
 });
 
 gulp.task("build", function(callback) {
-	runSequence("clean-build", "build-src-scripts", "build-specifications-scripts", callback);
+	sequence("clean-build", "build-src-scripts", "build-specifications-scripts", "build-browsersify-tests-scripts", callback);
 });
 
 gulp.task("release", function(callback) {
-	runSequence("clean-release", "lint", "jscs", "build", "build-release-scripts", callback);
+	sequence("clean-release", "lint", "jscs", "build", "build-release-scripts", callback);
 });
 
 gulp.task("watch", function() {

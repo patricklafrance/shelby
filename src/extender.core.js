@@ -8,14 +8,12 @@
         Scalar: 2
     };
 
-    Shelby.Extenders = {};
+    Shelby.Extenders = {
+    };
 
     // ---------------------------------
     
-    Shelby.Extenders.base = function() {
-    };
-    
-    Shelby.Extenders.base.fn = function(target) {
+    Shelby.Extenders.base = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -23,7 +21,7 @@
         }
     };
     
-    Shelby.Extenders.base.fn.extend = extend;
+    Shelby.Extenders.base.extend = extend;
 
     // ---------------------------------
 
@@ -52,10 +50,7 @@
                 
                 // Iterate on the target properties to extend all the objects and observables matching criterias.
                 factory.parser().parse(target, {
-                    filter: function(key, value) {
-                        // A property can be extended if it is an observable or an object.
-                        return key !== namespace && (ko.isObservable(value) || utils.isObject(value));
-                    },
+                    filter: factory.filters().getExtendablePropertyFilter(),
                     onObject: action(PropertyType.Object),
                     onArray: action(PropertyType.Array),
                     onFunction: action(PropertyType.Scalar)
@@ -74,11 +69,7 @@
         
             // Iterate on the target properties to remove shelby extenders.
             factory.parser().parse(target, {
-                filter: function(key, value) {
-                    // A property can have extender to remove if it is an observable or an object and has
-                    // been extend by Shelby.
-                    return (ko.isObservable(value) || utils.isObject(value)) && utils.isImplementingShelby(value);
-                },
+                filter: factory.filters().getExtendedPropertyFilter(),
                 onObject: action,
                 onArray: action,
                 onFunction: action
