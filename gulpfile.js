@@ -5,7 +5,9 @@ var pkg = require('./package.json');
 var fs = require("fs");
 var util = require("util");
 
-var runSequence = require("run-sequence");
+var sequence = require("run-sequence");
+var browserify = require("browserify");
+var source = require("vinyl-source-stream");
 
 var gulp = require("gulp");
 var rimraf = require("gulp-rimraf");
@@ -16,7 +18,6 @@ var header = require("gulp-header");
 var uglify = require("gulp-uglify");
 var jshint = require("gulp-jshint");
 var jscs = require("gulp-jscs");
-var browserify = require("gulp-browserify");
 
 var filenames = {
 	shelby: {
@@ -68,7 +69,7 @@ var paths = {
 				"test/viewmodel.js",
 				"test/runner.html.js",
 			],
-			browsersify: ["test/exports/browserify.main.js"],
+			browsersify: ["./test/exports/browserify.main.js"],
 			node: {
 				modules: ["test/exports/node_modules/**/*.js"]
 			}
@@ -121,11 +122,15 @@ gulp.task("copy-fake-node-modules", function() {
 		.pipe(gulp.dest(dest));
 });
 
-gulp.task("build-browsersify-tests-scripts", ["copy-fake-node-modules"], function() {
-    return gulp.src(paths.scripts.test.browsersify)
-    	.pipe(browserify({ debug : true }))
-    	.pipe(rename(filenames.test.browserify))
-        .pipe(gulp.dest(folders.build));
+gulp.task("build-browsersify-tests-scripts", function() {
+	return browserify(paths.scripts.test.browsersify)
+		.bundle({ debug: true })
+		.on("file", function(file, id) {
+			console.log(id);
+			console.log(file);
+		})
+      	.pipe(source(filenames.test.browserify))
+      	.pipe(gulp.dest(folders.build));
 });
 
 gulp.task("build-release-scripts", function() {
@@ -163,11 +168,11 @@ gulp.task("lint", function() {
 });
 
 gulp.task("build", function(callback) {
-	runSequence("clean-build", "build-src-scripts", "build-specifications-scripts", "build-browsersify-tests-scripts", callback);
+	sequence("clean-build", "build-src-scripts", "build-specifications-scripts", "build-browsersify-tests-scripts", callback);
 });
 
 gulp.task("release", function(callback) {
-	runSequence("clean-release", "lint", "jscs", "build", "build-release-scripts", callback);
+	sequence("clean-release", "lint", "jscs", "build", "build-release-scripts", callback);
 });
 
 gulp.task("watch", function() {

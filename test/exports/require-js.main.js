@@ -2,6 +2,7 @@
 	require.config({
 	    paths: {
 	    	"jquery": "../../lib/jquery-1.10.2",
+	    	"knockout.viewmodel": "../../lib/knockout.viewmodel",
 	        "shelby": "../../build/shelby"
 	    },
 	    

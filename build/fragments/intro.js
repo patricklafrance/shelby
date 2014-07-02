@@ -1,8 +1,8 @@
 (function(factory) {
     "use strict";
     
-    if (typeof require === "function") {
-        var instance = factory(require("jquery"), require("knockout"));
+    if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
+        var instance = factory(require("jquery"), require("knockout"), require("knockout.viewmodel"));
 
         // CommonJS
         if (typeof exports === "object") {
@@ -18,14 +18,15 @@
         // Register as a named AMD module.
         define("shelby", [
             "jquery",
-            "knockout"
+            "knockout",
+            "knockout.viewmodel"
         ], factory);
     } 
     else {
         var target = window || global;
 
         // Expose as a global object.
-        window.Shelby = factory(window.jQuery, window.ko);
+        target.Shelby = factory(target.jQuery, target.ko, target.ko.viewmodel);
     }
-})(function($, ko) {
+})(function($, ko, koViewModel) {
     "use strict";
