@@ -51,7 +51,8 @@ var paths = {
 			"src/extender.utility.js",
 			"src/ajax.js",
 			"src/mapper.js",
-			"src/viewmodel.js"
+			"src/viewmodel.js",
+			"src/viewmodel.http.js"
 		],
 		test: {
 			specifications: [
@@ -64,6 +65,7 @@ var paths = {
 				"test/extender.utility.js",
 				"test/ajax.js",
 				"test/viewmodel.js",
+				"test/viewmodel.http.js",
 				"test/runner.html.js",
 			],
 			browsersify: ["./test/exports/browserify.main.js"]
