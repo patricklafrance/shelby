@@ -38,6 +38,9 @@ var folders = {
 
 var paths = {
 	scripts: {
+		library: [
+			"lib/*.js"
+		],
 		src: [
 			"src/vars.js",
 			"src/utils.js",
@@ -129,6 +132,14 @@ gulp.task("build-release-scripts", function() {
 		.pipe(gulp.dest(folders.release));
 });
 
+gulp.task("copy-external-libraries-to-release", function() {
+	var dest = util.format("%s/lib", folders.release);
+
+	return gulp
+ 		.src(paths.scripts.library)
+ 		.pipe(gulp.dest(dest));
+});
+
 gulp.task("jscs", function() {
     return gulp
     	.src(paths.scripts.src)
@@ -153,7 +164,7 @@ gulp.task("build", function(callback) {
 });
 
 gulp.task("release", function(callback) {
-	sequence("clean-release", "lint", "jscs", "build", "build-release-scripts", callback);
+	sequence("clean-release", "lint", "jscs", "build", "build-release-scripts", "copy-external-libraries-to-release", callback);
 });
 
 gulp.task("watch", function() {
