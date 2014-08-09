@@ -50,27 +50,19 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 
 ### Basic
 
-When you are using Shelby, you are basically only working with one of the provided `ViewModel` (there's a few exception, we will talk about those later).
+When you are using Shelby, _you are basically only working with one of the provided view model_ (there's a few exception, we will talk about those later).
 
-#### Shelby.ViewModel
-
-Provides the _basic features_ of a Shelby view `ViewModel`.
-
-1. Define a `ViewModel`:
+1. Define a view model:
 
         var ClientDetailViewModel = Shelby.ViewModel.extend({
             model: null,
 
             _initialize: function(clientModel) {
-                this.model = clientModel;
-            },
-
-            _beforeBind: function() {
-                this._fromJs(this.model);
-            },
+                this.model = his._fromJs(clientModel);
+            }
         });
 
-2. Create a `ViewModel` instance from the definition:
+2. Create a view model instance from the definition:
     
         var vm = new ClientDetailViewModel({
             firstName: "John",
@@ -78,17 +70,21 @@ Provides the _basic features_ of a Shelby view `ViewModel`.
             corporation: "Acme"
         });
 
-3. Bind the `ViewModel`:
+3. Bind the view model:
 
         vm.bind();
 
-#### Shelby.HttpViewModel
+4. Later, dispose the view model _(optionnal)_:
+
+        vm.dispose();
 
 #### Lifecycle handlers
 
-### Use the native extenders
+There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
-### Working with arrays
+### Native extenders
+
+### Arrays
 
 ## API
 
@@ -101,5 +97,12 @@ Provides the _basic features_ of a Shelby view `ViewModel`.
 ### View models
 
 ### Component factory
+
+
+
+Provides the _basic features_ of a Shelby view model.
+
+
+Provided the same features as Shelby.ViewModel with the ability to communicate with an HTTP endpoint.
 
 
