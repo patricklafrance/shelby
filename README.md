@@ -73,7 +73,7 @@ To provide an handler for a specific model, all you got to do, is to override th
             // Call the base event handler.
             Shelby.ViewModel._beforeBind.call(this);
 
-            // Do stuff..
+            // Do stuff.
         }
     });
 
@@ -82,7 +82,17 @@ This is recommended that you always call the base event handler, but not mendato
 
 ##### Global event handler
 
-    Shelby.ViewModel.
+To add a global event handler.
+
+    Shelby.ViewModel.registerEventHandler("beforeFetch", function() {
+    });
+
+If you need to remove that event handler later, you must use a **_named_** event.
+
+    Shelby.ViewModel.registerEventHandler("context:beforeFetch", function() {
+    });
+
+    ShelbyViewModel.removeEventHandler("context:beforeFetch");
 
 To see all the events that you can hook to, see the view models API section.
 
