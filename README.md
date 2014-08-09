@@ -2,7 +2,7 @@
 
 Shelby is a set of objects to quickly build Knockout view models that will handle most of your business cases. 
 
-It provided features to:
+**It provided features to:**
 
 1. Communicate with HTTP endpoints in an asynchronous way with promises.
 2. Automatically map or unmap the models observables that are sent or received throught HTTP requests.
@@ -10,7 +10,7 @@ It provided features to:
 5. Start a transaction on 1 or multiple observables that gives the ability to commit or undo the changes on the observables.
 6. Handle the view model lifecycle.
 
-Shelby is not:
+**Shelby is not:**
 
 1. An SPA, this is only a set of view models and observable extenders that are highly extensible.
 
