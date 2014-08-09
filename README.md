@@ -32,6 +32,8 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
 
+Here's a very basic usage of Shelby, more complex exemples will be provided later.
+
 1. Define a view model
 
         var ClientDetailViewModel = Shelby.ViewModel.extend({
@@ -57,8 +59,6 @@ When you are using Shelby, you are basically only working with one of the provid
 4. Later, dispose the view model _(optionnal)_
 
         vm.dispose();
-
-This is a very basic usage of Shelby, more complex exemples will be provided later.
 
 #### Lifecycle handlers
 
