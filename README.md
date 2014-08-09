@@ -64,12 +64,25 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
 
 There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
-To provide an handler for a specific model, all you got to do, is to override the function that correspond to the event when you are defining your view model.
+##### Localized event handler
+
+To provide an handler for a specific model, all you got to do, is to override the event handler function that correspond to the event when you are defining your view model.
 
     Shelby.ViewModel.extend({
         _beforeBind: function() {
+            // Call the base event handler.
+            Shelby.ViewModel._beforeBind.call(this);
+
+            // Do stuff..
         }
     });
+
+When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+This is recommended that you always call the base event handler, but not mendatory.
+
+##### Global event handler
+
+    Shelby.ViewModel.
 
 To see all the events that you can hook to, see the view models API section.
 
