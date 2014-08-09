@@ -1,8 +1,6 @@
 Shelby
 ===========
 
-## What is it ?
-
 Shelby is a set of objects that helps to quickly build Knockout view models that will handle most of your business cases. 
 
 **It provided features to:**
