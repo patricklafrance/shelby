@@ -64,7 +64,7 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
 
 ### Extenders
 
-An extender is something that augment the behavior of an observable property [see knockout.js extender documentation](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+An extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
 
 You can learn more about the extenders system [in the API section](#).
 
@@ -72,7 +72,7 @@ You can learn more about the extenders system [in the API section](#).
 
 Shelby comes with a set of native extenders that are registered by default. Those extenders offers advanced subscriptions, transactions and much more.
 
-If you dont want any of the native extender you can remove them easily
+If you dont need one (or everyone of them) of the native extender you can easily remove it.
 
     Shelby.ViewModel.removeEditExtender();
     Shelby.ViewModel.removeSubscribeExtender();
