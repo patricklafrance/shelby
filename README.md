@@ -52,7 +52,7 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 
 When you are using Shelby, _you are basically only working with one of the provided view model_ (there's a few exception, we will talk about those later).
 
-1. Define a view model:
+1. **Define a view model**
 
         var ClientDetailViewModel = Shelby.ViewModel.extend({
             model: null,
@@ -62,7 +62,7 @@ When you are using Shelby, _you are basically only working with one of the provi
             }
         });
 
-2. Create a view model instance from the definition:
+2. **Create a view model instance from the definition**
     
         var vm = new ClientDetailViewModel({
             firstName: "John",
@@ -70,11 +70,11 @@ When you are using Shelby, _you are basically only working with one of the provi
             corporation: "Acme"
         });
 
-3. Bind the view model:
+3. **Bind the view model**
 
         vm.bind();
 
-4. Later, dispose the view model _(optionnal)_:
+4. **Later, dispose the view model _(optionnal)_**
 
         vm.dispose();
 
