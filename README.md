@@ -50,11 +50,13 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 
 ### Basic
 
-When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
+When you are using Shelby, you are basically only working with one of the provided `ViewModel` (there's a few exception, we will talk about those later).
 
 #### Shelby.ViewModel
 
-Provides the **basic features** of a Shelby view model.
+Provides the _basic features_ of a Shelby view `ViewModel`.
+
+To define a `ViewModel`:
 
     var ClientDetailViewModel = Shelby.ViewModel.extend({
         model: null,
@@ -67,6 +69,8 @@ Provides the **basic features** of a Shelby view model.
             this._fromJs(this.model);
         },
     });
+
+To create a `ViewModel` from a definition:
     
     var vm = new ClientDetailViewModel({
         firstName: "John",
@@ -74,7 +78,13 @@ Provides the **basic features** of a Shelby view model.
         corporation: "Acme"
     });
 
+To bind a `ViewModel`:
+
     vm.bind();
+
+To dispose a `ViewModel`:
+
+    vm.dispose();
 
 #### Shelby.HttpViewModel
 
