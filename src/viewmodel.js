@@ -70,8 +70,8 @@
             // Convert properties to observables.
             var mapped = factory.mapper().fromJS(obj, options);
             
-            // Extend all the properties.
-            this._addExtenders(mapped);
+            // Extend all the object properties.
+            this._applyExtendersToObject(mapped);
             
             return mapped;
         },
@@ -80,19 +80,19 @@
             // Convert observables back to primitive values.
             var unmapped = factory.mapper().toJS(obj);
             
-            // Remove all extenders left on the properties (ex. on objects).
-            this._removeExtenders(unmapped);
+            // Remove all the extenders left on the object properties (ex. on objects).
+            this._removeExtendersFromObject(unmapped);
             
             return unmapped;
         },
 
-        _addExtenders: function(obj) {
+        _applyExtendersToObject: function(obj) {
             if (utils.objectSize(this._extenders) > 0) {
                 factory.propertyExtender().add(obj, this._extenders);
             }
         },
         
-        _removeExtenders: function(obj) {
+        _removeExtendersFromObject: function(obj) {
             factory.propertyExtender().remove(obj);
         },
         

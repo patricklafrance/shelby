@@ -1,14 +1,14 @@
 Shelby
 ===========
 
-Shelby is a set of objects that helps to quickly build Knockout view models that will handle most of your business cases. 
+Shelby is a set of highly extensible objects to quickly build Knockout view models that will handle most of your application business cases. 
 
 **It provided features to:**
 
-* Communicate with HTTP endpoints in an asynchronous way with promises
+* Communicate with REST and RPC HTTP endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of multiple observables (including arrays items).
-* Start a transaction on 1 or multiple observables that gives the ability to commit or undo the changes on the observables.
+* Start a transaction on 1 or multiple observables, providing the ability to commit or undo the changes on the observables.
 * Handle the view model lifecycle.
 
 **Shelby is not:**
@@ -41,18 +41,31 @@ If you prefer to build the library yourself:
 
 Build the sources with Gulp and then the specs can be runned in a browser, simply open:
 
-1. test/runner-jquery-1.html
-2. test/runner-jquery-2.html
-3. test/exports/runner-browserify.html
-4. test/exports/runner-requirejs.html
+* test/runner-jquery-1.html
+* test/runner-jquery-2.html
+* test/exports/runner-browserify.html
+* test/exports/runner-requirejs.html
 
 ## Usages
 
 ### Basic
 
-    When you are using Shelby, you are basically only working with one of provided view model objects (there's a few exception, we will talk about those later).
+When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
 
+#### Shelby.ViewModel
 
+Provides the **basic features** of a Shelby view model.
+
+    var ClientDetailViewModel = Shelby.ViewModel.extend({
+        _initialize: function() {
+        },
+
+        _beforeBind: function() {
+
+        },
+    });
+
+#### Shelby.HttpViewModel
 
 ### Use the native extenders
 
@@ -62,12 +75,12 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 
 ## Extension points
 
-1. **Mapper**
+### Mapper
 
-2. **Extenders**
+### Extenders
 
-3. **View models**
+### View models
 
-4. **Component factory**
+### Component factory
 
 
