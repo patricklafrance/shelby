@@ -58,29 +58,29 @@ Provides the _basic features_ of a Shelby view `ViewModel`.
 
 1. Define a `ViewModel`:
 
-    var ClientDetailViewModel = Shelby.ViewModel.extend({
-        model: null,
+        var ClientDetailViewModel = Shelby.ViewModel.extend({
+            model: null,
 
-        _initialize: function(clientModel) {
-            this.model = clientModel;
-        },
+            _initialize: function(clientModel) {
+                this.model = clientModel;
+            },
 
-        _beforeBind: function() {
-            this._fromJs(this.model);
-        },
-    });
+            _beforeBind: function() {
+                this._fromJs(this.model);
+            },
+        });
 
 2. Create a `ViewModel` instance from the definition:
     
-    var vm = new ClientDetailViewModel({
-        firstName: "John",
-        lastName: "Doe",
-        corporation: "Acme"
-    });
+        var vm = new ClientDetailViewModel({
+            firstName: "John",
+            lastName: "Doe",
+            corporation: "Acme"
+        });
 
 3. Bind the `ViewModel`:
 
-    vm.bind();
+        vm.bind();
 
 #### Shelby.HttpViewModel
 
