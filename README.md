@@ -15,6 +15,73 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 * An SPA, this is only a set of view models and observable extenders that are highly extensible.
 
+## Installation
+
+Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/patricklafrance/shelby/tree/master/dist) and reference it in your web application:
+
+Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
+
+    <script src="jquery-x.y.z.js"></script>
+    <script src="knockout-x.y.z.js"></script>
+    <script src="knockout.viewmodel.js"></script>
+    <script src="shelby-x.y.z.js"></script>
+
+## Usages
+
+### Basic
+
+When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
+
+1. Define a view model
+
+        var ClientDetailViewModel = Shelby.ViewModel.extend({
+            model: null,
+
+            _initialize: function(clientModel) {
+                this.model = his._fromJs(clientModel);
+            }
+        });
+
+2. Create a view model instance from the definition
+    
+        var vm = new ClientDetailViewModel({
+            firstName: "John",
+            lastName: "Doe",
+            corporation: "Acme"
+        });
+
+3. **Bind the view model**
+
+        vm.bind();
+
+4. Later, dispose the view model _(optionnal)_
+
+        vm.dispose();
+
+This is a very basic usage of Shelby, more complex exemples will be provided later.
+
+#### Lifecycle handlers
+
+There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
+
+To 
+
+### Native extenders
+
+### Arrays
+
+## API
+
+## Extension points
+
+### Mapper
+
+### Extenders
+
+### View models
+
+### Component factory
+
 ## Building Shelby from sources
 
 If you prefer to build the library yourself:
@@ -45,58 +112,6 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 * test/runner-jquery-2.html
 * test/exports/runner-browserify.html
 * test/exports/runner-requirejs.html
-
-## Usages
-
-### Basic
-
-When you are using Shelby, _you are basically only working with one of the provided view model_ (there's a few exception, we will talk about those later).
-
-1. **Define a view model**
-
-        var ClientDetailViewModel = Shelby.ViewModel.extend({
-            model: null,
-
-            _initialize: function(clientModel) {
-                this.model = his._fromJs(clientModel);
-            }
-        });
-
-2. **Create a view model instance from the definition**
-    
-        var vm = new ClientDetailViewModel({
-            firstName: "John",
-            lastName: "Doe",
-            corporation: "Acme"
-        });
-
-3. **Bind the view model**
-
-        vm.bind();
-
-4. **Later, dispose the view model _(optionnal)_**
-
-        vm.dispose();
-
-#### Lifecycle handlers
-
-There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
-
-### Native extenders
-
-### Arrays
-
-## API
-
-## Extension points
-
-### Mapper
-
-### Extenders
-
-### View models
-
-### Component factory
 
 
 
