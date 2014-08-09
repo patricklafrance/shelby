@@ -40,7 +40,7 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
             model: null,
 
             _initialize: function(clientModel) {
-                this.model = his._fromJs(clientModel);
+                this.model = this._fromJs(clientModel);
             }
         });
 
@@ -60,11 +60,47 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
 
         vm.dispose();
 
-#### Lifecycle handlers
+### Working with an HTTP endpoint
+
+### Extenders
+
+An extender is something that augment the behavior of an observable property [see knockout.js extender documentation](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+
+You can learn more about the extenders system [in the API section](#).
+
+#### Native extenders
+
+Shelby comes with a set of native extenders that are registered by default. Those extenders offers advanced subscriptions, transactions and much more.
+
+If you dont want any of the native extender you can remove them easily
+
+    Shelby.ViewModel.removeEditExtender();
+    Shelby.ViewModel.removeSubscribeExtender();
+    Shelby.ViewModel.removeUtilityExtender();
+
+The most usefull extenders are the subscription and edit extenders (those that offer the advanced subscriotion and transaction capabilities).
+
+##### Subscription extender
+
+You can learn more about the subscription extender [in the API section](#).
+
+##### Edit extender
+
+You can learn more about the edit extender [in the API section](#).
+
+
+#### Custom extenders
+You can register a custom extender to Shelby with the `registerExtender` function.
+
+    Shelby.ViewModel.registerExtender("CustomExtenderKey", extenderFunction);
+
+### View model lifecycle
 
 There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
-##### Localized event handler
+To see all the events that you can hook to, [see the API section](#).
+
+#### Localized event handler
 
 To provide an handler for a specific model, all you got to do, is to override the event handler function that correspond to the event when you are defining your view model.
 
@@ -80,25 +116,16 @@ To provide an handler for a specific model, all you got to do, is to override th
 When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
 This is recommended that you always call the base event handler, but not mendatory.
 
-##### Global event handler
+#### Global event handler
 
-To add a global event handler.
+To add a global event handler you can use the `registerEventHandler` function.
 
-    Shelby.ViewModel.registerEventHandler("beforeFetch", function() {
-    });
+    Shelby.ViewModel.registerEventHandler("beforeFetch", handlerFunction);
 
 If you need to remove that event handler later, you must use a **_named_** event.
 
-    Shelby.ViewModel.registerEventHandler("context:beforeFetch", function() {
-    });
-
-    ShelbyViewModel.removeEventHandler("context:beforeFetch");
-
-To see all the events that you can hook to, see the view models API section.
-
-### Native extenders
-
-### Arrays
+    Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
+    Shelby.ViewModel.removeEventHandler("context:beforeFetch");
 
 ## API
 
