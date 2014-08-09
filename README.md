@@ -5,7 +5,7 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 **It provided features to:**
 
-* Communicate with REST and RPC HTTP endpoints in an asynchronous way with promises.
+* Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of multiple observables (including arrays items).
 * Start a transaction on 1 or multiple observables, providing the ability to commit or undo the changes on the observables.
@@ -64,7 +64,14 @@ This is a very basic usage of Shelby, more complex exemples will be provided lat
 
 There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
-To 
+##### Provide an handler by view model definition
+
+    Shelby.ViewModel.extend({
+        _beforeBind: function() {
+        }
+    });
+
+To see all the events available, see the view models API section.
 
 ### Native extenders
 
