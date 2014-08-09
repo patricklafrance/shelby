@@ -56,7 +56,7 @@ When you are using Shelby, you are basically only working with one of the provid
 
 Provides the _basic features_ of a Shelby view `ViewModel`.
 
-To define a `ViewModel`:
+1. Define a `ViewModel`:
 
     var ClientDetailViewModel = Shelby.ViewModel.extend({
         model: null,
@@ -70,7 +70,7 @@ To define a `ViewModel`:
         },
     });
 
-To create a `ViewModel` from a definition:
+2. Create a `ViewModel` instance from the definition:
     
     var vm = new ClientDetailViewModel({
         firstName: "John",
@@ -78,13 +78,9 @@ To create a `ViewModel` from a definition:
         corporation: "Acme"
     });
 
-To bind a `ViewModel`:
+3. Bind the `ViewModel`:
 
     vm.bind();
-
-To dispose a `ViewModel`:
-
-    vm.dispose();
 
 #### Shelby.HttpViewModel
 
