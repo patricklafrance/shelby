@@ -57,15 +57,28 @@ When you are using Shelby, you are basically only working with one of the provid
 Provides the **basic features** of a Shelby view model.
 
     var ClientDetailViewModel = Shelby.ViewModel.extend({
-        _initialize: function() {
+        model: null,
+
+        _initialize: function(clientModel) {
+            this.model = clientModel;
         },
 
         _beforeBind: function() {
-
+            this._fromJs(this.model);
         },
     });
+    
+    var vm = new ClientDetailViewModel({
+        firstName: "John",
+        lastName: "Doe",
+        corporation: "Acme"
+    });
+
+    vm.bind();
 
 #### Shelby.HttpViewModel
+
+#### Lifecycle handlers
 
 ### Use the native extenders
 
