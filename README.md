@@ -223,6 +223,24 @@ For more informations about those functions you can look at [the API section](#)
 
 #### Observables mapping / unmapping
 
+When your HTTP request has data that contains observables, they will automatically be unmapper before Shelby send the request
+
+```javascript
+
+    var newEmployee = this._fromJs({
+        firstName: "John",
+        lastName: "Doe"
+    });
+
+    this.addNewEmployee(newEmployee);
+
+    addNewEmployee: function(employee) {
+        // The add function will automatically unmap the observables 
+        // contained in the employee object.
+        this.add(employee);
+    }
+```
+
 When you sucessfully fetch data, by default:
 
 The response object is automatically mapped to observables
@@ -242,7 +260,7 @@ The extenders are automatically applied to the response object.
 fetchAllEmployees: function() {
     this.all().done(function(response) {
         // The extenders has been automatically applied to the observables.
-        response.employees()[0].firstName.subscribe(...);
+        response.employees()[0].subscribe();
     });
 }
 ```
