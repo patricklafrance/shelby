@@ -134,46 +134,42 @@ You can subscribe to a single observable.
 
 Or to a set of observables.
 
-    // If any of the address object observables value changed, the function
-    // addressChangedFunction will be called.
     var addressSubscription = extendedModel.address.shelby.subscribe(addressChangedFunction);
 
 You can pause and resume the subscriptions.
 
     firstNameSubscription.pause();
-
-    // The subscription handler will not be called because the subscription is paused.
-    extendedModel.firstName("Jane Doe");
-
+    extendedModel.firstName("Jane Doe"); // Do not trigger anything.
     firstNameSubscription.resume();
 
 Or you can pause and resume the observable directly.
 
     extendedModel.firstName.shelby.pause();
-
-    // The subscription handler will not be called because the subscription is paused.
-    extendedModel.firstName("Jane Doe");
-
+    extendedModel.firstName("Jane Doe"); // Do not trigger anything.
     extendedModel.firstName.shelby.resume();
 
-When you create a subscription on an array, the default behavior is to automatically track all items that are push to the array after the subscription has been made and automatically remove from the subscription the items that are removed from the array.
+When you create a subscription on an array, the default behavior is to:
 
-    var accountingDepartment = Shelby.ViewModel.prototype._fromJS({ id: 2, name: "Accouting" });
+* Trigger when an item is added or removed from the array.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+    extendedModel.departments.push(accountingDepartment); // Trigger departmentsChangedFunction
 
-    // This will trigger the function departmentsChangedFunction because
-    // a new department has been added to the array.
+* Trigger when an of the items are updated.
+
+    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+    extendedModel.departments.peek()[1].name("Accounting2"); // Trigger departmentsChangedFunction
+
+* Automatically add to the subscriptions all the items that are added.
+
+    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+    extendedModel.departments.push(accountingDepartment); // accountDepartment has been automatically added to the subscription.
+
+* Automatically removed from the subscriptions all the items that are removed from the array.
+
+    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
     extendedModel.departments.push(accountingDepartment); 
-    
-    // This will trigger the function departmentsChangedFunction because the name
-    // of the newly added item has been changed.
-    extendedModel.departments.peek()[1].name("Accounting2");
-
-    // This will trigger the function departmentsChangedFunction because a 
-    // department has been removed from the array AND the accountDepartment has been 
-    // removed from the subscription.
-    extendedModel.departments.remove(accountingDepartment);
+    extendedModel.departments.remove(accountingDepartment); // accountDepartment has been automatically removed from the subscription.
 
 This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
 
