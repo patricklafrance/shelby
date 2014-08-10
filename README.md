@@ -100,7 +100,7 @@ Shelby.ViewModel.extend({
 });
 ```
 
-Those functions are available on the view model and will use the URLs that you provided in your view model definition.
+Those functions are available on the view model and will use the URL(s) that you provided in your view model definition.
 
 * `all(criteria, options)`
 * `detail(id, options)`
@@ -149,7 +149,7 @@ For more informations about those functions you can look at [the API section](#)
 
 #### Multiple endpoints
 
-If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but can still use the low level one, they provide the same behavior but they are more verbose.
+If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but can still use the low level functions, they provide the same behavior but they are more verbose.
 
 * `_fetch(options)`
 * `_save(options)`
@@ -226,15 +226,34 @@ For more informations about those functions you can look at [the API section](#)
 When you sucessfully fetch data, by default:
 
 * The response object is automatically mapped to observables
+
+```javascript
+fetchAllEmployees: function() {
+    this.all().done(function(response) {
+        // The data has been automatically mapped to observables.
+        response.employees()[0].firstName("Jane");
+    });
+}
+```
+
 * The extenders are automatically applied to the response object.
 
-When you do a sucessfully update data by default:
+```javascript
+fetchAllEmployees: function() {
+    this.all().done(function(response) {
+        // The extenders has been automatically applied to the observables.
+        response.employees()[0].firstName.subscribe(...);
+    });
+}
+```
 
-* If the endpoint returns the updated data, your model will automatically be updated with the received data. 
+When you sucessfully update data, by default:
+
+* If the endpoint returned data, your model will automatically be updated with the returned data.
 
 #### Promises
 
-Every function will return a jQuery `Promise` object created from a jQuery `Deferred`. You can find more informations [here](http://api.jquery.com/category/deferred-object/).
+Every functions that leverage HTTP will return a jQuery `Promise` object created from a jQuery `Deferred`. You can find more informations [here](http://api.jquery.com/category/deferred-object/).
 
 ### Extenders
 
