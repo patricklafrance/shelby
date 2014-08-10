@@ -33,7 +33,7 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 `extend` is a generic function to perform [prototypal inheritance](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). This function is leverage by Shelby to let you extend any components that is part of Shelby. This is pretty usefull when the behavior of a component doesn't fulfill your need, you can extend it, then replace it (we will talk later about how you can replace a native component).
 
-For now, all you need to know is that this function will be use to define your own view model. Defining a custom view model is done by extending one of Shelby's native view model.
+For now, all you need to know is that this function will be use to define your own view model by extending one of Shelby's native view model.
 
 ### Define, create and bind a basic view model
 
