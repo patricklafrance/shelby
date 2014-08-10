@@ -2,8 +2,7 @@
 // ---------------------------------
 
 (function(utils) {
-    // Function use by some of the Shelby object to let you extend them with
-    // additional instance properties.
+    // Function use by the Shelby components to let you extend them.
     Shelby.extend = function(/* objects */) {
         if (arguments.length === 0) {
             throw new Error("At least 1 non-null plain object is required to extend a Shelby object.");
