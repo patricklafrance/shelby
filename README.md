@@ -37,7 +37,7 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/patricklafrance/shelby/tree/master/dist) and reference it in your web application:
 
-Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
+Shelby depends on `KO`, `jQuery` and a KO plugin called `knockout.viewmodel`. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
 
 ```html
 <script src="jquery-x.y.z.js"></script>
@@ -45,6 +45,8 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 <script src="knockout.viewmodel.js"></script>
 <script src="shelby-x.y.z.js"></script>
 ```
+
+Once you included the scripts, you can use Shelby from the `window` object, as a `CommonJS` or `AMD` module, or with `browserify`. 
 
 ## Usages
 
