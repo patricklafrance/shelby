@@ -267,6 +267,12 @@ fetchAllEmployees: function() {
 When you sucessfully update data, by default, if the endpoint returned data, your model will automatically be updated with the returned data.
 
 ```javascript
+updateExistingEmployee: function(updatedEmployee) {
+    this.update(updatedEmployee).done(function(updatedEmployee) {
+        // The updatedEmployee object has automatically been updated with 
+        // the values of the "updatedEmployee" object.
+    });
+}
 ```
 
 #### Promises
