@@ -8,7 +8,7 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 * Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of a set of observables (including arrays items).
-* Start a transaction on 1 or multiple observables, providing the ability to commit or undo the changes on the observables.
+* Start a transaction on 1 or multiple observables, providing the ability to commit or rollback the changes on the observables.
 * Handle the view model lifecycle.
 
 **Shelby is not:**
@@ -30,11 +30,9 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 ### Basic
 
-When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
+When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later). Here's a very basic usage of Shelby.
 
-Here's a very basic usage of Shelby.
-
-Define a view model.
+Define a view model
 
     var EmployeeDetailViewModel = Shelby.ViewModel.extend({
         model: null,
@@ -44,18 +42,18 @@ Define a view model.
         }
     });
 
-Create a view model instance from the definition.
+Create a view model instance from the definition
     
     var vm = new EmployeeDetailViewModel({
         firstName: "John",
         lastName: "Doe"
     });
 
-Bind the view model.
+Bind the view model
 
     vm.bind();
 
-Later, dispose the view model _(optionnal)_.
+Later, dispose the view model _(optionnal)_
 
     vm.dispose();
 
@@ -109,13 +107,13 @@ The most usefull extenders are the subscription and edit extenders (those that o
 
 ##### Subscription extender
 
-The subscription extender let you create a subscription on a single or multiple observables to track all their changes and react to them. The difference between this extender and the KO native `subscribe` function is that you can:
+The subscription extender give you the ability to create a subscription on a single observable or a set of observables to track all their changes and react to them. The difference between this extender and the KO native `subscribe` function is that you can:
 
 * Create a subscription on a set of observables instead a single observable.
 * Pause / resume the subscription.
 * Automatically add the new array items to the subscription when they are push to an observable array that is part of the subscription.
 
-If you have the following model that has been extended by Shelby.
+If you have the following model that has been extended by Shelby
 
     var extendedModel = Shelby.ViewModel.prototype._fromJS({
         firstName: "John",
@@ -128,24 +126,24 @@ If you have the following model that has been extended by Shelby.
         departments: [{ id: 1, name: "Sales" }]
     });
 
-You can subscribe to a single observable.
+You can subscribe to a single observable
 
     var firstNameSubscription 
         = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
 
-Or to a set of observables.
+Or to a set of observables
 
     var addressSubscription 
         = extendedModel.address.shelby.subscribe(addressChangedFunction);
 
-You can pause and resume the subscriptions.
+You can pause and resume the subscriptions
 
     firstNameSubscription.pause();
     // Do not trigger anything.
     extendedModel.firstName("Jane Doe");
     firstNameSubscription.resume();
 
-Or you can pause and resume the observable directly.
+Or you can pause and resume the observable directly
 
     extendedModel.firstName.shelby.pause();
     // Do not trigger anything.
@@ -154,28 +152,28 @@ Or you can pause and resume the observable directly.
 
 When you create a subscription on an array, the default behavior is to:
 
-Trigger when an item is added or removed from the array.
+Trigger when an item is added or removed from the array
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
     // Call departmentsChangedFunction
     extendedModel.departments.push(accountingDepartment);
 
-Trigger when an of the items are updated.
+Trigger when any of the items is updated
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
     // Call "departmentsChangedFunction"
     extendedModel.departments.peek()[1].name("Accounting2");
 
-Automatically add to the subscriptions all the items that are added.
+Automatically add to the subscriptions all the items that are added to the array
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
     // "accountingDepartment" has been automatically added to the subscription.
     extendedModel.departments.push(accountingDepartment);
 
-Automatically removed from the subscriptions all the items that are removed from the array.
+Automatically removed from the subscriptions all the items that are removed from the array
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
     extendedModel.departments.push(accountingDepartment); 
@@ -183,19 +181,58 @@ Automatically removed from the subscriptions all the items that are removed from
     // "accountingDepartment" has been automatically removed from the subscription.
     extendedModel.departments.remove(accountingDepartment);
 
-This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
+This is the basic usage of the subscription extender, other features and options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
 
 ##### Edit extender
 
-This is the basic usage of the subscription extender, some options are available, you can learn about them [in the API section](#).
+The edit extender give you the ability to create a transaction for a single observable or a set of observables. The transaction provided the ability to commit or rollback the changes on the observables.
+
+If you have the following model that has been extended by Shelby
+
+    var extendedModel = Shelby.ViewModel.prototype._fromJS({
+        firstName: "John",
+        lastName: "Doe",
+        address: {
+            civicNumber: "123"
+            street: "Foo avenue",
+            city: "Bar city"
+        },
+        departments: [{ id: 1, name: "Sales" }]
+    });
+
+You can edit a single observable
+
+    extendedModel.firstName.shelby.beginEdit();
+    extendedModel.firstName("Jane");
+
+Or a set of observables
+
+    extendedModel.address.shelby.beginEdit();
+    extendedModel.address.civicNumber("456");
+
+If you are satisfied with the changes you can commit them
+
+    extendedModel.firstName.shelby.endEdit();
+
+Otherwise, you just rollback them
+
+    // Rollback the values but do not end the transaction
+    extendedModel.firstName.shelby.resetEdit();
+
+    // Rollback the values and ends the transaction
+    extendedModel.firstName.shelby.cancelEdit();
+
+While the observables are in a transaction, all the subscriptions on those observables are paused, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction will trigger with their final value.
+
+This is the basic usage of the subscription extender, other features and options are available, you can learn about them [in the API section](#).
 
 #### Custom extenders
 
-You can register a custom extender to Shelby with the `registerExtender` function.
+You can register a custom extender to Shelby with the `registerExtender` function
 
     Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
 
-Your `extender` must follow some rules, you can learn about them in the API section.
+Your `extender` must follow some rules, you can learn about them [in the API section](#).
 
 ### View model lifecycle
 
