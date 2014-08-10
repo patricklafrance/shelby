@@ -16,9 +16,9 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 **Documentation**
 
-* [Installation](#Installation)
+* [Installation](##Installation)
 * [Usage](https://github.com/patricklafrance/shelby#usages)
-    * [The extend function](#The extend function)
+    * [The extend function](https://github.com/patricklafrance/shelby#the-extend-function)
     * [Define, create and bind a basic view model](https://github.com/patricklafrance/shelby#define-create-and-bind-a-basic-view-model)
     * [Communicate with HTTP endpoints](https://github.com/patricklafrance/shelby#communicate-with-http-endpoints)
         * [Single endpoint](https://github.com/patricklafrance/shelby#single-endpoint)
