@@ -64,7 +64,7 @@ Bind the view model
 vm.bind();
 ```
 
-### Communicate with an HTTP endpoint
+### Communicate with HTTP endpoints
 
 Shelby provides an `HttpViewModel` to communicate with a REST or RPC endpoint. The HttpViewModel` is designed to handle view models that communicate with a single endpoint. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
 
@@ -322,9 +322,11 @@ Shelby.ViewModel.removeSubscribeExtender();
 Shelby.ViewModel.removeUtilityExtender();
 ```
 
+> The `edit extender` depends on the `subscribe extender`. This means that removing the `subscribe extender` will automatically remove the `edit extender`.
+
 The most usefull property extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
 
-##### Subscription extender
+##### Subscribe extender
 
 The subscription extender give you the ability to create a subscription on a single observable or a set of observables to track all their changes and react to them. The difference between this extender and the KO native `subscribe` function is that you can:
 
@@ -473,7 +475,7 @@ This is the basic usage of the subscription extender, other features and options
 
 To create a property extender there is some rules that you must follow, you can learn about them [in the API section](#).
 
-Basically, you define an extender function. In this function you filter the properties that you want to extend and then extend them with the strategy of your choice. The function will be called by Shelby for every properties that is parsed by Shelby and will receive the property and it's type.
+Basically, you define an extender function. In this function you filter the properties that you want to extend and then extend them with the strategy of your choice. The function will be called by Shelby for every properties that is map by Shelby and will receive the property and it's type.
 
 The type can either be:
 
@@ -485,19 +487,18 @@ The type can either be:
 Shelby.Extenders.edit = function(target, type) {
     if (type !== PropertyType.Object) {
         // If this is not an object, then it must be a KO observable 
-        // and it can be extended by using a KO native extender 
+        // and it can be extended by using a KO extender 
         target.extend(this._observableExtenders);
     }
     
     if (type === PropertyType.Object) {
-        // If this is an object literal that we want to extend, it can be done
-        // with the jQuery $.extend.
+        // An object literal can be extended with the jQuery $.extend function
         $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
     }
 };
 ```
 
-Then, in this case we define a property object that contains the extender properties and functions that extend a property of the `Shelby.PropertyType.Object` type.
+In this case we define a property object that contains the extender properties and functions that extend a property of the `Shelby.PropertyType.Object` type.
 
 ```javascript
 Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
@@ -505,9 +506,9 @@ Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
         this.isEditing = false;
     },
     
-    beginEdit: function(options) { },
+    beginEdit: function(options) { ... },
 
-    endEdit: function(notifyOnce) { },
+    endEdit: function(notifyOnce) { ... },
 
     // ...
 };
@@ -517,11 +518,13 @@ Shelby.Extenders.edit._observableExtenders = {
 };
 ```
 
-Finally you register your custom property extender to Shelby
+Finally you register your custom property extender to Shelby.
 
 ```javascript
-Shelby.ViewModel.registerExtender("customPropertyExtenderKey", extender);
+Shelby.ViewModel.registerExtender("edit", Shelby.Extenders.edit);
 ```
+
+You can take a look at the [edit extender](https://github.com/patricklafrance/shelby/blob/master/src/extender.edit.js) to see how a complete exemple of a Shelby property extender.
 
 ### Handle view model events
 
@@ -592,11 +595,12 @@ You can see a sample [here](https://github.com/patricklafrance/shelby/blob/maste
 
 ## Components
 
-The components are:
+Extensibility is at the core of Shelby. To easily let you extend any of his parts, Shelby has been build in components. Shelby use a components factory to lazily creates a component when he is needed. That way, you can easily replace any components when your application start, before you use Shelby. 
+
+The available components are:
 
 * `Shelby.Ajax`: description
 * `Shelby.PropertyExtender`
-* `Shelby.Components / Shelby.ComponentsFactory`
 * `Shelby.Filters`
 * `Shelby.Mapper`
 * `Shelby.Parser`
