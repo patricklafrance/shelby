@@ -20,7 +20,7 @@ Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/pat
 
 Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
 
-```javascript
+```html
 <script src="jquery-x.y.z.js"></script>
 <script src="knockout-x.y.z.js"></script>
 <script src="knockout.viewmodel.js"></script>
@@ -286,7 +286,6 @@ Automatically removed from the subscriptions all the items that are removed from
 ```javascript
 extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 extendedModel.departments.push(accountingDepartment); 
-
 // "accountingDepartment" has been automatically removed from the subscription.
 extendedModel.departments.remove(accountingDepartment);
 ```
