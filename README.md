@@ -235,7 +235,7 @@ this.addNewEmployee(newEmployee);
 
 addNewEmployee: function(employee) {
     // The add function will automatically unmap the observables 
-    // contained in the employee object.
+    // of the employee object.
     this.add(employee);
 }
 ```
@@ -264,9 +264,10 @@ fetchAllEmployees: function() {
 }
 ```
 
-When you sucessfully update data, by default:
+When you sucessfully update data, by default, if the endpoint returned data, your model will automatically be updated with the returned data.
 
-* If the endpoint returned data, your model will automatically be updated with the returned data.
+```javascript
+```
 
 #### Promises
 
@@ -367,7 +368,7 @@ extendedModel.firstName("Jane Doe");
 extendedModel.firstName.shelby.resume();
 ```
 
-When you create a subscription on an array, the default behavior is to:
+**When you create a subscription on an array, the default behavior is to:**
 
 Trigger when an item is added or removed from the array
 
@@ -393,7 +394,7 @@ extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 extendedModel.departments.push(accountingDepartment);
 ```
 
-Automatically removed from the subscriptions all the items that are removed from the array
+Automatically remove from the subscriptions all the items that are removed from the array
 
 ```javascript
 extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
