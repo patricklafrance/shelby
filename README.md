@@ -3,12 +3,12 @@ Shelby
 
 Shelby is a set of highly extensible objects to quickly build Knockout view models that will handle most of your application business cases. 
 
-**It provided features to:**
+**It provides features to:**
 
 * Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of a set of observables (including arrays items).
-* Start a transaction on 1 or multiple observables, providing the ability to commit or rollback the changes on the observables.
+* Start a transaction on a single or a set of observables, providing the ability to commit or rollback the changes.
 
 **Shelby is not:**
 
@@ -65,6 +65,8 @@ vm.dispose();
 ```
 
 ### The extend function
+
+
 
 ### Communicate with an HTTP endpoint
 
@@ -469,8 +471,6 @@ If you're view model is an `HttpViewModel`, you can also override there event ha
 When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
 This is recommended that you always call the base event handler, but not mendatory.
 
-You can see a complete sample that use view model specific event handlers [here](#).
-
 #### Global event handler
 
 To add a global event handler you can use the `registerEventHandler` function.
@@ -496,7 +496,7 @@ The following event handlers are available:
 * handleOperationError
 * handleOperationSuccess
 
-You can see a sample that use global event handlers [here](#).
+You can see a sample [here](https://github.com/patricklafrance/shelby/blob/master/samples/global_events.js).
 
 ## Components
 
