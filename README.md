@@ -155,23 +155,31 @@ When you create a subscription on an array, the default behavior is to:
 Trigger when an item is added or removed from the array.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-    extendedModel.departments.push(accountingDepartment); // Trigger departmentsChangedFunction
+
+    // Trigger departmentsChangedFunction
+    extendedModel.departments.push(accountingDepartment);
 
 Trigger when an of the items are updated.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-    extendedModel.departments.peek()[1].name("Accounting2"); // Trigger departmentsChangedFunction
+
+    // Trigger departmentsChangedFunction
+    extendedModel.departments.peek()[1].name("Accounting2");
 
 Automatically add to the subscriptions all the items that are added.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-    extendedModel.departments.push(accountingDepartment); // accountDepartment has been automatically added to the subscription.
+
+    // accountDepartment has been automatically added to the subscription.
+    extendedModel.departments.push(accountingDepartment);
 
 Automatically removed from the subscriptions all the items that are removed from the array.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
     extendedModel.departments.push(accountingDepartment); 
-    extendedModel.departments.remove(accountingDepartment); // accountDepartment has been automatically removed from the subscription.
+
+    // accountDepartment has been automatically removed from the subscription.
+    extendedModel.departments.remove(accountingDepartment);
 
 This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
 
