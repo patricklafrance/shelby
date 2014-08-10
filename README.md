@@ -14,10 +14,20 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 * An SPA, this is only a set of view models and observable extenders.
 
-**Content**
+**Documentation**
 
 * [Installation](https://github.com/patricklafrance/shelby#installation)
 * [Usage](https://github.com/patricklafrance/shelby#usages)
+    * [The extend function](https://github.com/patricklafrance/shelby#the-extend-function)
+    * [Define, create and bind a basic view model](https://github.com/patricklafrance/shelby#define-create-and-bind-a-basic-view-model)
+    * [Communicate with HTTP endpoints](https://github.com/patricklafrance/shelby#communicate-with-http-endpoints)
+        * [Single endpoint](https://github.com/patricklafrance/shelby#single-endpoint)
+        * [Multiple endpoints](https://github.com/patricklafrance/shelby#multiple-endpoints)
+    * [Use Shelby property extenders](https://github.com/patricklafrance/shelby#use-shelby-property-extenders)
+        * [Subscribe extender](https://github.com/patricklafrance/shelby#subscribe-extender)
+        * [Edit extender](https://github.com/patricklafrance/shelby#edit-extender)
+        * [How to create a custom property extender](https://github.com/patricklafrance/shelby#how-to-create-a-custom-property-extender)
+    * [Handle view model events](https://github.com/patricklafrance/shelby#handle-view-model-events)
 * [Components](https://github.com/patricklafrance/shelby#components)
 * [API](https://github.com/patricklafrance/shelby#api)
 * [Building Shelby from sources](https://github.com/patricklafrance/shelby#building-shelby-from-sources)
