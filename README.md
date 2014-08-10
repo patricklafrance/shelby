@@ -7,7 +7,7 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 * Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
-* Create a subscription to track all the changes of multiple observables (including arrays items).
+* Create a subscription to track all the changes of a set of observables (including arrays items).
 * Start a transaction on 1 or multiple observables, providing the ability to commit or undo the changes on the observables.
 * Handle the view model lifecycle.
 
@@ -32,11 +32,11 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later).
 
-Here's a very basic usage of Shelby, more complex exemples will be provided later.
+Here's a very basic usage of Shelby.
 
 1. Define a view model
 
-        var ClientDetailViewModel = Shelby.ViewModel.extend({
+        var EmployeeDetailViewModel = Shelby.ViewModel.extend({
             model: null,
 
             _initialize: function(clientModel) {
@@ -46,10 +46,9 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
 
 2. Create a view model instance from the definition
     
-        var vm = new ClientDetailViewModel({
+        var vm = new EmployeeDetailViewModel({
             firstName: "John",
-            lastName: "Doe",
-            corporation: "Acme"
+            lastName: "Doe"
         });
 
 3. Bind the view model
@@ -62,9 +61,37 @@ Here's a very basic usage of Shelby, more complex exemples will be provided late
 
 ### Working with an HTTP endpoint
 
+Automatically detect if you're URL are REST or RPC...
+
+Sample code
+
+#### Using REST
+
+#### Using RPC
+
+You can see a complete exemple of a Shelby view model that use HTTP communication [here](#).
+
 ### Extenders
 
 An extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+
+To prevent any name clashing, all the extenders are added inside a `shelby` object:
+
+    var extendedModel = Shelby.ViewModel.prototype._fromJS({
+        firstName: "John",
+        lastName: "Doe",
+        address: {
+            civicNumber: "123"
+            street: "Foo avenue",
+            city: "Bar city"
+        }
+    });
+
+    // Extended observable
+    extendedModel.firstName.shelby.myExtender();
+
+    // Extended object
+    extendedModel.address.shelby.myExtender();
 
 You can learn more about the extenders system [in the API section](#).
 
@@ -78,29 +105,93 @@ If you dont need one (or everyone of them) of the native extender you can easily
     Shelby.ViewModel.removeSubscribeExtender();
     Shelby.ViewModel.removeUtilityExtender();
 
-The most usefull extenders are the subscription and edit extenders (those that offer the advanced subscriotion and transaction capabilities).
+The most usefull extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
 
 ##### Subscription extender
 
-You can learn more about the subscription extender [in the API section](#).
+The subscription extender let you create a subscription on a single or multiple observables to track all their changes and react to them. The difference between this extender and the KO native `subscribe` function is that you can:
+
+* Create a subscription on a set of observables instead a single observable.
+* Pause / resume the subscription.
+* Automatically add the new array items to the subscription when they are push to an observable array that is part of the subscription.
+
+If you have the following model that has been extended by Shelby.
+
+    var extendedModel = Shelby.ViewModel.prototype._fromJS({
+        firstName: "John",
+        lastName: "Doe",
+        address: {
+            civicNumber: "123"
+            street: "Foo avenue",
+            city: "Bar city"
+        },
+        departments: [{ id: 1, name: "Sales" }]
+    });
+
+You can subscribe to a single observable.
+
+    var firstNameSubscription = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
+
+Or to a set of observables.
+
+    // If  any of the address object observables value changed, the function addressChangedFunction will be called.
+    var addressSubscription = extendedModel.address.shelby.subscribe(addressChangedFunction);
+
+You can pause and resume the subscriptions.
+
+    firstNameSubscription.pause();
+
+    // The subscription handler will not be called because the subscription is paused.
+    extendedModel.firstName("Jane Doe");
+
+    firstNameSubscription.resume();
+
+Or you can pause and resume the observable directly.
+
+    extendedModel.firstName.shelby.pause();
+
+    // The subscription handler will not be called because the subscription is paused.
+    extendedModel.firstName("Jane Doe");
+
+    extendedModel.firstName.shelby.resume();
+
+When you create a subscription on an array, the default behavior is to automatically track all items that are push to the array after the subscription has been made and automatically remove from the subscription the items that are removed from the array.
+
+    var accountingDepartment = Shelby.ViewModel.prototype._fromJS({ id: 2, name: "Accouting" });
+
+    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+
+    // This will trigger the function departmentsChangedFunction because a new department has been added to the array.
+    extendedModel.departments.push(accountingDepartment); 
+    
+    // This will trigger the function departmentsChangedFunction because the name of the newly added item has been changed.
+    extendedModel.departments.peek()[1].name("Accounting2");
+
+    // This will trigger the function departmentsChangedFunction because a department has been removed from the array AND
+    // the accountDepartment has been removed from the subscription.
+    extendedModel.departments.remove(accountingDepartment);
+
+This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
 
 ##### Edit extender
 
-You can learn more about the edit extender [in the API section](#).
-
+This is the basic usage of the subscription extender, some options are available, you can learn about them [in the API section](#).
 
 #### Custom extenders
+
 You can register a custom extender to Shelby with the `registerExtender` function.
 
-    Shelby.ViewModel.registerExtender("CustomExtenderKey", extenderFunction);
+    Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
+
+Your `extender` must follow some rules, you can learn about them in the API section.
 
 ### View model lifecycle
 
-There is severals event that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
+There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
 To see all the events that you can hook to, [see the API section](#).
 
-#### Localized event handler
+#### View model specific event handler
 
 To provide an handler for a specific model, all you got to do, is to override the event handler function that correspond to the event when you are defining your view model.
 
@@ -116,6 +207,8 @@ To provide an handler for a specific model, all you got to do, is to override th
 When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
 This is recommended that you always call the base event handler, but not mendatory.
 
+You can see a more complete sample that use view model specific event handlers [here](#).
+
 #### Global event handler
 
 To add a global event handler you can use the `registerEventHandler` function.
@@ -126,6 +219,8 @@ If you need to remove that event handler later, you must use a **_named_** event
 
     Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
     Shelby.ViewModel.removeEventHandler("context:beforeFetch");
+
+You can see a more complete sample that use global event handlers [here](#).
 
 ## API
 

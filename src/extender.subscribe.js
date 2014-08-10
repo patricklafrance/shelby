@@ -194,7 +194,7 @@
                     var evaluationResult = propertyEvaluator(path);
 
                     // Even if this is not a perfect match, there is cases (like arrays) when we want to add a subscription
-                    // to the property to handle special behaviours (like item's automatic subscriptions for arrays).
+                    // to the property to handle special behaviors (like item's automatic subscriptions for arrays).
                     if (evaluationResult.isValid) {
                         // Abstraction to add additional informations when a subscription is triggered.
                         var proxyCallback = function(value, extendArguments, extender) {
