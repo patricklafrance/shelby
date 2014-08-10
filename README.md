@@ -68,13 +68,13 @@ vm.dispose();
 
 ### Communicate with an HTTP endpoint
 
-Shelby provided an `HttpViewModel` to communicate with a REST or RPC endpoint. 
+Shelby provides an `HttpViewModel` to communicate with a REST or RPC endpoint. The HttpViewModel` is designed to handle view models that communicate with a single endpoint. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
 
-Shelby take for granted that your view model communicate with a single endpoint and will try to infer which type of HTTP endpoint (REST or RPC) you are working with by the URL structure that you provide in your view model definition. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
+You can see a sample of a Shelby `HttpViewModel` [here](#).
 
 #### Single endpoint
 
-To define your URLs, you must override the `_url` property when you define your view model.
+To define your URLs, you must override the `_url` property when you define your view model. Shelby will infer which type of HTTP endpoint (REST or RPC) you are working with by the URL structure that you provide in your view model definition.
 
 If you use a REST endpoint
 
@@ -217,11 +217,22 @@ Shelby.ViewModel.extend({
 });
 ```
 
-Map / unmap automatiquement (avec extenders)
+For more informations about those functions you can look at [the API section](#).
 
-Sample code
+#### Observables mapping / unmapping
 
-You can see a sample of a Shelby `HttpViewModel` [here](#).
+When you sucessfully fetch data, by default:
+
+* The response object is automatically mapped to observables
+* The extenders are automatically applied to the response object.
+
+When you do a sucessfully update data by default:
+
+* If the endpoint returns the updated data, your model will automatically be updated with the received data. 
+
+#### Promises
+
+Every function will return a jQuery `Promise` object created from a jQuery `Deferred`. You can find more informations [here](http://api.jquery.com/category/deferred-object/).
 
 ### Extenders
 
@@ -495,9 +506,11 @@ You can see a sample that use global event handlers [here](#).
 
 ### View models
 
-### Replace a native components
+### Replace a components
 
 ## API
+
+Coming soon...
 
 ## Building Shelby from sources
 
