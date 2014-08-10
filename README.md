@@ -14,6 +14,13 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 * An SPA, this is only a set of view models and observable extenders.
 
+[Installation](https://github.com/patricklafrance/shelby#installation)
+[Usage](https://github.com/patricklafrance/shelby#usages)
+[Components](https://github.com/patricklafrance/shelby#components)
+[API](https://github.com/patricklafrance/shelby#api)
+[Building Shelby from sources](https://github.com/patricklafrance/shelby#building-shelby-from-sources)
+[Running the tests](https://github.com/patricklafrance/shelby#running-the-tests)
+
 ## Installation
 
 Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/patricklafrance/shelby/tree/master/dist) and reference it in your web application:
@@ -243,7 +250,7 @@ The response object is automatically mapped to observables
 ```javascript
 fetchAllEmployees: function() {
     this.all().done(function(response) {
-        // The data has been automatically mapped to observables.
+        // The data has been automatically mapped to the observables.
         response.employees()[0].firstName("Jane");
     });
 }
@@ -265,7 +272,7 @@ When you sucessfully update data, by default, if the endpoint returned data, you
 ```javascript
 updateExistingEmployee: function(updatedEmployee) {
     this.update(updatedEmployee).done(function(responseEmployee) {
-        // The updatedEmployee object has automatically been updated with 
+        // The "updatedEmployee" object has automatically been updated with 
         // the values of the "responseEmployee" object.
     });
 }
