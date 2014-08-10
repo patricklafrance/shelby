@@ -92,6 +92,7 @@ Those functions are available on the view model and will use the URLs that you p
 * `update(/* [id], model, [options] */)`
 * `remove(target, options)`
 
+```javascript
 Shelby.ViewModel.extend({
     _url: {
         all: "ALL_URL",
