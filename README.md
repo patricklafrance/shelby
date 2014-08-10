@@ -32,7 +32,7 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later). Here's a very basic usage of Shelby.
 
-Define a view model
+Define a basic view model
 
     var EmployeeDetailViewModel = Shelby.ViewModel.extend({
         model: null,
@@ -57,15 +57,21 @@ Later, dispose the view model _(optionnal)_
 
     vm.dispose();
 
-### Working with an HTTP endpoint
+### HTTP endpoint
 
-Automatically detect if you're URL are REST or RPC...
+The Shelby `HttpViewModel` view model provides the ability to communicate with a REST or RPC endpoint. 
 
-Sample code
+Shelby will infer which type of HTTP endpoint you are working with by the URL structure that you provide in your view model definition.
 
 #### Using REST
 
+If your endpoint 
+
 #### Using RPC
+
+
+
+Sample code
 
 You can see a complete exemple of a Shelby view model that use HTTP communication [here](#).
 
@@ -222,7 +228,7 @@ Otherwise, you just rollback them
     // Rollback the values and ends the transaction
     extendedModel.firstName.shelby.cancelEdit();
 
-While the observables are in a transaction, all the subscriptions on those observables are paused, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction will trigger with their final value.
+While the observables are in a transaction, _all the subscriptions on those observables are paused_, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction _will trigger with their final value_.
 
 This is the basic usage of the subscription extender, other features and options are available, you can learn about them [in the API section](#).
 
@@ -253,10 +259,27 @@ To provide an handler for a specific model, all you got to do, is to override th
         }
     });
 
+The following event handler functions can be overrided for every view models:
+
+* `_beforeBind`
+* `_afterBind`
+* `_handleDispose`
+
+If you're view model is an `HttpViewModel`, you can also override there event handler functions:
+
+* `_beforeFetch`
+* `_beforeSave`
+* `_beforeRemove`
+* `_afterFetch`
+* `_afterSave`
+* `_afterRemove`
+* `_handleOperationError`
+* `_handleOperationSuccess`
+
 When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
 This is recommended that you always call the base event handler, but not mendatory.
 
-You can see a more complete sample that use view model specific event handlers [here](#).
+You can see a complete sample that use view model specific event handlers [here](#).
 
 #### Global event handler
 
@@ -269,11 +292,19 @@ If you need to remove that event handler later, you must use a **_named_** event
     Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
     Shelby.ViewModel.removeEventHandler("context:beforeFetch");
 
-You can see a more complete sample that use global event handlers [here](#).
+The following event handlers are available:
 
-## API
+* `beforeFetch`
+* `beforeSave`
+* `afterFetch`
+* `afterSave`
+* `afterRemove`
+* `handleOperationError`
+* `handleOperationSuccess`
 
-## Extension points
+You can see a sample that use global event handlers [here](#).
+
+## Components
 
 ### Mapper
 
@@ -281,7 +312,9 @@ You can see a more complete sample that use global event handlers [here](#).
 
 ### View models
 
-### Component factory
+### Replace a native components
+
+## API
 
 ## Building Shelby from sources
 
