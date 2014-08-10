@@ -29,9 +29,13 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 ## Usages
 
-When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later). Here's a very basic usage of Shelby.
+### The extend function
 
-Define a basic view model
+The `extend` function 
+
+### Define, create and bind a basic view model
+
+Define the view model
 
 ```javascript
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
@@ -43,7 +47,7 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 });
 ```
 
-Create a view model instance from the definition
+Create an instance from the definition
 
 ```javascript
 var vm = new EmployeeDetailViewModel({
@@ -57,16 +61,6 @@ Bind the view model
 ```javascript
 vm.bind();
 ```
-
-Later, dispose the view model _(optionnal)_
-
-```javascript
-vm.dispose();
-```
-
-### The extend function
-
-
 
 ### Communicate with an HTTP endpoint
 
@@ -268,9 +262,9 @@ When you sucessfully update data, by default, if the endpoint returned data, you
 
 ```javascript
 updateExistingEmployee: function(updatedEmployee) {
-    this.update(updatedEmployee).done(function(updatedEmployee) {
+    this.update(updatedEmployee).done(function(responseEmployee) {
         // The updatedEmployee object has automatically been updated with 
-        // the values of the "updatedEmployee" object.
+        // the values of the "responseEmployee" object.
     });
 }
 ```
@@ -279,7 +273,7 @@ updateExistingEmployee: function(updatedEmployee) {
 
 Every functions that leverage HTTP will return a jQuery `Promise` object created from a jQuery `Deferred`. You can find more informations [here](http://api.jquery.com/category/deferred-object/).
 
-### Extenders
+### Use Shelby extenders
 
 An extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
 
@@ -474,7 +468,7 @@ Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
 
 Your `extender` must follow some rules, you can learn about them [in the API section](#).
 
-### View model events
+### Handle view model events
 
 There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
