@@ -20,10 +20,11 @@ Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/pat
 
 Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
 
-    <script src="jquery-x.y.z.js"></script>
-    <script src="knockout-x.y.z.js"></script>
-    <script src="knockout.viewmodel.js"></script>
-    <script src="shelby-x.y.z.js"></script>
+```javascript
+<script src="jquery-x.y.z.js"></script>
+<script src="knockout-x.y.z.js"></script>
+<script src="knockout.viewmodel.js"></script>
+<script src="shelby-x.y.z.js"></script>
 
 ## Usages
 
@@ -127,56 +128,6 @@ Shelby.ViewModel.extend({
         promise.fail(function() { console.log("Failed"); });
     }
 });
-
-To fetch a list of models
-
-    Shelby.ViewModel.extend({
-        _url: { all: "ALL_URL" },
-
-        fetchEmployees: function() {
-            var promise = this.all();
-        }
-    });
-
-To fetch a single model
-
-    Shelby.ViewModel.extend({
-        _url: { detail: "DETAIL_URL" },
-
-        fetchEmployee: function(employeeId) {
-            var promise = this.detail(employeeId);
-        }
-    });
-
-To send an add command
-
-    Shelby.ViewModel.extend({
-        _url: { add: "ADD_URL" },
-
-        addNewEmployee: function(employee) {
-            var promise = this.add(employee);
-        }
-    });
-
-To send an update command
-
-    Shelby.ViewModel.extend({
-        _url: { update: "UPDATE_URL" },
-
-        updateExistingEmployee: function(updatedEmployee) {
-            var promise = this.update(updatedEmployee);
-        }
-    });
-
-To send a delete command
-
-    Shelby.ViewModel.extend({
-        _url: { remove: "REMOVE_URL" },
-
-        removeEmployee: function(employee) {
-            var promise = this.remove(employee);
-        }
-    });
 
 For more informations about those functions you can look at [the API section](#).
 
