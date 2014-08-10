@@ -30,7 +30,7 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
     * [Handle view model events](https://github.com/patricklafrance/shelby#handle-view-model-events)
 * [Components](https://github.com/patricklafrance/shelby#components)
 * [API](https://github.com/patricklafrance/shelby#api)
-* [Building Shelby from sources](https://github.com/patricklafrance/shelby#building-shelby-from-sources)
+* [Building from sources](https://github.com/patricklafrance/shelby#building-from-sources)
 * [Running the tests](https://github.com/patricklafrance/shelby#running-the-tests)
 
 ## Installation
@@ -649,7 +649,7 @@ Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
 
 Coming soon...
 
-## Building Shelby from sources
+## Building from sources
 
 If you prefer to build the library yourself:
 
