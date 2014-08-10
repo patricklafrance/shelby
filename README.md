@@ -55,18 +55,45 @@ Later, dispose the view model _(optionnal)_
 
     vm.dispose();
 
-### HTTP endpoint
+### The extend function
 
-The Shelby `HttpViewModel` view model provides the ability to communicate with a REST or RPC endpoint. 
+### Communicate with an HTTP endpoint
 
-Shelby will infer which type of HTTP endpoint you are working with by the URL structure that you provide in your view model definition.
+Shelby provided an `HttpViewModel` view model to communicate with a REST or RPC endpoint. 
 
-#### Using REST
+Shelby take for granted that your view model communicate with a single endpoint and will try to infer which type of HTTP endpoint (REST or RPC) you are working with by the URL structure that you provide in your view model definition. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
 
-If your endpoint 
+#### Single endpoint
 
-#### Using RPC
+To define your URLs, you must override the `_url` property when you define your view model.
 
+If you use a REST endpoint
+
+    Shelby.ViewModel.extend({
+        _url: "_ENDPOINT_URL"
+    });
+
+Otherwise, for an RPC endpoint (they are not all mandatories, you only define those that you need)
+
+    Shelby.ViewModel.extend({
+        _url: {
+            all: "ALL_URL",
+            detail: "DETAIL_URL",
+            add: "ADD_URL",
+            update: "UPDATE_URL",
+            remove: "REMOVE_URL"
+        }
+    });
+
+When you use a single endpoint, those functions are available on the view model and will use the URLs that you provided in your view model definition.
+
+* `all(criteria, options)`
+* `detail(id, options)`
+* `add(model, options)`
+* `update(/* [id], model, [options] */) `
+* `remove(target, options)`
+
+#### Multiple endpoints
 
 
 Sample code
