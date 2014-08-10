@@ -2,7 +2,7 @@
   "name": "shelby",
   "title": "Shelby",
   "version": "0.2.0",
-  "description": "Base view models for Knockout",
+  "description": "Set of highly extensible objects to quickly build Knockout view models that will handle most of your application business cases.",
   "main": "/dist/shelby.js",
   "homepage": "https://github.com/patricklafrance/shelby",
   "author": "Patrick Lafrance",

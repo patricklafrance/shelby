@@ -16,9 +16,9 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 **Documentation**
 
-* [Installation](https://github.com/patricklafrance/shelby#installation)
+* [Installation](#Installation)
 * [Usage](https://github.com/patricklafrance/shelby#usages)
-    * [The extend function](https://github.com/patricklafrance/shelby#the-extend-function)
+    * [The extend function](#The extend function)
     * [Define, create and bind a basic view model](https://github.com/patricklafrance/shelby#define-create-and-bind-a-basic-view-model)
     * [Communicate with HTTP endpoints](https://github.com/patricklafrance/shelby#communicate-with-http-endpoints)
         * [Single endpoint](https://github.com/patricklafrance/shelby#single-endpoint)
@@ -89,7 +89,7 @@ Shelby provides an `HttpViewModel` to communicate with a REST or RPC endpoint. T
 
 You can see a sample of a Shelby `HttpViewModel` [here](https://github.com/patricklafrance/shelby/blob/master/samples/http.js).
 
-#### Single endpoint
+#### View model with a single endpoint
 
 To define your URLs, you must override the `_url` property when you define your view model. Shelby will infer which type of HTTP endpoint (REST or RPC) you are working with by the URL structure that you provide in your view model definition.
 
@@ -162,7 +162,7 @@ Shelby.ViewModel.extend({
 
 For more informations about those functions you can look at [the API section](#).
 
-#### Multiple endpoints
+#### View model with multiple endpoints
 
 If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but can still use the low level functions, they provide the same behavior but they are more verbose.
 
@@ -621,7 +621,7 @@ The components are:
 * `Shelby.Parser`: Parse an object.
 * `Shelby.Mapper`: Map the properties of an object to observables. The native implementation use knockout.viewmodel.
 * `Shelby.PropertyExtender`: Apply the registered extenders to a property.
-* `Shelby.Ajax`: Handles all the HTTP communication.
+* `Shelby.Ajax`: Handles the HTTP communication.
 * `Shelby.ViewModel`: Provide the basic features of a Shelby view model.
 * `Shelby.HttpViewModel`: Provide the same features as `Shelby.ViewModel` in addition to HTTP capabilities.
 
