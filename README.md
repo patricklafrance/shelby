@@ -33,28 +33,36 @@ When you are using Shelby, you are basically only working with one of the provid
 
 Define a basic view model
 
-    var EmployeeDetailViewModel = Shelby.ViewModel.extend({
-        model: null,
+```javascript
+var EmployeeDetailViewModel = Shelby.ViewModel.extend({
+    model: null,
 
-        _initialize: function(clientModel) {
-            this.model = this._fromJs(clientModel);
-        }
-    });
+    _initialize: function(clientModel) {
+        this.model = this._fromJs(clientModel);
+    }
+});
+```
 
 Create a view model instance from the definition
-    
-    var vm = new EmployeeDetailViewModel({
-        firstName: "John",
-        lastName: "Doe"
-    });
+
+```javascript
+var vm = new EmployeeDetailViewModel({
+    firstName: "John",
+    lastName: "Doe"
+});
+```
 
 Bind the view model
 
-    vm.bind();
+```javascript
+vm.bind();
+```
 
 Later, dispose the view model _(optionnal)_
 
-    vm.dispose();
+```javascript
+vm.dispose();
+```
 
 ### The extend function
 
@@ -70,21 +78,25 @@ To define your URLs, you must override the `_url` property when you define your 
 
 If you use a REST endpoint
 
-    Shelby.ViewModel.extend({
-        _url: "REST_ENDPOINT_URL"
-    });
+```javascript
+Shelby.ViewModel.extend({
+    _url: "REST_ENDPOINT_URL"
+});
+```
 
 Otherwise, for an RPC endpoint (you only define the URLs that you need)
 
-    Shelby.ViewModel.extend({
-        _url: {
-            all: "ALL_URL",
-            detail: "DETAIL_URL",
-            add: "ADD_URL",
-            update: "UPDATE_URL",
-            remove: "REMOVE_URL"
-        }
-    });
+```javascript
+Shelby.ViewModel.extend({
+    _url: {
+        all: "ALL_URL",
+        detail: "DETAIL_URL",
+        add: "ADD_URL",
+        update: "UPDATE_URL",
+        remove: "REMOVE_URL"
+    }
+});
+```
 
 Those functions are available on the view model and will use the URLs that you provided in your view model definition.
 
@@ -129,6 +141,7 @@ Shelby.ViewModel.extend({
         promise.fail(function() { console.log("Failed"); });
     }
 });
+```
 
 For more informations about those functions you can look at [the API section](#).
 
@@ -153,21 +166,23 @@ An extender is something that augment the behavior of an observable property [(s
 
 To prevent any name clashing, all the extenders are added inside a `shelby` object:
 
-    var extendedModel = Shelby.ViewModel.prototype._fromJS({
-        firstName: "John",
-        lastName: "Doe",
-        address: {
-            civicNumber: "123"
-            street: "Foo avenue",
-            city: "Bar city"
-        }
-    });
+```javascript
+var extendedModel = Shelby.ViewModel.prototype._fromJS({
+    firstName: "John",
+    lastName: "Doe",
+    address: {
+        civicNumber: "123"
+        street: "Foo avenue",
+        city: "Bar city"
+    }
+});
 
-    // Extended observable
-    extendedModel.firstName.shelby.myExtender();
+// Extended observable
+extendedModel.firstName.shelby.myExtender();
 
-    // Extended object
-    extendedModel.address.shelby.myExtender();
+// Extended object
+extendedModel.address.shelby.myExtender();
+```
 
 You can learn more about the extenders system [in the API section](#).
 
@@ -177,9 +192,11 @@ Shelby comes with a set of native extenders that are registered by default. Thos
 
 If you dont need one (or all) of the native extender you can easily remove it.
 
-    Shelby.ViewModel.removeEditExtender();
-    Shelby.ViewModel.removeSubscribeExtender();
-    Shelby.ViewModel.removeUtilityExtender();
+```javascript
+Shelby.ViewModel.removeEditExtender();
+Shelby.ViewModel.removeSubscribeExtender();
+Shelby.ViewModel.removeUtilityExtender();
+```
 
 The most usefull extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
 
@@ -193,71 +210,86 @@ The subscription extender give you the ability to create a subscription on a sin
 
 If you have the following model that has been extended by Shelby
 
-    var extendedModel = Shelby.ViewModel.prototype._fromJS({
-        firstName: "John",
-        lastName: "Doe",
-        address: {
-            civicNumber: "123"
-            street: "Foo avenue",
-            city: "Bar city"
-        },
-        departments: [{ id: 1, name: "Sales" }]
-    });
+```javascript
+var extendedModel = Shelby.ViewModel.prototype._fromJS({
+    firstName: "John",
+    lastName: "Doe",
+    address: {
+        civicNumber: "123"
+        street: "Foo avenue",
+        city: "Bar city"
+    },
+    departments: [{ id: 1, name: "Sales" }]
+});
+```
 
 You can subscribe to a single observable
 
-    var firstNameSubscription 
-        = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
+```javascript
+var firstNameSubscription 
+    = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
+```
 
 Or to a set of observables
 
-    var addressSubscription 
-        = extendedModel.address.shelby.subscribe(addressChangedFunction);
+```javascript
+var addressSubscription 
+    = extendedModel.address.shelby.subscribe(addressChangedFunction);
+```
 
 You can pause and resume the subscriptions
 
-    firstNameSubscription.pause();
-    // Do not trigger anything.
-    extendedModel.firstName("Jane Doe");
-    firstNameSubscription.resume();
+```javascript
+firstNameSubscription.pause();
+// Do not trigger anything.
+extendedModel.firstName("Jane Doe");
+firstNameSubscription.resume();
+```
 
 Or you can pause and resume the observable directly
 
-    extendedModel.firstName.shelby.pause();
-    // Do not trigger anything.
-    extendedModel.firstName("Jane Doe");
-    extendedModel.firstName.shelby.resume();
+```javascript
+extendedModel.firstName.shelby.pause();
+// Do not trigger anything.
+extendedModel.firstName("Jane Doe");
+extendedModel.firstName.shelby.resume();
+```
 
 When you create a subscription on an array, the default behavior is to:
 
 Trigger when an item is added or removed from the array
 
-    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-
-    // Call departmentsChangedFunction
-    extendedModel.departments.push(accountingDepartment);
+```javascript
+extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+// Call departmentsChangedFunction
+extendedModel.departments.push(accountingDepartment);
+```
 
 Trigger when any of the items is updated
 
-    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-
-    // Call "departmentsChangedFunction"
-    extendedModel.departments.peek()[1].name("Accounting2");
+```javascript
+extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+// Call "departmentsChangedFunction"
+extendedModel.departments.peek()[1].name("Accounting2");
+```
 
 Automatically add to the subscriptions all the items that are added to the array
 
-    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-
-    // "accountingDepartment" has been automatically added to the subscription.
-    extendedModel.departments.push(accountingDepartment);
+```javascript
+extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+// "accountingDepartment" has been automatically added to the subscription.
+extendedModel.departments.push(accountingDepartment);
+```
 
 Automatically removed from the subscriptions all the items that are removed from the array
 
-    extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-    extendedModel.departments.push(accountingDepartment); 
+```javascript
+extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+extendedModel.departments.push(accountingDepartment); 
 
-    // "accountingDepartment" has been automatically removed from the subscription.
-    extendedModel.departments.remove(accountingDepartment);
+// "accountingDepartment" has been automatically removed from the subscription.
+extendedModel.departments.remove(accountingDepartment);
+```
 
 This is the basic usage of the subscription extender, other features and options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
 
@@ -267,38 +299,48 @@ The edit extender give you the ability to create a transaction for a single obse
 
 If you have the following model that has been extended by Shelby
 
-    var extendedModel = Shelby.ViewModel.prototype._fromJS({
-        firstName: "John",
-        lastName: "Doe",
-        address: {
-            civicNumber: "123"
-            street: "Foo avenue",
-            city: "Bar city"
-        },
-        departments: [{ id: 1, name: "Sales" }]
-    });
+```javascript
+var extendedModel = Shelby.ViewModel.prototype._fromJS({
+    firstName: "John",
+    lastName: "Doe",
+    address: {
+        civicNumber: "123"
+        street: "Foo avenue",
+        city: "Bar city"
+    },
+    departments: [{ id: 1, name: "Sales" }]
+});
+```
 
 You can edit a single observable
 
-    extendedModel.firstName.shelby.beginEdit();
-    extendedModel.firstName("Jane");
+```javascript
+extendedModel.firstName.shelby.beginEdit();
+extendedModel.firstName("Jane");
+```
 
 Or a set of observables
 
-    extendedModel.address.shelby.beginEdit();
-    extendedModel.address.civicNumber("456");
+```javascript
+extendedModel.address.shelby.beginEdit();
+extendedModel.address.civicNumber("456");
+```
 
 If you are satisfied with the changes you can commit them
 
-    extendedModel.firstName.shelby.endEdit();
+```javascript
+extendedModel.firstName.shelby.endEdit();
+```
 
 Otherwise, you just rollback them
 
-    // Rollback the values but do not end the transaction
-    extendedModel.firstName.shelby.resetEdit();
+```javascript
+// Rollback the values but do not end the transaction
+extendedModel.firstName.shelby.resetEdit();
 
-    // Rollback the values and ends the transaction
-    extendedModel.firstName.shelby.cancelEdit();
+// Rollback the values and ends the transaction
+extendedModel.firstName.shelby.cancelEdit();
+```
 
 While the observables are in a transaction, _all the subscriptions on those observables are paused_, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction _will trigger with their final value_.
 
@@ -308,7 +350,9 @@ This is the basic usage of the subscription extender, other features and options
 
 You can register a custom extender to Shelby with the `registerExtender` function
 
-    Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
+```javascript
+Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
+```
 
 Your `extender` must follow some rules, you can learn about them [in the API section](#).
 
@@ -322,14 +366,16 @@ To see all the events that you can hook to, [see the API section](#).
 
 To provide an handler for a specific model, all you got to do, is to override the event handler function that correspond to the event when you are defining your view model.
 
-    Shelby.ViewModel.extend({
-        _beforeBind: function() {
-            // Call the base event handler.
-            Shelby.ViewModel._beforeBind.call(this);
+```javascript
+Shelby.ViewModel.extend({
+    _beforeBind: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._beforeBind.call(this);
 
-            // Do stuff.
-        }
-    });
+        // Do stuff.
+    }
+});
+```
 
 The following event handler functions can be overrided for every view models:
 
@@ -357,12 +403,16 @@ You can see a complete sample that use view model specific event handlers [here]
 
 To add a global event handler you can use the `registerEventHandler` function.
 
-    Shelby.ViewModel.registerEventHandler("beforeFetch", handlerFunction);
+```javascript
+Shelby.ViewModel.registerEventHandler("beforeFetch", handlerFunction);
+```
 
 If you need to remove that event handler later, you must use a **_named_** event.
 
-    Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
-    Shelby.ViewModel.removeEventHandler("context:beforeFetch");
+```javascript
+Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
+Shelby.ViewModel.removeEventHandler("context:beforeFetch");
+```
 
 The following event handlers are available:
 
