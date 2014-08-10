@@ -130,11 +130,13 @@ If you have the following model that has been extended by Shelby.
 
 You can subscribe to a single observable.
 
-    var firstNameSubscription = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
+    var firstNameSubscription 
+        = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
 
 Or to a set of observables.
 
-    var addressSubscription = extendedModel.address.shelby.subscribe(addressChangedFunction);
+    var addressSubscription 
+        = extendedModel.address.shelby.subscribe(addressChangedFunction);
 
 You can pause and resume the subscriptions.
 
