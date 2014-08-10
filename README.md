@@ -31,7 +31,7 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 ### The extend function
 
-`extend` is a generic function to perform [prototypal inheritance](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). This function is leverage by Shelby to let you extend any components that is part of Shelby. This is pretty usefull when the behavior of a component doesn't fulfill your need, you can extend it, then replace it (we will talk later about how you can replace a native component).
+`extend` is a generic function to perform [prototypal inheritance](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). This function is leverage by Shelby to let you extend any components and property extenders that is part of Shelby. This is pretty usefull when the behavior of a component doesn't fulfill your need, you can extend it, then replace it (we will talk later about how you can replace a native component).
 
 For now, all you need to know is that this function will be use to define your own view model by extending one of Shelby's native view model.
 
@@ -275,11 +275,20 @@ updateExistingEmployee: function(updatedEmployee) {
 
 Every functions that leverage HTTP will return a jQuery `Promise` object created from a jQuery `Deferred`. You can find more informations [here](http://api.jquery.com/category/deferred-object/).
 
-### Use Shelby extenders
+The most common usage is to use the `done` and `fail` functions
 
-An extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object. Shelby automatically applied all the registered extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+```javascript
+var promise = this.all();
 
-To prevent any name clashing, all the extenders are added inside a `shelby` object:
+promise.done(function() { ... });
+promise.fail(function() { ... });
+```
+
+### Use Shelby property extenders
+
+A property extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object property. Shelby automatically applied all the registered property extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+
+To prevent any name clashing, all the property extenders are added inside a `shelby` object:
 
 ```javascript
 var extendedModel = Shelby.ViewModel.prototype._fromJS({
@@ -299,13 +308,13 @@ extendedModel.firstName.shelby.myExtender();
 extendedModel.address.shelby.myExtender();
 ```
 
-You can learn more about the extenders system [in the API section](#).
+You can learn more about the property extenders system [in the API section](#).
 
-#### Native extenders
+#### Native property extenders
 
-Shelby comes with a set of native extenders that are registered by default. Those extenders offers advanced subscriptions, transactions and much more.
+Shelby comes with a set of native property extenders that are registered by default. Those property extenders offers advanced subscriptions, transactions and much more.
 
-If you dont need one (or all) of the native extender you can easily remove it.
+If you dont need one (or all) of the native property extender you can easily remove it.
 
 ```javascript
 Shelby.ViewModel.removeEditExtender();
@@ -313,7 +322,7 @@ Shelby.ViewModel.removeSubscribeExtender();
 Shelby.ViewModel.removeUtilityExtender();
 ```
 
-The most usefull extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
+The most usefull property extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
 
 ##### Subscription extender
 
@@ -460,15 +469,59 @@ While the observables are in a transaction, **all the subscriptions on those obs
 
 This is the basic usage of the subscription extender, other features and options are available, you can learn about them [in the API section](#).
 
-#### Custom extenders
+#### How to create a custom property extender
 
-You can register a custom extender to Shelby with the `registerExtender` function
+To create a property extender there is some rules that you must follow, you can learn about them [in the API section](#).
+
+Basically, you define an extender function. In this function you filter the properties that you want to extend and then extend them with the strategy of your choice. The function will be called by Shelby for every properties that is parsed by Shelby and will receive the property and it's type.
+
+The type can either be:
+
+* `Shelby.PropertyType.Object`
+* `Shelby.PropertyType.Array`
+* `Shelby.PropertyType.Scalar` 
 
 ```javascript
-Shelby.ViewModel.registerExtender("CustomExtenderKey", extender);
+Shelby.Extenders.edit = function(target, type) {
+    if (type !== PropertyType.Object) {
+        // If this is not an object, then it must be a KO observable 
+        // and it can be extended by using a KO native extender 
+        target.extend(this._observableExtenders);
+    }
+    
+    if (type === PropertyType.Object) {
+        // If this is an object literal that we want to extend, it can be done
+        // with the jQuery $.extend.
+        $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
+    }
+};
 ```
 
-Your `extender` must follow some rules, you can learn about them [in the API section](#).
+Then, in this case we define a property object that contains the extender properties and functions that extend a property of the `Shelby.PropertyType.Object` type.
+
+```javascript
+Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
+    _initialize: function() {
+        this.isEditing = false;
+    },
+    
+    beginEdit: function(options) { },
+
+    endEdit: function(notifyOnce) { },
+
+    // ...
+};
+
+Shelby.Extenders.edit._observableExtenders = {
+    shelbyEdit: true
+};
+```
+
+Finally you register your custom property extender to Shelby
+
+```javascript
+Shelby.ViewModel.registerExtender("customPropertyExtenderKey", extender);
+```
 
 ### Handle view model events
 
@@ -539,11 +592,16 @@ You can see a sample [here](https://github.com/patricklafrance/shelby/blob/maste
 
 ## Components
 
-### Mapper
+The components are:
 
-### Extenders
-
-### View models
+* `Shelby.Ajax`: description
+* `Shelby.PropertyExtender`
+* `Shelby.Components / Shelby.ComponentsFactory`
+* `Shelby.Filters`
+* `Shelby.Mapper`
+* `Shelby.Parser`
+* `Shelby.ViewModel`
+* `Shelby.HttpViewModel`
 
 ### Replace a components
 
