@@ -600,13 +600,31 @@ Extensibility is at the core of Shelby. To easily let you extend any of his part
 The components are:
 
 * `Shelby.Parser`: Parse an object.
-* `Shelby.Mapper`: Map the properties of an object to observables. The native implementation use knockout.viewmodel
-* `Shelby.PropertyExtender`: Apply the registered extenders to a property
+* `Shelby.Mapper`: Map the properties of an object to observables. The native implementation use knockout.viewmodel.
+* `Shelby.PropertyExtender`: Apply the registered extenders to a property.
 * `Shelby.Ajax`: Handles all the HTTP communication.
-* `Shelby.ViewModel`: Provide the basic features of a Shelby view  model.
+* `Shelby.ViewModel`: Provide the basic features of a Shelby view model.
 * `Shelby.HttpViewModel`: Provide the same features as `Shelby.ViewModel` in addition to HTTP capabilities.
 
 ### Replace a components
+
+The recommended way to replace a native component, is to extend the existing one and override the functions that need to be customized
+
+```javascript
+var CustomMapper = Shelby.Mapper.extends({
+    fromJS: function() {
+        // Do stuff.
+    }
+});
+```
+
+Then register your new component to Shelby
+
+```javascript
+Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
+```
+
+> The components must be replaced before you use any parts of Shelby. Once a component instance has been created by the components factory. that instance will be returned for every subsequent call.
 
 ## API
 
