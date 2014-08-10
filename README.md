@@ -157,7 +157,7 @@ If you're view model use multiple endpoints you cannot use the high level HTTP f
 Shelby.ViewModel.extend({
     fetchAllEmployees: function() {
         var requestOptions = {
-            request: { url: "ALL_URL }
+            request: { url: "ALL_URL" }
         };
 
         this._handleResult(this._fetch(requestOptions));
@@ -166,7 +166,7 @@ Shelby.ViewModel.extend({
     fetchEmployeeDetail: function(employeeId) {
         var requestOptions = {
             request: {
-                url: "DETAIL_URL,
+                url: "DETAIL_URL",
                 data: { id: employeeId }
             }
         };
@@ -177,7 +177,7 @@ Shelby.ViewModel.extend({
     addNewEmployee: function(employee) {
         var requestOptions = {
             request: {
-                url: "ADD_URL,
+                url: "ADD_URL",
                 type: "POST",
                 data: employee
             }
@@ -189,7 +189,7 @@ Shelby.ViewModel.extend({
     updateExistingEmployee: function(updatedEmployee) {
         var requestOptions = {
             request: {
-                url: "UPDATE_URL,
+                url: "UPDATE_URL",
                 type: "PUT",
                 data: updatedEmployee
             }
@@ -201,7 +201,7 @@ Shelby.ViewModel.extend({
     removeEmployee: function(employee) {
         var requestOptions = {
             request: {
-                url: "DELETE_URL,
+                url: "DELETE_URL",
                 type: "DELETE",
                 data: employee
             }
