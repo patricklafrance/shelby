@@ -141,13 +141,15 @@ Or to a set of observables.
 You can pause and resume the subscriptions.
 
     firstNameSubscription.pause();
-    extendedModel.firstName("Jane Doe"); // Do not trigger anything.
+    // Do not trigger anything.
+    extendedModel.firstName("Jane Doe");
     firstNameSubscription.resume();
 
 Or you can pause and resume the observable directly.
 
     extendedModel.firstName.shelby.pause();
-    extendedModel.firstName("Jane Doe"); // Do not trigger anything.
+    // Do not trigger anything.
+    extendedModel.firstName("Jane Doe");
     extendedModel.firstName.shelby.resume();
 
 When you create a subscription on an array, the default behavior is to:
@@ -156,21 +158,21 @@ Trigger when an item is added or removed from the array.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
-    // Trigger departmentsChangedFunction
+    // Call departmentsChangedFunction
     extendedModel.departments.push(accountingDepartment);
 
 Trigger when an of the items are updated.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
-    // Trigger departmentsChangedFunction
+    // Call "departmentsChangedFunction"
     extendedModel.departments.peek()[1].name("Accounting2");
 
 Automatically add to the subscriptions all the items that are added.
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
-    // accountDepartment has been automatically added to the subscription.
+    // "accountingDepartment" has been automatically added to the subscription.
     extendedModel.departments.push(accountingDepartment);
 
 Automatically removed from the subscriptions all the items that are removed from the array.
@@ -178,7 +180,7 @@ Automatically removed from the subscriptions all the items that are removed from
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
     extendedModel.departments.push(accountingDepartment); 
 
-    // accountDepartment has been automatically removed from the subscription.
+    // "accountingDepartment" has been automatically removed from the subscription.
     extendedModel.departments.remove(accountingDepartment);
 
 This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
