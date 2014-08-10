@@ -322,7 +322,7 @@ Shelby.ViewModel.removeSubscribeExtender();
 Shelby.ViewModel.removeUtilityExtender();
 ```
 
-> The `edit extender` depends on the `subscribe extender`. This means that removing the `subscribe extender` will automatically remove the `edit extender`.
+> The _edit extender_ depends on the _subscribe extender_. This means that removing the _subscribe extender_ will automatically remove the _edit extender_.
 
 The most usefull property extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
 
@@ -597,15 +597,14 @@ You can see a sample [here](https://github.com/patricklafrance/shelby/blob/maste
 
 Extensibility is at the core of Shelby. To easily let you extend any of his parts, Shelby has been build in components. Shelby use a components factory to lazily creates a component when he is needed. That way, you can easily replace any components when your application start, before you use Shelby. 
 
-The available components are:
+The components are:
 
-* `Shelby.Ajax`: description
-* `Shelby.PropertyExtender`
-* `Shelby.Filters`
-* `Shelby.Mapper`
-* `Shelby.Parser`
-* `Shelby.ViewModel`
-* `Shelby.HttpViewModel`
+* `Shelby.Parser`: Parse an object.
+* `Shelby.Mapper`: Map the properties of an object to observables. The native implementation use knockout.viewmodel
+* `Shelby.PropertyExtender`: Apply the registered extenders to a property
+* `Shelby.Ajax`: Handles all the HTTP communication.
+* `Shelby.ViewModel`: Provide the basic features of a Shelby view  model.
+* `Shelby.HttpViewModel`: Provide the same features as `Shelby.ViewModel` in addition to HTTP capabilities.
 
 ### Replace a components
 
