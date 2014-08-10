@@ -454,7 +454,7 @@ extendedModel.firstName.shelby.resetEdit();
 extendedModel.firstName.shelby.cancelEdit();
 ```
 
-While the observables are in a transaction, _all the subscriptions on those observables are paused_, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction _will trigger with their final value_.
+While the observables are in a transaction, **all the subscriptions on those observables are paused**, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction **will trigger with their final value**.
 
 This is the basic usage of the subscription extender, other features and options are available, you can learn about them [in the API section](#).
 
