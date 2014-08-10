@@ -14,11 +14,11 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 
 * An SPA, this is only a set of view models and observable extenders.
 
-**Documentation**
+**Contents**
 
-* [Installation](##Installation)
+* [Installation](#installation)
 * [Usage](https://github.com/patricklafrance/shelby#usages)
-    * [The extend function](https://github.com/patricklafrance/shelby#the-extend-function)
+    * [The extend function](#the-extend-function)
     * [Define, create and bind a basic view model](https://github.com/patricklafrance/shelby#define-create-and-bind-a-basic-view-model)
     * [Communicate with HTTP endpoints](https://github.com/patricklafrance/shelby#communicate-with-http-endpoints)
         * [Single endpoint](https://github.com/patricklafrance/shelby#single-endpoint)
