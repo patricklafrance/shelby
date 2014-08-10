@@ -92,6 +92,41 @@ Those functions are available on the view model and will use the URLs that you p
 * `update(/* [id], model, [options] */)`
 * `remove(target, options)`
 
+Shelby.ViewModel.extend({
+    _url: {
+        all: "ALL_URL",
+        detail: "DETAIL_URL",
+        add: "ADD_URL",
+        update: "UPDATE_URL",
+        remove: "REMOVE_URL"
+    },
+
+    fetchEmployees: function() {
+        this._handleResult(this.all());
+    },
+
+    fetchEmployee: function(employeeId) {
+        this._handleResult(this.detail(employeeId));
+    },
+
+    addNewEmployee: function(employee) {
+        this._handleResult(this.add(employee));
+    },
+
+    updateExistingEmployee: function(updatedEmployee) {
+        this._handleResult(this.update(updatedEmployee));
+    },
+
+    removeEmployee: function(employee) {
+        this._handleResult(this.remove(employee));
+    },
+
+    _handleResult(promise) {
+        promise.done(function() { console.log("Succeeded"); });
+        promise.fail(function() { console.log("Failed"); });
+    }
+});
+
 To fetch a list of models
 
     Shelby.ViewModel.extend({
