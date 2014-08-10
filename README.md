@@ -226,19 +226,18 @@ For more informations about those functions you can look at [the API section](#)
 When your HTTP request has data that contains observables, they will automatically be unmapper before Shelby send the request
 
 ```javascript
+var newEmployee = this._fromJs({
+    firstName: "John",
+    lastName: "Doe"
+});
 
-    var newEmployee = this._fromJs({
-        firstName: "John",
-        lastName: "Doe"
-    });
+this.addNewEmployee(newEmployee);
 
-    this.addNewEmployee(newEmployee);
-
-    addNewEmployee: function(employee) {
-        // The add function will automatically unmap the observables 
-        // contained in the employee object.
-        this.add(employee);
-    }
+addNewEmployee: function(employee) {
+    // The add function will automatically unmap the observables 
+    // contained in the employee object.
+    this.add(employee);
+}
 ```
 
 When you sucessfully fetch data, by default:
