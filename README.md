@@ -34,30 +34,30 @@ When you are using Shelby, you are basically only working with one of the provid
 
 Here's a very basic usage of Shelby.
 
-1. Define a view model
+Define a view model.
 
-        var EmployeeDetailViewModel = Shelby.ViewModel.extend({
-            model: null,
+    var EmployeeDetailViewModel = Shelby.ViewModel.extend({
+        model: null,
 
-            _initialize: function(clientModel) {
-                this.model = this._fromJs(clientModel);
-            }
-        });
+        _initialize: function(clientModel) {
+            this.model = this._fromJs(clientModel);
+        }
+    });
 
-2. Create a view model instance from the definition
+Create a view model instance from the definition.
     
-        var vm = new EmployeeDetailViewModel({
-            firstName: "John",
-            lastName: "Doe"
-        });
+    var vm = new EmployeeDetailViewModel({
+        firstName: "John",
+        lastName: "Doe"
+    });
 
-3. Bind the view model
+Bind the view model.
 
-        vm.bind();
+    vm.bind();
 
-4. Later, dispose the view model _(optionnal)_
+Later, dispose the view model _(optionnal)_.
 
-        vm.dispose();
+    vm.dispose();
 
 ### Working with an HTTP endpoint
 
@@ -99,7 +99,7 @@ You can learn more about the extenders system [in the API section](#).
 
 Shelby comes with a set of native extenders that are registered by default. Those extenders offers advanced subscriptions, transactions and much more.
 
-If you dont need one (or everyone of them) of the native extender you can easily remove it.
+If you dont need one (or all) of the native extender you can easily remove it.
 
     Shelby.ViewModel.removeEditExtender();
     Shelby.ViewModel.removeSubscribeExtender();
@@ -134,7 +134,8 @@ You can subscribe to a single observable.
 
 Or to a set of observables.
 
-    // If  any of the address object observables value changed, the function addressChangedFunction will be called.
+    // If any of the address object observables value changed, the function
+    // addressChangedFunction will be called.
     var addressSubscription = extendedModel.address.shelby.subscribe(addressChangedFunction);
 
 You can pause and resume the subscriptions.
@@ -161,14 +162,17 @@ When you create a subscription on an array, the default behavior is to automatic
 
     extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
 
-    // This will trigger the function departmentsChangedFunction because a new department has been added to the array.
+    // This will trigger the function departmentsChangedFunction because
+    // a new department has been added to the array.
     extendedModel.departments.push(accountingDepartment); 
     
-    // This will trigger the function departmentsChangedFunction because the name of the newly added item has been changed.
+    // This will trigger the function departmentsChangedFunction because the name
+    // of the newly added item has been changed.
     extendedModel.departments.peek()[1].name("Accounting2");
 
-    // This will trigger the function departmentsChangedFunction because a department has been removed from the array AND
-    // the accountDepartment has been removed from the subscription.
+    // This will trigger the function departmentsChangedFunction because a 
+    // department has been removed from the array AND the accountDepartment has been 
+    // removed from the subscription.
     extendedModel.departments.remove(accountingDepartment);
 
 This is the basic usage of the subscription extender, some options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
