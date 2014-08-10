@@ -28,8 +28,6 @@ Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel.
 
 ## Usages
 
-### Basic
-
 When you are using Shelby, you are basically only working with one of the provided view model (there's a few exception, we will talk about those later). Here's a very basic usage of Shelby.
 
 Define a basic view model
@@ -294,13 +292,13 @@ If you need to remove that event handler later, you must use a **_named_** event
 
 The following event handlers are available:
 
-* `beforeFetch`
-* `beforeSave`
-* `afterFetch`
-* `afterSave`
-* `afterRemove`
-* `handleOperationError`
-* `handleOperationSuccess`
+* beforeFetch
+* beforeSave
+* afterFetch
+* afterSave
+* afterRemove
+* handleOperationError
+* handleOperationSuccess
 
 You can see a sample that use global event handlers [here](#).
 
