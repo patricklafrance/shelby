@@ -46,7 +46,7 @@ Shelby depends on `KO`, `jQuery` and a KO plugin called `knockout.viewmodel`. Yo
 <script src="shelby-x.y.z.js"></script>
 ```
 
-Once you included the scripts, you can use Shelby from the `window` object, as a `CommonJS` or `AMD` module, or with `browserify`. 
+Once you included the scripts, you can use Shelby from the `window` object, as a `CommonJS` or `AMD` module and with `browserify`. 
 
 ## Usages
 
