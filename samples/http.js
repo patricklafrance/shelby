@@ -1,4 +1,4 @@
-var SimpleListViewModel = Shelby.ViewModel.extend({
+var SimpleListViewModel = Shelby.HttpViewModel.extend({
     _url: "http://shelbysamples/api/SimpleListRest",
 
     list: null,
@@ -45,18 +45,8 @@ var SimpleListViewModel = Shelby.ViewModel.extend({
         var promise = this.add(this.addModel);
 
         promise.done(function() {
-            // Clone the added model and extend his properties with extenders and a custom property that his
-            // added during the mapping operation.
-            this.list.items.push(this._fromJS(this._toJS(this.addModel), {
-                extend: {
-                    "{root}": function(item) {
-                        item.extended = ko.computed(function() {
-                            return "Value has " + this.value().length + " characters.";
-                        }, item);
-                    }
-                }
-            }));
-
+            // Clone the added model and extend his properties with extenders.
+            this.list.items.push(this._fromJS(this._toJS(this.addModel)));
             this.addModel.shelby.reset();
         });
     },

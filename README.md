@@ -70,7 +70,7 @@ vm.dispose();
 
 Shelby provides an `HttpViewModel` to communicate with a REST or RPC endpoint. The HttpViewModel` is designed to handle view models that communicate with a single endpoint. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
 
-You can see a sample of a Shelby `HttpViewModel` [here](#).
+You can see a sample of a Shelby `HttpViewModel` [here](https://github.com/patricklafrance/shelby/blob/master/samples/http.js).
 
 #### Single endpoint
 
