@@ -21,10 +21,11 @@ Download a copy of shelby-x.y.z.js from [the dist folder](https://github.com/pat
 Shelby depends on knockout.js, jQuery and a KO plugin called knockout.viewmodel. You must grab a copy of those or use the ones provided in [the dist/lib folder](https://github.com/patricklafrance/shelby/tree/master/dist/lib).
 
 ```javascript
-    <script src="jquery-x.y.z.js"></script>
-    <script src="knockout-x.y.z.js"></script>
-    <script src="knockout.viewmodel.js"></script>
-    <script src="shelby-x.y.z.js"></script>
+<script src="jquery-x.y.z.js"></script>
+<script src="knockout-x.y.z.js"></script>
+<script src="knockout.viewmodel.js"></script>
+<script src="shelby-x.y.z.js"></script>
+```
 
 ## Usages
 
