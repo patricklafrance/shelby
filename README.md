@@ -116,11 +116,11 @@ Shelby.ViewModel.extend({
         remove: "REMOVE_URL"
     },
 
-    fetchEmployees: function() {
+    fetchAllEmployees: function() {
         this._handleResult(this.all());
     },
 
-    fetchEmployee: function(employeeId) {
+    fetchEmployeeDetail: function(employeeId) {
         this._handleResult(this.detail(employeeId));
     },
 
@@ -147,12 +147,75 @@ For more informations about those functions you can look at [the API section](#)
 
 #### Multiple endpoints
 
-If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but still can use the low level functions.
+If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but can still use the low level one, they provide the same behavior but they are more verbose.
 
 * `_fetch(options)`
 * `_save(options)`
 * `_remove(options)`
 
+```javascript
+Shelby.ViewModel.extend({
+    fetchAllEmployees: function() {
+        var requestOptions = {
+            request: { url: "ALL_URL }
+        };
+
+        this._handleResult(this._fetch(requestOptions));
+    },
+
+    fetchEmployeeDetail: function(employeeId) {
+        var requestOptions = {
+            request: {
+                url: "DETAIL_URL,
+                data: { id: employeeId }
+            }
+        };
+
+        this._handleResult(this._fetch(requestOptions));
+    },
+
+    addNewEmployee: function(employee) {
+        var requestOptions = {
+            request: {
+                url: "ADD_URL,
+                type: "POST",
+                data: employee
+            }
+        };
+
+        this._handleResult(this._save(requestOptions));
+    },
+
+    updateExistingEmployee: function(updatedEmployee) {
+        var requestOptions = {
+            request: {
+                url: "UPDATE_URL,
+                type: "PUT",
+                data: updatedEmployee
+            }
+        };
+
+        this._handleResult(this._save(requestOptions));
+    },
+
+    removeEmployee: function(employee) {
+        var requestOptions = {
+            request: {
+                url: "DELETE_URL,
+                type: "DELETE",
+                data: employee
+            }
+        };
+
+        this._handleResult(this._remove(requestOptions));
+    },
+
+    _handleResult(promise) {
+        promise.done(function() { console.log("Succeeded"); });
+        promise.fail(function() { console.log("Failed"); });
+    }
+});
+```
 
 Map / unmap automatiquement (avec extenders)
 
@@ -370,7 +433,6 @@ Shelby.ViewModel.extend({
     _beforeBind: function() {
         // Call the base event handler.
         Shelby.ViewModel._beforeBind.call(this);
-
         // Do stuff.
     }
 });
