@@ -9,11 +9,10 @@ Shelby is a set of highly extensible objects to quickly build Knockout view mode
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of a set of observables (including arrays items).
 * Start a transaction on 1 or multiple observables, providing the ability to commit or rollback the changes on the observables.
-* Handle the view model lifecycle.
 
 **Shelby is not:**
 
-* An SPA, this is only a set of view models and observable extenders that are highly extensible.
+* An SPA, this is only a set of view models and observable extenders.
 
 ## Installation
 
@@ -59,7 +58,7 @@ Later, dispose the view model _(optionnal)_
 
 ### Communicate with an HTTP endpoint
 
-Shelby provided an `HttpViewModel` view model to communicate with a REST or RPC endpoint. 
+Shelby provided an `HttpViewModel` to communicate with a REST or RPC endpoint. 
 
 Shelby take for granted that your view model communicate with a single endpoint and will try to infer which type of HTTP endpoint (REST or RPC) you are working with by the URL structure that you provide in your view model definition. If your view model communicate with multiple endpoints, dont worry, you can still leverage all the HTTP features of Shelby, but you need to write a little more code.
 
@@ -70,10 +69,10 @@ To define your URLs, you must override the `_url` property when you define your 
 If you use a REST endpoint
 
     Shelby.ViewModel.extend({
-        _url: "_ENDPOINT_URL"
+        _url: "REST_ENDPOINT_URL"
     });
 
-Otherwise, for an RPC endpoint (they are not all mandatories, you only define those that you need)
+Otherwise, for an RPC endpoint (you only define the URLs that you need)
 
     Shelby.ViewModel.extend({
         _url: {
@@ -85,20 +84,80 @@ Otherwise, for an RPC endpoint (they are not all mandatories, you only define th
         }
     });
 
-When you use a single endpoint, those functions are available on the view model and will use the URLs that you provided in your view model definition.
+Those functions are available on the view model and will use the URLs that you provided in your view model definition.
 
 * `all(criteria, options)`
 * `detail(id, options)`
 * `add(model, options)`
-* `update(/* [id], model, [options] */) `
+* `update(/* [id], model, [options] */)`
 * `remove(target, options)`
+
+To fetch a list of models
+
+    Shelby.ViewModel.extend({
+        _url: { all: "ALL_URL" },
+
+        fetchEmployees: function() {
+            var promise = this.all();
+        }
+    });
+
+To fetch a single model
+
+    Shelby.ViewModel.extend({
+        _url: { detail: "DETAIL_URL" },
+
+        fetchEmployee: function(employeeId) {
+            var promise = this.detail(employeeId);
+        }
+    });
+
+To send an add command
+
+    Shelby.ViewModel.extend({
+        _url: { add: "ADD_URL" },
+
+        addNewEmployee: function(employee) {
+            var promise = this.add(employee);
+        }
+    });
+
+To send an update command
+
+    Shelby.ViewModel.extend({
+        _url: { update: "UPDATE_URL" },
+
+        updateExistingEmployee: function(updatedEmployee) {
+            var promise = this.update(updatedEmployee);
+        }
+    });
+
+To send a delete command
+
+    Shelby.ViewModel.extend({
+        _url: { remove: "REMOVE_URL" },
+
+        removeEmployee: function(employee) {
+            var promise = this.remove(employee);
+        }
+    });
+
+For more informations about those functions you can look at [the API section](#).
 
 #### Multiple endpoints
 
+If you're view model use multiple endpoints you cannot use the high level HTTP functions of Shelby, but still can use the low level functions.
+
+* `_fetch(options)`
+* `_save(options)`
+* `_remove(options)`
+
+
+Map / unmap automatiquement (avec extenders)
 
 Sample code
 
-You can see a complete exemple of a Shelby view model that use HTTP communication [here](#).
+You can see a sample of a Shelby `HttpViewModel` [here](#).
 
 ### Extenders
 
@@ -265,7 +324,7 @@ You can register a custom extender to Shelby with the `registerExtender` functio
 
 Your `extender` must follow some rules, you can learn about them [in the API section](#).
 
-### View model lifecycle
+### View model events
 
 There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
 
@@ -371,12 +430,5 @@ Build the sources with Gulp and then the specs can be runned in a browser, simpl
 * test/runner-jquery-2.html
 * test/exports/runner-browserify.html
 * test/exports/runner-requirejs.html
-
-
-
-Provides the _basic features_ of a Shelby view model.
-
-
-Provided the same features as Shelby.ViewModel with the ability to communicate with an HTTP endpoint.
 
 
