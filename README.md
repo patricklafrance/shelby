@@ -225,7 +225,7 @@ For more informations about those functions you can look at [the API section](#)
 
 When you sucessfully fetch data, by default:
 
-* The response object is automatically mapped to observables
+The response object is automatically mapped to observables
 
 ```javascript
 fetchAllEmployees: function() {
@@ -236,7 +236,7 @@ fetchAllEmployees: function() {
 }
 ```
 
-* The extenders are automatically applied to the response object.
+The extenders are automatically applied to the response object.
 
 ```javascript
 fetchAllEmployees: function() {
