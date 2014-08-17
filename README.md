@@ -538,8 +538,6 @@ You can take a look at the [edit extender](https://github.com/patricklafrance/sh
 
 There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers. Those handlers can be scoped to a specific view model or globally (they will be triggered **when the event occurs in any view models**).
 
-To see all the events that you can hook to, [see the API section](#).
-
 #### Event handlers scoped to a specific view model
 
 To provide an event handler for a specific view model, you have to override the event handler function that match the desired event when you define the view model.
@@ -603,7 +601,7 @@ You can see a sample [here](https://github.com/patricklafrance/shelby/blob/maste
 
 ## Components
 
-Extensibility is at the core of Shelby. To easily let you extend any of his parts, Shelby has been build in components. Shelby use a components factory to lazily creates a component when he is needed. That way, you can easily replace any components when your application start, before you use Shelby. 
+Extensibility is at the core of Shelby. To easily let you extend any parts of Shelby, it is build in components. A components factory lazily creates the components when they are needed. That way, you can easily replace any components when your application start, before you use Shelby. 
 
 The components are:
 
@@ -619,7 +617,7 @@ The components are:
 The recommended way to replace a native component, is to extend the existing one and override the functions that need to be customized
 
 ```javascript
-var CustomMapper = Shelby.Mapper.extends({
+var CustomMapper = Shelby.Mapper.extend({
     fromJS: function() {
         // Do stuff.
     }
@@ -636,7 +634,41 @@ Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
 
 ## API
 
-Coming soon...
+### Shelby.ViewModel
+
+To define a view model without HTTP capabilities you can extend Shelby.ViewModel. When you define your view model you can _optionnally_ override the following properties:
+
+```javascript
+var EmployeeDetailViewModel = Shelby.ViewModel.extend({
+    _initialize: function(param1, param2, ...) { ... },
+
+    _beforeBind: function(callback) { ... },
+
+    _afterBind: function() { ... },
+
+    _handleDispose: function() { ... }
+});
+```
+
+**_initialize: function()**
+
+This is the constructor of the view model. It receive the parameters that are passed to the view model at his instanciation.
+
+```javascript
+var EmployeeDetailViewModel = Shelby.ViewModel.extend({
+    model: null,
+
+    _initialize: function(clientModel) {
+        this.model = this._fromJs(clientModel);
+    }
+});
+
+var vm = new EmployeeDetailViewModel({
+    firstName: "John",
+    lastName: "Doe"
+});
+```
+
 
 ## Building from sources
 
