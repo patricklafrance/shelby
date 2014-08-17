@@ -638,6 +638,8 @@ Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
 
 To define a view model without HTTP capabilities you can extend Shelby.ViewModel. 
 
+#### Define a view model from Shelby.ViewModel
+
 When you define your view model you can _optionnally_ override the following properties:
 
 ```javascript
@@ -705,16 +707,7 @@ This event handler is called after the call to `ko.applyBindings` has been made.
 
 This function is called when the view model is disposed. A view model can be disposed explicitly be calling the `dispose` function.
 
-
-
-
-
-
-
-
-
-
-You can also use the following variables / functions
+#### Use Shelby.ViewModel variables and functions
 
 ##### _element
 
