@@ -669,7 +669,7 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 var vm = new EmployeeDetailViewModel("John", "Doe");
 ```
 
-##### _beforeBind: function(callback) : void or boolean
+##### _beforeBind: function(callback) : void or true
 
 This event handler is called just before binding the view model with the DOM. If you need to fetch data to initialize your view model, this is the place to do so.`_beforeBind` can be implemented in 2 ways, synchronous and asynchronous.
 
@@ -767,6 +767,13 @@ Convert all the properties of the object back to regular JavaScript. It also rem
 
 To define a view model with all the features of `Shelby.ViewModel` and HTTP capabilities you can extend `Shelby.HttpViewModel`.
 
+#### Operation context
+
+Every event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
+
+* `url`: The request URL
+* `method`: Shelby.HttpViewModel.OperationMethod.Get | Shelby.HttpViewModel.OperationMethod.Post | Shelby.HttpViewModel.OperationMethod.Put | Shelby.HttpViewModel.OperationMethod.Delete
+
 #### Define a view model from Shelby.HttpViewModel
 
 When you define your view model you can _optionnally_ override the following properties:
@@ -775,15 +782,15 @@ When you define your view model you can _optionnally_ override the following pro
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
     _url: "" OR {},
 
-    _beforeFetch: function() { ... },
+    _beforeFetch: function(operationContext, jqXHR, requestSettings) { ... },
 
-    _beforeSave: function() { ... },
+    _beforeSave: function(operationContext, jqXHR, requestSettings) { ... },
 
-    _beforeRemove: function() { ... },
+    _beforeRemove: function(operationContext, jqXHR, requestSettings) { ... },
 
-    _afterFetch: function() { ... },
+    _afterFetch: function(operationContext, data | jqXHR, textStatus, jqXHR|errorThrown) { ... },
 
-    _afterRemove: function() { ... },
+    _afterRemove: function(operationContext, data | jqXHR, textStatus, jqXHR|errorThrown) { ... },
 
     _handleOperationError: function(operationContext) { ... },
 
@@ -799,7 +806,7 @@ If your endpoint implements REST, specify `_url` as a string.
 
 ```javascript
 Shelby.ViewModel.extend({
-    _url: "ENDPOINT_URL"
+    _url: "REST_ENDPOINT_URL"
 });
 ```
 
@@ -831,11 +838,11 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 * `_save`
 * `_remove`
 
-##### _beforeFetch: function()
+##### _beforeFetch: function(operationContext, ) : void or false
 
-##### _beforeSave: function()
+##### _beforeSave: function() : void or false
 
-##### _beforeRemove: function()
+##### _beforeRemove: function() : void or false
 
 ##### _afterFetch: function()
 
