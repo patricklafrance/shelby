@@ -669,7 +669,7 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 var vm = new EmployeeDetailViewModel("John", "Doe");
 ```
 
-##### _beforeBind: function(callback)
+##### _beforeBind: function(callback) : void or boolean
 
 This event handler is called just before binding the view model with the DOM. If you need to fetch data to initialize your view model, this is the place to do so.`_beforeBind` can be implemented in 2 ways, synchronous and asynchronous.
 
@@ -733,7 +733,7 @@ Clear the KO bindings and dispose the view model.
 
 If the view model is binded to a specific element of the DOM, this property value will be that element of the DOM. The property will only have a value after a call to the `bind` function has been made.
 
-##### _fromJs: function(obj [, options]) : Object
+##### _fromJs: function(obj, [options]) : Object
 
 Convert all the properties of the object into observables and apply the registered [property extenders](#) to all the properties. By default [knockout.viewmodel](http://coderenaissance.github.io/knockout.viewmodel/) is used to do the mapping.
 
@@ -762,6 +762,48 @@ options:{
 ##### _toJs: function(obj) : Object
 
 Convert all the properties of the object back to regular JavaScript. It also remove all the applied [property extenders](#).
+
+### Shelby.HttpViewModel
+
+#### Define a view model from Shelby.HttpViewModel
+
+##### _url: String or Object
+
+##### _beforeFetch: function()
+
+##### _beforeSave: function()
+
+##### _beforeRemove: function()
+
+##### _afterFetch: function()
+
+##### _afterSave: function()
+
+##### _afterRemove: function()
+
+##### _handleOperationError: function(operationContext)
+
+##### _handleOperationSuccess: function(operationContext)
+
+#### Use Shelby.HttpViewModel variables and functions
+
+##### all: function([criteria], [options]) : jQuery promise
+
+##### detail: function(id, [options]) : jQuery promise
+
+##### add: function(model, [options]) : jQuery promise
+
+##### update: function([id], model, [options]) : jQuery promise
+
+##### remove: function(target, [options]) : jQuery promise
+
+##### _fetch: function(options) : jQuery promise
+
+##### _save: function(options) : jQuery promise
+
+##### _remove: function(options) : jQuery promise
+
+##### OperationMethod: enum
 
 ## Building from sources
 
