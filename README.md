@@ -240,7 +240,7 @@ For more informations about those functions you can look at [the API section](#)
 
 #### Observables mapping / unmapping
 
-When your HTTP request has data that contains observables, they will automatically be unmapper before Shelby send the request
+When your HTTP request has data that contains observables, they will automatically be unmapped before Shelby send the request
 
 ```javascript
 var newEmployee = this._fromJs({
@@ -257,14 +257,14 @@ addNewEmployee: function(employee) {
 }
 ```
 
-When you sucessfully fetch data, by default:
+When you sucessfully fetch the data, by default:
 
 The response object is automatically mapped to observables
 
 ```javascript
 fetchAllEmployees: function() {
     this.all().done(function(response) {
-        // The data has been automatically mapped to the observables.
+        // We can use observables on the response object.
         response.employees()[0].firstName("Jane");
     });
 }
@@ -275,7 +275,7 @@ The extenders are automatically applied to the response object.
 ```javascript
 fetchAllEmployees: function() {
     this.all().done(function(response) {
-        // The extenders has been automatically applied to the observables.
+        // The subscribe extender is available on the response object.
         response.employees()[0].subscribe();
     });
 }
@@ -307,7 +307,7 @@ promise.fail(function() { ... });
 
 ### Use Shelby property extenders
 
-A property extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment an object property. Shelby automatically applied all the registered property extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
+A property extender is something that augment the behavior of an observable property [(see knockout.js extender documentation)](http://knockoutjs.com/documentation/extenders.html) or in Shelby, it can also augment a property having an object as value. Shelby automatically apply all the registered property extenders to all the matching observables when you use Shelby to map your model properties to observables (dont worry you can prevent that).
 
 To prevent any name clashing, all the property extenders are added inside a `shelby` object:
 
@@ -335,7 +335,7 @@ You can learn more about the property extenders system [in the API section](#).
 
 Shelby comes with a set of native property extenders that are registered by default. Those property extenders offers advanced subscriptions, transactions and much more.
 
-If you dont need one (or all) of the native property extender you can easily remove it.
+If you dont need one (or all) of the native property extender you can easily remove them.
 
 ```javascript
 Shelby.ViewModel.removeEditExtender();
@@ -345,7 +345,7 @@ Shelby.ViewModel.removeUtilityExtender();
 
 > The _edit extender_ depends on the _subscribe extender_. This means that removing the _subscribe extender_ will automatically remove the _edit extender_.
 
-The most usefull property extenders are the subscription and edit extenders (those that offer the advanced subscription and transaction capabilities).
+The most usefull property extenders are the subscription extender (add advanced subscriptions) and the edit extender (add transaction capabilities).
 
 ##### Subscribe extender
 
@@ -354,11 +354,12 @@ The subscription extender give you the ability to create a subscription on a sin
 * Create a subscription on a set of observables instead a single observable.
 * Pause / resume the subscription.
 * Automatically add the new array items to the subscription when they are push to an observable array that is part of the subscription.
+* It automatically add to the subscription every item that are pushed to the array (it can be turn off if desired).
 
 If you have the following model that has been extended by Shelby
 
 ```javascript
-var extendedModel = Shelby.ViewModel.prototype._fromJS({
+var model = Shelby.ViewModel.prototype._fromJS({
     firstName: "John",
     lastName: "Doe",
     address: {
@@ -373,8 +374,7 @@ var extendedModel = Shelby.ViewModel.prototype._fromJS({
 You can subscribe to a single observable
 
 ```javascript
-var firstNameSubscription 
-    = extendedModel.firstName.shelby.subscribe(firstChangedFunction);
+var firstNameSubscription = model.firstName.shelby.subscribe(firstChangedFunction);
 ```
 
 Or to a set of observables
