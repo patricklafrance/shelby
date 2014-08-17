@@ -709,6 +709,8 @@ This function is called when the view model is disposed. A view model can be dis
 
 #### Use Shelby.ViewModel variables and functions
 
+The following variables and functions should be used but not overrided.
+
 ##### bind: function([element]) : jQuery promise
 
 Bind the view model to the DOM. If a DOM `element` is specified, the view model will be bind to the specified element, otherwise the view model is bind to the `body` element. The specified `element` can a jQuery element or a regular JavaScript DOM element.
