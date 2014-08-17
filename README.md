@@ -353,8 +353,7 @@ The subscription extender give you the ability to create a subscription on a sin
 
 * Create a subscription on a set of observables instead a single observable.
 * Pause / resume the subscription.
-* Automatically add the new array items to the subscription when they are push to an observable array that is part of the subscription.
-* It automatically add to the subscription every item that are pushed to the array (it can be turn off if desired).
+* It automatically add to the subscription every items that are added to the array (it can be turn off if desired).
 
 If you have the following model that has been extended by Shelby
 
@@ -444,7 +443,7 @@ This is the basic usage of the subscription extender, other features and options
 
 ##### Edit extender
 
-The edit extender give you the ability to create a transaction for a single observable or a set of observables. The transaction provided the ability to commit or rollback the changes on the observables.
+The edit extender give you the ability to create a transaction for a single observable or a set of observables. The transaction can then be commit or rollback. If the transaction is commit the changes are push to the observables, otherwise they are rejected.
 
 If you have the following model that has been extended by Shelby
 
@@ -491,64 +490,49 @@ model.firstName.shelby.resetEdit();
 model.firstName.shelby.cancelEdit();
 ```
 
-While the observables are in a transaction, **all the subscriptions on those observables are paused**, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction **will trigger with their final value**.
+While the observables are in a transaction, **all the subscriptions on those observables are paused**, this means that the observables will not trigger any registered callbacks. When you commit the transaction, all the observables that changed during the transaction **will trigger the registered callback with their final value**.
 
 This is the basic usage of the subscription extender, other features and options are available, you can learn about them [in the API section](#).
 
 #### How to create a custom property extender
 
-To create a property extender there is some rules that you must follow, you can learn about them [in the API section](#).
+If you need to add a custom behavior to multiple observables, you probably want to define a custom property extender. To create a property extender there is some rules that you must follow, you can learn about them [in the API section](#).
 
-Basically, you define an extender function. In this function you filter the properties that you want to extend and then extend them with the strategy of your choice. The function will be called by Shelby for every properties that is map by Shelby and will receive the property and it's type.
+Basically, you have to define an extender function. Once it is registered to Shelby, this function will be called for every properties that are being mapped by Shelby and will receive the property being currently mapped and is type.
 
-The type can either be:
+The property type can either be:
 
 * `Shelby.PropertyType.Object`
 * `Shelby.PropertyType.Array`
 * `Shelby.PropertyType.Scalar` 
 
+You can use the property type to apply the appropriate strategy to extend the property. 
+
 ```javascript
-Shelby.Extenders.edit = function(target, type) {
-    if (type !== PropertyType.Object) {
+Shelby.Extenders.edit = function(property, propertType) {
+    if (propertType !== PropertyType.Object) {
         // If this is not an object, then it must be a KO observable 
         // and it can be extended by using a KO extender 
-        target.extend(this._observableExtenders);
+        property.extend({ shelbyEdit: true });
     }
     
-    if (type === PropertyType.Object) {
+    if (propertType === PropertyType.Object) {
         // An object literal can be extended with the jQuery $.extend function
-        $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
+        $.extend(property["shelby"], {
+            beginEdit: function(options) { ... },
+
+            endEdit: function(notifyOnce) { ... },
+        });
     }
 };
 ```
-
-In this case we define a property object that contains the extender properties and functions that extend a property of the `Shelby.PropertyType.Object` type.
-
-```javascript
-Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
-    _initialize: function() {
-        this.isEditing = false;
-    },
-    
-    beginEdit: function(options) { ... },
-
-    endEdit: function(notifyOnce) { ... },
-
-    // ...
-};
-
-Shelby.Extenders.edit._observableExtenders = {
-    shelbyEdit: true
-};
-```
-
-Finally you register your custom property extender to Shelby.
+After you defined your custom property extender you must register it to Shelby.
 
 ```javascript
 Shelby.ViewModel.registerExtender("edit", Shelby.Extenders.edit);
 ```
 
-You can take a look at the [edit extender](https://github.com/patricklafrance/shelby/blob/master/src/extender.edit.js) to see how a complete exemple of a Shelby property extender.
+You can take a look at the [edit extender](https://github.com/patricklafrance/shelby/blob/master/src/extender.edit.js) to see a complete exemple of a Shelby property extender.
 
 ### Handle view model events
 
