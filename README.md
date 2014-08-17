@@ -654,14 +654,11 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 
 **AND** use the following variables / functions:
 
-```javascript
 * `_element`
 * `_fromJs`
 * `_toJs`
 * `bind`
 * `dispose`
-
-```
 
 ##### _initialize: function([parameters])
 
