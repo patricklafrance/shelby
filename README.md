@@ -387,8 +387,10 @@ You can pause and resume the subscriptions
 
 ```javascript
 firstNameSubscription.pause();
+
 // Do not trigger anything.
 model.firstName("Jane Doe");
+
 firstNameSubscription.resume();
 ```
 
@@ -396,8 +398,10 @@ Or you can pause and resume the observable directly
 
 ```javascript
 model.firstName.shelby.pause();
+
 // Do not trigger anything.
 model.firstName("Jane Doe");
+
 model.firstName.shelby.resume();
 ```
 
