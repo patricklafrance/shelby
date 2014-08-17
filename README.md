@@ -702,6 +702,12 @@ Shelby.ViewModel.extend({
 
 #### _afterBind: function()
 
+This event handler is called after the call to `ko.applyBindings` has been made.
+
+#### _handleDispose: function
+
+This function is called when the view model is disposed. A view model can be disposed explicitly be calling the `dispose` function.
+
 ## Building from sources
 
 If you prefer to build the library yourself:
