@@ -2,15 +2,6 @@
     "use strict";
 
     Shelby.HttpViewModel = Shelby.ViewModel.extend({
-        // Must be override by you to support REST or RPC HTTP requests for 
-        // "all" / "detail" / "add" / "update" / "remove" functions. 
-        // For REST requests, "_url" must be a string representing the endpoint URL.
-        // For RPC requests, "_url" must be an object literal having the following structure:
-        //  - all: "ALL_URL",
-        //  - detail: "DETAIL_URL",
-        //  - add: "ADD_URL",
-        //  - update: "UPDATE_URL",
-        //  - remove: "REMOVE_URL"
         _url: null,
 
         _beforeFetch: null,
@@ -31,7 +22,7 @@
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = this._createOperationContext(request);
+            var operationContext = new OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -81,7 +72,7 @@
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = that._createRequestErrorData(operationContext, jqxhr, textStatus);
+                var error = new RequestError(operationContext, jqxhr, textStatus);
                 
                 deferred.rejectWith(this, [error]);
 
@@ -299,56 +290,56 @@
             return this._remove($.extend(requestOptions, options));
         },
 
-        // Create a new operation context with the following structure:
-        //  - url: The request URL.
-        //  - method: The operation method.
-        //  - data: The request data.
-        _createOperationContext: function(request) {
-            return {
-                url: request.url,
-                method: this._getOperationMethod(request.type),
-                data: request.data
-            };
-        },
+        // // Create a new operation context with the following structure:
+        // //  - url: The request URL.
+        // //  - method: The operation method.
+        // //  - data: The request data.
+        // _createOperationContext: function(request) {
+        //     return {
+        //         url: request.url,
+        //         method: OperationMethod.fromHttpVerb(request.type),
+        //         data: request.data
+        //     };
+        // },
         
-        _createRequestErrorData: function(operationContext, jqxhr, textStatus) {
-            var data = null;
+        // _createRequestErrorData: function(operationContext, jqxhr, textStatus) {
+        //     var data = null;
             
-            if (!utils.isNull(jqxhr.responseJSON)) {
-                data = jqxhr.responseJSON;
-            }
-            else if (!utils.isNull(jqxhr.responseXML)) {
-                data = jqxhr.responseXML;
-            }
-            else {
-                data = jqxhr.responseText;
-            }
+        //     if (!utils.isNull(jqxhr.responseJSON)) {
+        //         data = jqxhr.responseJSON;
+        //     }
+        //     else if (!utils.isNull(jqxhr.responseXML)) {
+        //         data = jqxhr.responseXML;
+        //     }
+        //     else {
+        //         data = jqxhr.responseText;
+        //     }
             
-            operationContext.statusCode = jqxhr.status;
-            operationContext.statusText = jqxhr.statusText;
-            operationContext.exception = textStatus;
+        //     operationContext.statusCode = jqxhr.status;
+        //     operationContext.statusText = jqxhr.statusText;
+        //     operationContext.exception = textStatus;
         
-            return {
-                data: data,
-                operationContext: operationContext
-            };
-        },
+        //     return {
+        //         data: data,
+        //         operationContext: operationContext
+        //     };
+        // },
 
-        _getOperationMethod: function(httpVerb) {
-            var method = OperationMethod.Get;
+        // _getOperationMethod: function(httpVerb) {
+        //     var method = OperationMethod.Get;
 
-            if (httpVerb === "POST") {
-                method = OperationMethod.Post;
-            }
-            else if (httpVerb === "PUT") {
-                method = OperationMethod.Put;
-            }
-            else if (httpVerb === "DELETE") {
-                method = OperationMethod.Delete;
-            }
+        //     if (httpVerb === "POST") {
+        //         method = OperationMethod.Post;
+        //     }
+        //     else if (httpVerb === "PUT") {
+        //         method = OperationMethod.Put;
+        //     }
+        //     else if (httpVerb === "DELETE") {
+        //         method = OperationMethod.Delete;
+        //     }
 
-            return method;
-        },
+        //     return method;
+        // },
         
         _getUrl: function(operation) {
             if (!utils.isNullOrEmpty(this._url)) {
@@ -378,19 +369,70 @@
         }
     });
 
+    Shelby.HttpViewModel.extend = extend;
+
+    // ---------------------------------
+
     var UrlType = Shelby.HttpViewModel.UrlType = {
         Rest: "REST",
         Rpc: "RPC"
     };
+
+    // ---------------------------------
     
     var OperationMethod = Shelby.HttpViewModel.OperationMethod = {
         Get: "GET",
         Post: "POST",
         Put: "PUT",
-        Delete: "DELETE"
+        Delete: "DELETE",
+
+        fromHttpVerb: function(httpVerb) {
+            var method = OperationMethod.Get;
+
+            if (httpVerb === "POST") {
+                method = OperationMethod.Post;
+            }
+            else if (httpVerb === "PUT") {
+                method = OperationMethod.Put;
+            }
+            else if (httpVerb === "DELETE") {
+                method = OperationMethod.Delete;
+            }
+
+            return method;
+        };
     };
 
-    Shelby.HttpViewModel.extend = extend;
+    // ---------------------------------
+
+    var OperationContext = Shelby.HttpViewModel.OperationContext = function(request) {
+        this.url = request.url;
+        this.method =  OperationMethod.fromHttpVerb(request.type);
+        this.data = request.data;
+    };
+
+    // ---------------------------------
+
+    var RequestError = Shelby.HttpViewModel.RequestError = function(operationContext, jqxhr, textStatus) {
+        var response = null;
+        
+        if (!utils.isNull(jqxhr.responseJSON)) {
+            response = jqxhr.responseJSON;
+        }
+        else if (!utils.isNull(jqxhr.responseXML)) {
+            response = jqxhr.responseXML;
+        }
+        else {
+            response = jqxhr.responseText;
+        }
+        
+        operationContext.statusCode = jqxhr.status;
+        operationContext.statusText = jqxhr.statusText;
+        operationContext.exception = textStatus;
+    
+        this.operationContext = operationContext;
+        this.response = response;
+    };
 })(Shelby.extend,
    Shelby.utils,
    Shelby.Factory.instance);

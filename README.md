@@ -3,14 +3,14 @@ Shelby
 
 Shelby is a set of highly extensible objects to quickly build Knockout view models that will handle most of your application business cases. 
 
-**It provides features to:**
+**It provides features to**
 
 * Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
 * Create a subscription to track all the changes of a set of observables (including arrays items).
 * Start a transaction on a single or a set of observables, providing the ability to commit or rollback the changes.
 
-**Shelby is not:**
+**Shelby is not**
 
 * An SPA, this is only a set of view models and observable extenders.
 
@@ -767,18 +767,6 @@ Convert all the properties of the object back to regular JavaScript. It also rem
 
 To define a view model with all the features of `Shelby.ViewModel` and HTTP capabilities you can extend `Shelby.HttpViewModel`.
 
-#### Operation context
-
-Every event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
-
-* `url`: The request URL
-* `method`: A value of the `OperationMethod` enumeration
-    * `Shelby.HttpViewModel.OperationMethod.Get`
-    * `Shelby.HttpViewModel.OperationMethod.Post`
-    * `Shelby.HttpViewModel.OperationMethod.Put`
-    * `Shelby.HttpViewModel.OperationMethod.Delete`
-* `data`: The request data if there was any
-
 #### Define a view model from Shelby.HttpViewModel
 
 When you define your view model you can _optionnally_ override the following properties:
@@ -787,17 +775,17 @@ When you define your view model you can _optionnally_ override the following pro
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
     _url: "" OR {},
 
-    _beforeFetch: function(operationContext, jqXHR, requestSettings) { ... },
+    _beforeFetch: function(operationContext) { ... },
 
-    _beforeSave: function(operationContext, jqXHR, requestSettings) { ... },
+    _beforeSave: function(operationContext) { ... },
 
-    _beforeRemove: function(operationContext, jqXHR, requestSettings) { ... },
+    _beforeRemove: function(operationContext) { ... },
 
-    _afterFetch: function(operationContext, data | jqXHR, textStatus, jqXHR|errorThrown) { ... },
+    _afterFetch: function(operationContext) { ... },
 
-    _afterRemove: function(operationContext, data | jqXHR, textStatus, jqXHR|errorThrown) { ... },
+    _afterRemove: function(operationContext) { ... },
 
-    _handleOperationError: function(operationContext) { ... },
+    _handleOperationError: function(requestError) { ... },
 
     _handleOperationSuccess: function(operationContext) { ... }
 });
@@ -859,6 +847,37 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 
 ##### _handleOperationSuccess: function(operationContext)
 
+#### Shelby.HttpViewModel data objects
+
+##### Shelby.HttpViewModel.OperationContext
+
+Most event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
+
+* `url`: The request URL
+* `method`: A value of the `OperationMethod` enumeration
+    * `Shelby.HttpViewModel.OperationMethod.Get`
+    * `Shelby.HttpViewModel.OperationMethod.Post`
+    * `Shelby.HttpViewModel.OperationMethod.Put`
+    * `Shelby.HttpViewModel.OperationMethod.Delete`
+* `data`: The request data if there was any
+
+##### Shelby.HttpViewModel.RequestError
+
+When an error occurs during a request (HTTP code 4.*, 5.*, timeouts, etc..), the error details is propagate using an object defined as follow:
+
+* `operationContext`
+    * `url`: The request URL
+    * `method`: A value of the `OperationMethod` enumeration
+        * `Shelby.HttpViewModel.OperationMethod.Get`
+        * `Shelby.HttpViewModel.OperationMethod.Post`
+        * `Shelby.HttpViewModel.OperationMethod.Put`
+        * `Shelby.HttpViewModel.OperationMethod.Delete`
+    * `data`: The request data if there was any
+    * `statusCode`: The HTTP status code
+    * `statusText`: The HTTP status text
+    * `exception`: The HTTP exception
+* `response`: The server response (can be JSON, XML or free text)
+
 #### Use Shelby.HttpViewModel variables and functions
 
 ##### all: function([criteria], [options]) : jQuery promise
@@ -876,15 +895,6 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 ##### _save: function(options) : jQuery promise
 
 ##### _remove: function(options) : jQuery promise
-
-##### Shelby.HttpViewModel.OperationMethod: enum
-
-The values are:
-
-* `Get`
-* `Post`
-* `Put`
-* `Delete`
 
 ## Building from sources
 
