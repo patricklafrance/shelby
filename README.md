@@ -849,16 +849,23 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 
 #### Shelby.HttpViewModel data objects
 
+##### Shelby.HttpViewModel.OperationMethod
+
+Represent an HTTP operation method use to communicate with the endpoint.
+
+The values are:
+
+* `Get`
+* `Post`
+* `Put`
+* `Delete`
+
 ##### Shelby.HttpViewModel.OperationContext
 
 Most event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
 
 * `url`: The request URL
-* `method`: A value of the `OperationMethod` enumeration
-    * `Shelby.HttpViewModel.OperationMethod.Get`
-    * `Shelby.HttpViewModel.OperationMethod.Post`
-    * `Shelby.HttpViewModel.OperationMethod.Put`
-    * `Shelby.HttpViewModel.OperationMethod.Delete`
+* `method`: A value of the `Shelby.HttpViewModel.OperationMethod` enumeration
 * `data`: The request data if there was any
 
 ##### Shelby.HttpViewModel.RequestError
@@ -867,11 +874,7 @@ When an error occurs during a request (HTTP code 4.*, 5.*, timeouts, etc..), the
 
 * `operationContext`
     * `url`: The request URL
-    * `method`: A value of the `OperationMethod` enumeration
-        * `Shelby.HttpViewModel.OperationMethod.Get`
-        * `Shelby.HttpViewModel.OperationMethod.Post`
-        * `Shelby.HttpViewModel.OperationMethod.Put`
-        * `Shelby.HttpViewModel.OperationMethod.Delete`
+    * `method`: A value of the `Shelby.HttpViewModel.OperationMethod` enumeration
     * `data`: The request data if there was any
     * `statusCode`: The HTTP status code
     * `statusText`: The HTTP status text
