@@ -709,9 +709,41 @@ This function is called when the view model is disposed. A view model can be dis
 
 #### Use Shelby.ViewModel variables and functions
 
-##### _element
+##### bind: function([element])
+
+##### dispose: function()
+
+##### _element: DOM element
 
 If the view model is binded to a specific element of the DOM, this property value will be that element of the DOM. The property will only have a value after a call to the `bind` function has been made.
+
+##### _fromJs: function(obj [, options])
+
+Convert all the properties of the object into observables and apply the registered [property extenders](#) to all the properties. By default [knockout.viewmodel](http://coderenaissance.github.io/knockout.viewmodel/) is used to do the mapping.
+
+You can specify any options that is supported by [knockout.viewmodel](http://coderenaissance.github.io/knockout.viewmodel/).
+
+The most common options are:
+
+* extend a property
+```javascript
+options:{ 
+    extend:{
+        "{root}.users[i]": function(user){
+            user.isDeleted = ko.observable(false);
+            return user;
+        }
+    }
+};
+```
+*exclude a property
+```javascript
+options:{ 
+    exclude:["{root}.users[i].firstName"]
+};
+```
+
+##### _toJs: function(obj)
 
 ## Building from sources
 
