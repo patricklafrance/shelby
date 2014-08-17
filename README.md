@@ -636,7 +636,7 @@ Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
 
 ### Shelby.ViewModel
 
-To define a view model without HTTP capabilities you can extend Shelby.ViewModel. 
+To define a view model without HTTP capabilities you can extend `Shelby.ViewModel`. 
 
 #### Define a view model from Shelby.ViewModel
 
@@ -765,9 +765,69 @@ Convert all the properties of the object back to regular JavaScript. It also rem
 
 ### Shelby.HttpViewModel
 
+To define a view model with all the features of `Shelby.ViewModel` and HTTP capabilities you can extend `Shelby.HttpViewModel`.
+
 #### Define a view model from Shelby.HttpViewModel
 
+```javascript
+var EmployeeDetailViewModel = Shelby.ViewModel.extend({
+    _url: "" OR {},
+
+    _beforeFetch: function() { ... },
+
+    _beforeSave: function() { ... },
+
+    _beforeRemove: function() { ... },
+
+    _afterFetch: function() { ... },
+
+    _afterRemove: function() { ... },
+
+    _handleOperationError: function(operationContext) { ... },
+
+    _handleOperationSuccess: function(operationContext) { ... }
+});
+```
+
 ##### _url: String or Object
+
+`Shelby.HttpViewModel` support REST and RPC endpoints.
+
+If your endpoint implements REST, specify `_url` as a string.
+
+```javascript
+Shelby.ViewModel.extend({
+    _url: "ENDPOINT_URL"
+});
+```
+
+If your endpoint implements RPC, specify `_url` as an object. You dont have to define all the URLs.
+
+```javascript
+Shelby.ViewModel.extend({
+    _url: {
+        all: "ALL_URL",
+        detail: "DETAIL_URL",
+        add: "ADD_URL",
+        update: "UPDATE_URL",
+        remove: "REMOVE_URL"
+    }
+});
+```
+
+Once you define `_url`,  can you use the _high level_ functions to communicate with your endpoint:
+
+* `all`
+* `detail`
+* `add`
+* `update`
+* `remove`
+
+Otherwise, if you dont want to define `_url`, you can use the _low level_ function:
+
+* _fetch
+* _save
+* _remove
 
 ##### _beforeFetch: function()
 
@@ -803,7 +863,14 @@ Convert all the properties of the object back to regular JavaScript. It also rem
 
 ##### _remove: function(options) : jQuery promise
 
-##### OperationMethod: enum
+##### Shelby.HttpViewModel.OperationMethod: enum
+
+The values are:
+
+* `Get`
+* `Post`
+* `Put`
+* `Delete`
 
 ## Building from sources
 
