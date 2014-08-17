@@ -709,15 +709,29 @@ This function is called when the view model is disposed. A view model can be dis
 
 #### Use Shelby.ViewModel variables and functions
 
-##### bind: function([element])
+##### bind: function([element]) : jQuery promise
+
+Bind the view model to the DOM. If a DOM `element` is specified, the view model will be bind to the specified element, otherwise the view model is bind to the `body` element. The specified `element` can a jQuery element or a regular JavaScript DOM element.
+
+The function returns a jQuery promise that you can hook too if you need to be notified when the view model is bound to the DOM. This is done that way because the `_beforeBind` event handler can be asynchronous.
+
+```javascript
+var promise = vm.bind($("#employee-detail-container"));
+
+promise.done(function() {
+   console.log("The view model is bound to the DOM"); 
+});
+```
 
 ##### dispose: function()
+
+Clear the KO bindings and dispose the view model.
 
 ##### _element: DOM element
 
 If the view model is binded to a specific element of the DOM, this property value will be that element of the DOM. The property will only have a value after a call to the `bind` function has been made.
 
-##### _fromJs: function(obj [, options])
+##### _fromJs: function(obj [, options]) : Object
 
 Convert all the properties of the object into observables and apply the registered [property extenders](#) to all the properties. By default [knockout.viewmodel](http://coderenaissance.github.io/knockout.viewmodel/) is used to do the mapping.
 
@@ -743,7 +757,9 @@ options:{
 };
 ```
 
-##### _toJs: function(obj)
+##### _toJs: function(obj) : Object
+
+Convert all the properties of the object back to regular JavaScript. It also remove all the applied [property extenders](#).
 
 ## Building from sources
 
