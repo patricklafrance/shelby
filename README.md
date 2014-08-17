@@ -706,13 +706,13 @@ This event handler is called after the call to `ko.applyBindings` has been made.
 This function is called when the view model is disposed. A view model can be disposed explicitly be calling the `dispose` function.
 
 
-
+```
 You can also use the following variables / functions
 
 ##### _element
 
 If the view model is binded to a specific element of the DOM, this property value will be that element of the DOM. The property will only have a value after a call to the `bind` function has been made.
-
+```
 
 ## Building from sources
 
