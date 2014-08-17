@@ -641,6 +641,7 @@ To define a view model without HTTP capabilities you can extend Shelby.ViewModel
 ** Écrire les propriétés disponibles tel que _element
 
 
+
 When you define your view model you can _optionnally_ override the following properties:
 
 ```javascript
@@ -655,9 +656,9 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 });
 ```
 
-#### _initialize: function([parameters])
+##### _initialize: function([parameters])
 
-This is the constructor of the view model. It receive the parameters that are passed to the view model at the instanciation of the object.
+This is the constructor of the view model. It is call after all the initialization logic is done and receive the parameters that are passed to the view model at the instanciation of the object.
 
 ```javascript
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
@@ -672,7 +673,7 @@ var vm = new EmployeeDetailViewModel("John", "Doe");
 
 #### _beforeBind: function(callback)
 
-This event handler is called just before the call to `ko.applyBindings` is made. If you need to fetch data to initialize your view model, this is the place to do so.`_beforeBind` can be implemented in 2 ways, synchronous and asynchronous.
+This event handler is called just before binding the view model with the DOM. If you need to fetch data to initialize your view model, this is the place to do so.`_beforeBind` can be implemented in 2 ways, synchronous and asynchronous.
 
 If you choose to do synchronous stuff you dont have to call the `callback` function or return anything.
 
@@ -704,7 +705,7 @@ Shelby.ViewModel.extend({
 
 This event handler is called after the call to `ko.applyBindings` has been made.
 
-#### _handleDispose: function
+#### _handleDispose: function()
 
 This function is called when the view model is disposed. A view model can be disposed explicitly be calling the `dispose` function.
 

@@ -7,20 +7,10 @@
     };
     
     Shelby.ViewModel.prototype = {
-        // Proxy constructor function that should be override by you. 
-        // If defined, it will be invoked when the model is created after all the 
-        // initialization logic is done.
         _initialize: null,
-    
-        // If defined by you, it will be invoked before binding the view model with the DOM. 
-        // By default, the bindings will be applied after your handler execution, if you want to do asynchronous
-        // operations your handler function must return true and then call the callback function parameter 
-        // when your operations are completed.
-        //  - callback: A function that you can call when your asynchronous operations are completed.
+        
         _beforeBind: null,
         _afterBind: null,
-
-        // If defined by you, it will be invoked when disposing the view model.
         _handleDispose: null,
 
         // Apply the KO bindings with the view model.
