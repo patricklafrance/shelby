@@ -772,7 +772,12 @@ To define a view model with all the features of `Shelby.ViewModel` and HTTP capa
 Every event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
 
 * `url`: The request URL
-* `method`: Shelby.HttpViewModel.OperationMethod.Get | Shelby.HttpViewModel.OperationMethod.Post | Shelby.HttpViewModel.OperationMethod.Put | Shelby.HttpViewModel.OperationMethod.Delete
+* `method`: A value of the `OperationMethod` enumeration
+    * `Shelby.HttpViewModel.OperationMethod.Get`
+    * `Shelby.HttpViewModel.OperationMethod.Post`
+    * `Shelby.HttpViewModel.OperationMethod.Put`
+    * `Shelby.HttpViewModel.OperationMethod.Delete`
+* `data`: The request data if there was any
 
 #### Define a view model from Shelby.HttpViewModel
 
