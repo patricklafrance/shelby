@@ -769,6 +769,8 @@ To define a view model with all the features of `Shelby.ViewModel` and HTTP capa
 
 #### Define a view model from Shelby.HttpViewModel
 
+When you define your view model you can _optionnally_ override the following properties:
+
 ```javascript
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
     _url: "" OR {},
@@ -825,9 +827,9 @@ Once you define `_url`,  can you use the _high level_ functions to communicate w
 
 Otherwise, if you dont want to define `_url`, you can use the _low level_ function:
 
-* _fetch
-* _save
-* _remove
+* `_fetch`
+* `_save`
+* `_remove`
 
 ##### _beforeFetch: function()
 
