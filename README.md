@@ -526,7 +526,7 @@ Shelby.Extenders.edit = function(property, propertType) {
     }
 };
 ```
-After you defined your custom property extender you must register it to Shelby.
+When your custom property extender is defined, you must register it to Shelby.
 
 ```javascript
 Shelby.ViewModel.registerExtender("edit", Shelby.Extenders.edit);
@@ -536,13 +536,13 @@ You can take a look at the [edit extender](https://github.com/patricklafrance/sh
 
 ### Handle view model events
 
-There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers when you are defining a view model or, most of them can be provided globally, i.e. that they will be called **when the event occurs in any view models**. 
+There is several events that occurs during the lifeycle of a view model that you can hook too. You can hook to those events by providing handlers. Those handlers can be scoped to a specific view model or globally (they will be triggered **when the event occurs in any view models**).
 
 To see all the events that you can hook to, [see the API section](#).
 
-#### View model specific event handler
+#### Event handlers scoped to a specific view model
 
-To provide an handler for a specific model, all you got to do, is to override the event handler function that correspond to the event when you are defining your view model.
+To provide an event handler for a specific view model, you have to override the event handler function that match the desired event when you define the view model.
 
 ```javascript
 Shelby.ViewModel.extend({
@@ -560,7 +560,7 @@ The following event handler functions can be overrided for every view models:
 * `_afterBind`
 * `_handleDispose`
 
-If you're view model is an `HttpViewModel`, you can also override there event handler functions:
+If you're view model extend `HttpViewModel`, you can also override there event handler functions:
 
 * `_beforeFetch`
 * `_beforeSave`
@@ -572,9 +572,9 @@ If you're view model is an `HttpViewModel`, you can also override there event ha
 * `_handleOperationSuccess`
 
 When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
-This is recommended that you always call the base event handler, but not mendatory.
+This is not mandatory, but we recommaned that you always call the base event handler.
 
-#### Global event handler
+#### Global event handlers
 
 To add a global event handler you can use the `registerEventHandler` function.
 
