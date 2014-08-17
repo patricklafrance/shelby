@@ -725,7 +725,7 @@ You can specify any options that is supported by [knockout.viewmodel](http://cod
 
 The most common options are:
 
-* extend a property
+**Extend a property**
 ```javascript
 options:{ 
     extend:{
@@ -736,7 +736,7 @@ options:{
     }
 };
 ```
-*exclude a property
+**Exclude a property**
 ```javascript
 options:{ 
     exclude:["{root}.users[i].firstName"]
