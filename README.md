@@ -380,8 +380,7 @@ var firstNameSubscription = model.firstName.shelby.subscribe(firstChangedFunctio
 Or to a set of observables
 
 ```javascript
-var addressSubscription 
-    = extendedModel.address.shelby.subscribe(addressChangedFunction);
+var addressSubscription = model.address.shelby.subscribe(addressChangedFunction);
 ```
 
 You can pause and resume the subscriptions
@@ -389,17 +388,17 @@ You can pause and resume the subscriptions
 ```javascript
 firstNameSubscription.pause();
 // Do not trigger anything.
-extendedModel.firstName("Jane Doe");
+model.firstName("Jane Doe");
 firstNameSubscription.resume();
 ```
 
 Or you can pause and resume the observable directly
 
 ```javascript
-extendedModel.firstName.shelby.pause();
+model.firstName.shelby.pause();
 // Do not trigger anything.
-extendedModel.firstName("Jane Doe");
-extendedModel.firstName.shelby.resume();
+model.firstName("Jane Doe");
+model.firstName.shelby.resume();
 ```
 
 **When you create a subscription on an array, the default behavior is to:**
@@ -407,34 +406,34 @@ extendedModel.firstName.shelby.resume();
 Trigger when an item is added or removed from the array
 
 ```javascript
-extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+model.departments.shelby.subscribe(departmentsChangedFunction);
 // Call departmentsChangedFunction
-extendedModel.departments.push(accountingDepartment);
+model.departments.push(accountingDepartment);
 ```
 
 Trigger when any of the items is updated
 
 ```javascript
-extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+model.departments.shelby.subscribe(departmentsChangedFunction);
 // Call "departmentsChangedFunction"
-extendedModel.departments.peek()[1].name("Accounting2");
+model.departments.peek()[1].name("Accounting2");
 ```
 
 Automatically add to the subscriptions all the items that are added to the array
 
 ```javascript
-extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
+model.departments.shelby.subscribe(departmentsChangedFunction);
 // "accountingDepartment" has been automatically added to the subscription.
-extendedModel.departments.push(accountingDepartment);
+model.departments.push(accountingDepartment);
 ```
 
 Automatically remove from the subscriptions all the items that are removed from the array
 
 ```javascript
-extendedModel.departments.shelby.subscribe(departmentsChangedFunction);
-extendedModel.departments.push(accountingDepartment); 
+model.departments.shelby.subscribe(departmentsChangedFunction);
+model.departments.push(accountingDepartment); 
 // "accountingDepartment" has been automatically removed from the subscription.
-extendedModel.departments.remove(accountingDepartment);
+model.departments.remove(accountingDepartment);
 ```
 
 This is the basic usage of the subscription extender, other features and options are available, like the ability to filter which properties of an object should be added to a subscription, you can learn about them [in the API section](#).
@@ -446,7 +445,7 @@ The edit extender give you the ability to create a transaction for a single obse
 If you have the following model that has been extended by Shelby
 
 ```javascript
-var extendedModel = Shelby.ViewModel.prototype._fromJS({
+var model = Shelby.ViewModel.prototype._fromJS({
     firstName: "John",
     lastName: "Doe",
     address: {
@@ -461,31 +460,31 @@ var extendedModel = Shelby.ViewModel.prototype._fromJS({
 You can edit a single observable
 
 ```javascript
-extendedModel.firstName.shelby.beginEdit();
-extendedModel.firstName("Jane");
+model.firstName.shelby.beginEdit();
+model.firstName("Jane");
 ```
 
 Or a set of observables
 
 ```javascript
-extendedModel.address.shelby.beginEdit();
-extendedModel.address.civicNumber("456");
+model.address.shelby.beginEdit();
+model.address.civicNumber("456");
 ```
 
 If you are satisfied with the changes you can commit them
 
 ```javascript
-extendedModel.firstName.shelby.endEdit();
+model.firstName.shelby.endEdit();
 ```
 
 Otherwise, you just rollback them
 
 ```javascript
 // Rollback the values but do not end the transaction
-extendedModel.firstName.shelby.resetEdit();
+model.firstName.shelby.resetEdit();
 
 // Rollback the values and ends the transaction
-extendedModel.firstName.shelby.cancelEdit();
+model.firstName.shelby.cancelEdit();
 ```
 
 While the observables are in a transaction, **all the subscriptions on those observables are paused**, this means that the observables will not trigger. When you commit the transaction, all the observables that changed during the transaction **will trigger with their final value**.
