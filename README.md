@@ -636,7 +636,12 @@ Shelby.Components.replace(Shelby.Components.Mapper, CustomMapper);
 
 ### Shelby.ViewModel
 
-To define a view model without HTTP capabilities you can extend Shelby.ViewModel. When you define your view model you can _optionnally_ override the following properties:
+To define a view model without HTTP capabilities you can extend Shelby.ViewModel. 
+
+** Écrire les propriétés disponibles tel que _element
+
+
+When you define your view model you can _optionnally_ override the following properties:
 
 ```javascript
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
@@ -650,25 +655,50 @@ var EmployeeDetailViewModel = Shelby.ViewModel.extend({
 });
 ```
 
-**_initialize: function()**
+**_initialize: function([parameters])**
 
 This is the constructor of the view model. It receive the parameters that are passed to the view model at his instanciation.
 
 ```javascript
 var EmployeeDetailViewModel = Shelby.ViewModel.extend({
-    model: null,
-
-    _initialize: function(clientModel) {
-        this.model = this._fromJs(clientModel);
+    _initialize: function(firstName, lastName) {
+        this._firstName = firstName;
+        this._lastName = lastName;
     }
 });
 
-var vm = new EmployeeDetailViewModel({
-    firstName: "John",
-    lastName: "Doe"
+var vm = new EmployeeDetailViewModel("John", "Doe");
+```
+
+**_beforeBind: function(callback)**
+
+This event handler is called just before the call to `ko.applyBindings is made. If you need to fetch data to initialize your view model, this is the place to do so.`_beforeBind can be implemented in 2 ways, synchronous and asynchronous.
+
+If you choose to do synchronous stuff you dont have to call the `callback function or return anything.
+
+```javascript
+Shelby.ViewModel.extend({
+    _beforeBind: function() {
+        // Doing synchronous stuff..
+    }
 });
 ```
 
+However, if you do asynchronous stuff, you must return `true to notify Shelby that `_beforeBind is doing asynchronous operations and you must call the `callback function when you are done.
+
+```javascript
+Shelby.ViewModel.extend({
+    _beforeBind: function(callback) {
+        var promise = $.getJSON("...");
+        
+        promise.done(function() {
+            callback();
+        }); 
+
+        return true;
+    }
+});
+```
 
 ## Building from sources
 
