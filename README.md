@@ -544,10 +544,11 @@ To provide an event handler for a specific view model, you have to override the 
 
 ```javascript
 Shelby.ViewModel.extend({
-    _beforeBind: function() {
+    _beforeFetch: function() {
         // Call the base event handler.
-        Shelby.ViewModel._beforeBind.call(this);
-        // Do stuff.
+        Shelby.ViewModel._beforeFetch.apply(this, arguments);
+
+        // Do stuff...
     }
 });
 ```
@@ -569,8 +570,8 @@ If you're view model extend `HttpViewModel`, you can also override there event h
 * `_handleOperationError`
 * `_handleOperationSuccess`
 
-When you override an event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
-This is not mandatory, but we recommaned that you always call the base event handler.
+When you override an event handler function **you throw away the native behavior of that event handler if you dont call the base event handler**. 
+This is not mandatory, but we recommend that you always call the base event handler.
 
 #### Global event handlers
 
@@ -741,7 +742,7 @@ You can specify any options that is supported by [knockout.viewmodel](http://cod
 
 The most common options are:
 
-**Extend a property**
+**Extend a property when mapping**
 ```javascript
 options:{ 
     extend:{
@@ -752,7 +753,7 @@ options:{
     }
 };
 ```
-**Exclude a property**
+**Exclude a property from the mapping**
 ```javascript
 options:{ 
     exclude:["{root}.users[i].firstName"]
@@ -834,6 +835,20 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 ##### _beforeFetch: function(operationContext) : void or false
 
 This event handler is called before an HTTP request to fetch data is send. The request can be initiated by either of `all`, `detail` or `_fetch` functions. To cancel the request you can return `false`, otherwise, do not return anything.
+
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _beforeFetch: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._beforeFetch.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
 
 ##### _beforeSave: function(operationContext) : void or false
 
