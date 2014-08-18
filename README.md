@@ -854,29 +854,127 @@ Shelby.ViewModel.extend({
 
 This event handler is called before an HTTP request to save data is send. The request can be initiated by either of `add`, `update` or `_save` functions. To cancel the request you can return `false`, otherwise, do not return anything.
 
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _beforeSave: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._beforeSave.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
+
 ##### _beforeRemove: function(operationContext) : void or false
 
 This event handler is called before an HTTP request to delete data is send. The request can be initiated by either of `remove` or `_remove` functions. To cancel the request you can return `false`, otherwise, do not return anything.
+
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _beforeRemove: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._beforeRemove.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
 
 ##### _afterFetch: function(operationContext)
 
 This event handler is called after an HTTP request to fetch data has been sent. The request can have been initiated by either of `all`, `detail` or `_fetch` functions.
 
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _afterFetch: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._afterFetch.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
+
 ##### _afterSave: function(operationContext)
 
 This event handler is called after an HTTP request to save data has been sent. The request can have been initiated by either of `add`, `update` or `_save` functions.
+
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _afterSave: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._afterSave.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
 
 ##### _afterRemove: function(operationContext)
 
 This event handler is called after an HTTP request to delete data has been sent. The request can have been initiated by either of `remove` or `_remove` functions.
 
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _afterRemove: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._afterRemove.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
+
 ##### _handleOperationError: function(requestError)
 
 This event handler is called everytime a request failed (HTTP code 4.\*, 5.\*, timeouts, etc..).
 
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _handleOperationError: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._handleOperationError.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
+
 ##### _handleOperationSuccess: function(operationContext)
 
 This event handler is called everytime a request is completed successfully.
+
+> When you override this event handler function you throw away the native behavior of that event handler if you dont call the base event handler. 
+> You should call the base event handler.
+
+```javascript
+Shelby.ViewModel.extend({
+    _handleOperationSuccess: function() {
+        // Call the base event handler.
+        Shelby.ViewModel._handleOperationSuccess.apply(this, arguments);
+
+        // Do stuff...
+    }
+});
+```
 
 #### Shelby.HttpViewModel data objects
 
