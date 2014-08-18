@@ -831,25 +831,41 @@ Otherwise, if you dont want to define `_url`, you can use the _low level_ functi
 * `_save`
 * `_remove`
 
-##### _beforeFetch: function(operationContext, ) : void or false
+##### _beforeFetch: function(operationContext) : void or false
 
-##### _beforeSave: function() : void or false
+This event handler is called before an HTTP request to fetch data is send. The request can be initiated by either of `all`, `detail` or `_fetch` functions. To cancel the request you can return `false`, otherwise, do not return anything.
 
-##### _beforeRemove: function() : void or false
+##### _beforeSave: function(operationContext) : void or false
 
-##### _afterFetch: function()
+This event handler is called before an HTTP request to save data is send. The request can be initiated by either of `add`, `update` or `_save` functions. To cancel the request you can return `false`, otherwise, do not return anything.
 
-##### _afterSave: function()
+##### _beforeRemove: function(operationContext) : void or false
 
-##### _afterRemove: function()
+This event handler is called before an HTTP request to delete data is send. The request can be initiated by either of `remove` or `_remove` functions. To cancel the request you can return `false`, otherwise, do not return anything.
 
-##### _handleOperationError: function(operationContext)
+##### _afterFetch: function(operationContext)
+
+This event handler is called after an HTTP request to fetch data has been sent. The request can have been initiated by either of `all`, `detail` or `_fetch` functions.
+
+##### _afterSave: function(operationContext)
+
+This event handler is called after an HTTP request to save data has been sent. The request can have been initiated by either of `add`, `update` or `_save` functions.
+
+##### _afterRemove: function(operationContext)
+
+This event handler is called after an HTTP request to delete data has been sent. The request can have been initiated by either of `remove` or `_remove` functions.
+
+##### _handleOperationError: function(requestError)
+
+This event handler is called everytime a request failed (HTTP code 4.*, 5.*, timeouts, etc..).
 
 ##### _handleOperationSuccess: function(operationContext)
 
+This event handler is called everytime a request is completed successfully.
+
 #### Shelby.HttpViewModel data objects
 
-##### Shelby.HttpViewModel.OperationMethod
+##### OperationMethod
 
 Represent an HTTP operation method use to communicate with the endpoint.
 
@@ -860,7 +876,7 @@ The values are:
 * `Put`
 * `Delete`
 
-##### Shelby.HttpViewModel.OperationContext
+##### OperationContext
 
 Most event handlers that are specific to HTTP communication receive as parameters an **operationContext**. The operation context is defined as follow:
 
@@ -868,9 +884,9 @@ Most event handlers that are specific to HTTP communication receive as parameter
 * `method`: A value of the `Shelby.HttpViewModel.OperationMethod` enumeration
 * `data`: The request data if there was any
 
-##### Shelby.HttpViewModel.RequestError
+##### RequestError
 
-When an error occurs during a request (HTTP code 4.*, 5.*, timeouts, etc..), the error details is propagate using an object defined as follow:
+When a request fail the error details is propagate using an object defined as follow:
 
 * `operationContext`
     * `url`: The request URL
