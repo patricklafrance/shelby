@@ -857,7 +857,7 @@ This event handler is called after an HTTP request to delete data has been sent.
 
 ##### _handleOperationError: function(requestError)
 
-This event handler is called everytime a request failed (HTTP code 4.**, 5.**, timeouts, etc..).
+This event handler is called everytime a request failed (HTTP code 4.\*, 5.\*, timeouts, etc..).
 
 ##### _handleOperationSuccess: function(operationContext)
 
