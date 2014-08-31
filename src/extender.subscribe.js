@@ -189,8 +189,8 @@
                 // Must do this check because of the automatic subscription of array's new items.
                 if (utils.isImplementingShelby(property.value)) {
                     // Must consider a contextual path and parent to fully support the automatic subscription of array's new items.
-                    var path = property.path === "/" && !utils.isNullOrEmpty(context.path) ? context.path : context.path + property.path;
-                    var parent = property.path === "/" && !utils.isNull(context.parent) ? context.parent : property.parent;
+                    var path = utils.isNullOrEmpty(context.path) ? property.path : utils.stringFormat("{1}{2}", context.path, property.path.replace("{root}", ""));
+                    var parent = utils.isNull(context.parent) ? property.parent : context.parent;
                     var evaluationResult = propertyEvaluator(path);
 
                     // Even if this is not a perfect match, there is cases (like arrays) when we want to add a subscription
@@ -215,7 +215,7 @@
                                         // If a custom extender indicate that an item is added to an array, automatically 
                                         // subscribe to that new item.
                                         that._addToSubscription(this.value, subscription, propertyEvaluator, options, {
-                                            path: utils.stringEnsureEndsWith(path, "/") + "i",
+                                            path: path + "[i]",
                                             parent: property.value
                                         });
                                     }

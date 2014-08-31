@@ -100,16 +100,16 @@
             return utils.arrayMap(paths, function(path) {
                 // If this is a path matching array items, create a function that use a regular expression to match the current paths representing array items properties,
                 // otherwise create a function that use the equality operator to match the current paths against the path.
-                if (utils.stringEndsWith(path, "/i")) {
+                if (utils.stringEndsWith(path, "[i]")) {
                     // Transform "/i" into regex expression [^]+ (means that everything is accepted).
                     var pattern = null;
 
                     try {
-                        pattern = new RegExp(path.replace(/\/i/g, "[^]+"));
+                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]+"));
                     }
                     catch (e) {
                         // IE8 cause a RegExpError exception when the ']' character is not escaped.
-                        pattern = new RegExp(path.replace(/\/i/g, "[^]]+"));
+                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]]+"));
                     }
 
                     return function(current) {
@@ -158,7 +158,7 @@
         },
 
         _isArrayPath: function(path, current) {
-            return path.indexOf(current + "/i") !== -1;
+            return path.indexOf(current + "[i]") !== -1;
         }
     };
 

@@ -74,36 +74,36 @@
 
 			it("When options are specified, reset the matching properties with the matching values", function() {
 				var options = {
-					"/prop1": dataSampler.generateString(10),
-					"/prop2": dataSampler.generateString(10),
-					"/nestedProp/prop3": dataSampler.generateString(10),
-					"/nestedProp/prop4": dataSampler.generateString(10),
-					"/arrayProp/i/prop5": dataSampler.generateString(10),
-					"/arrayProp/i/prop6": dataSampler.generateString(10)
+					"{root}.prop1": dataSampler.generateString(10),
+					"{root}.prop2": dataSampler.generateString(10),
+					"{root}.nestedProp.prop3": dataSampler.generateString(10),
+					"{root}.nestedProp.prop4": dataSampler.generateString(10),
+					"{root}.arrayProp[i].prop5": dataSampler.generateString(10),
+					"{root}.arrayProp[i].prop6": dataSampler.generateString(10)
 				};
 
 				model.shelby.reset(options);
 
-				expect(model.prop1.peek()).toBe(options["/prop1"]);
-				expect(model.prop2.peek()).toBe(options["/prop2"]);
-				expect(model.nestedProp.prop3.peek()).toBe(options["/nestedProp/prop3"]);
-				expect(model.nestedProp.prop4.peek()).toBe(options["/nestedProp/prop4"]);
-				expect(model.arrayProp.peek()[0].prop5.peek()).toBe(options["/arrayProp/i/prop5"]);
-				expect(model.arrayProp.peek()[0].prop6.peek()).toBe(options["/arrayProp/i/prop6"]);
+				expect(model.prop1.peek()).toBe(options["{root}.prop1"]);
+				expect(model.prop2.peek()).toBe(options["{root}.prop2"]);
+				expect(model.nestedProp.prop3.peek()).toBe(options["{root}.nestedProp.prop3"]);
+				expect(model.nestedProp.prop4.peek()).toBe(options["{root}.nestedProp.prop4"]);
+				expect(model.arrayProp.peek()[0].prop5.peek()).toBe(options["{root}.arrayProp[i].prop5"]);
+				expect(model.arrayProp.peek()[0].prop6.peek()).toBe(options["{root}.arrayProp[i].prop6"]);
 			});
 
 			it("When a reset value and options are specified, use the options value when specified, otherwise use the reset value", function() {
 				var resetValue = dataSampler.generateString(10);
 				var options = {
-					"/prop1": dataSampler.generateString(10),
-					"/nestedProp/prop3": dataSampler.generateString(10)
+					"{root}.prop1": dataSampler.generateString(10),
+					"{root}.nestedProp.prop3": dataSampler.generateString(10)
 				};
 
 				model.shelby.reset(resetValue, options);
 
-				expect(model.prop1.peek()).toBe(options["/prop1"]);
+				expect(model.prop1.peek()).toBe(options["{root}.prop1"]);
 				expect(model.prop2.peek()).toBe(resetValue);
-				expect(model.nestedProp.prop3.peek()).toBe(options["/nestedProp/prop3"]);
+				expect(model.nestedProp.prop3.peek()).toBe(options["{root}.nestedProp.prop3"]);
 				expect(model.nestedProp.prop4.peek()).toBe(resetValue);
 				expect(model.arrayProp.peek()[0].prop5.peek()).toBe(resetValue);
 				expect(model.arrayProp.peek()[0].prop6.peek()).toBe(resetValue);

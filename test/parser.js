@@ -18,6 +18,74 @@
 			parser.parse({}, null);
 		});
 
+		describe("Path", function() {
+			var obj = null;
+
+			beforeEach(function() {
+				obj = {
+					observableArrayProp: ko.observableArray([
+						dataSampler.generateString(5), 
+						dataSampler.generateString(5), 
+						{
+							innerArrayProp: [dataSampler.generateString(5)]
+						}
+					]),
+					objProp: {
+						prop1: dataSampler.generateString(5),
+						observableProp: ko.observable(dataSampler.generateString(5))
+					},
+					fctProp: $.noop,
+					intProp: dataSampler.generateInteger(5),
+					strProp: dataSampler.generateString(5)
+				};
+			});
+
+			it("Always starts with {root}", function() {
+				var count = 0;
+
+				parser.parse(obj, {
+					onPrimitive: function(args) {
+						if (args.path.indexOf("{root}") === 0) {
+							count += 1;
+						}
+					}
+				});
+
+				expect(count > 0).toBeTruthy();
+			});
+
+			it("Nested object are separated by '.'", function() {
+				var count = 0;
+
+				parser.parse(obj, {
+					onPrimitive: function(args) {
+						if (args.path === "{root}.objProp.prop1") {
+							count += 1;
+						}
+					}
+				});
+
+				expect(count).toBe(1);
+			});
+
+			it("Array are represented by [i]", function() {
+				var count = 0;
+
+				parser.parse(obj, {
+					onPrimitive: function(args) {
+						if (args.path === "{root}.observableArrayProp[i]") {
+							count += 1;
+						}
+						else if (args.path === "{root}.observableArrayProp[i].innerArrayProp") {
+							count += 1;
+						}
+					}
+				});
+
+				expect(count).toBe(2);
+			})
+		});
+
 		describe("Handlers", function() {
 			var obj = null;
 
@@ -145,7 +213,7 @@
 
 					parser.parse(obj, {
 						onArray: function(args) {
-							if (args.key === "observableArrayProp" && args.path === "/observableArrayProp") {
+							if (args.key === "observableArrayProp" && args.path === "{root}.observableArrayProp") {
 								works = true;
 							}
 						}

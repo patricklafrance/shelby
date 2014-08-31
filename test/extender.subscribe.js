@@ -433,10 +433,10 @@
 					prop4Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/nestedProp/prop3") {
+					if (args.path === "{root}.nestedProp.prop3") {
 						prop3Called = true;
 					}
-					else if (args.path === "/nestedProp/prop4") {
+					else if (args.path === "{root}.nestedProp.prop4") {
 						prop4Called = true;
 					}
 				});
@@ -453,10 +453,10 @@
 					prop6Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
 				});
@@ -477,26 +477,26 @@
 					prop6Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/prop1") {
+					if (args.path === "{root}.prop1") {
 						prop1Called = true;
 					}
-					else if (args.path === "/prop2") {
+					else if (args.path === "{root}.prop2") {
 						prop2Called = true;
 					}
-					else if (args.path === "/nestedProp/prop3") {
+					else if (args.path === "{root}.nestedProp.prop3") {
 						prop3Called = true;
 					}
-					else if (args.path === "/nestedProp/prop4") {
+					else if (args.path === "{root}.nestedProp.prop4") {
 						prop4Called = true;
 					}
-					else if (args.path === "/array/i/prop5") {
+					else if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
 				}, {
-					include: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 				});
 
 				model.prop1(dataSampler.generateString(10));
@@ -520,17 +520,17 @@
 					arrayNewItemCalled = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
-					else if (args.path === "/array") {
+					else if (args.path === "{root}.array") {
 						arrayNewItemCalled = true;
 					}
 				}, {
-					include: ["/array"]
+					include: ["{root}.array"]
 				});
 
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
@@ -548,17 +548,17 @@
 					arrayNewItemCalled = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
-					else if (args.path === "/array") {
+					else if (args.path === "{root}.array") {
 						arrayNewItemCalled = true;
 					}
 				}, {
-					include: ["/array/i"]
+					include: ["{root}.array[i]"]
 				});
 
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
@@ -575,14 +575,14 @@
 					prop6Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
 				}, {
-					include: ["/array/i/prop5"]
+					include: ["{root}.array[i].prop5"]
 				});
 
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
@@ -601,26 +601,26 @@
 					prop6Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/prop1") {
+					if (args.path === "{root}.prop1") {
 						prop1Called = true;
 					}
-					else if (args.path === "/prop2") {
+					else if (args.path === "{root}.prop2") {
 						prop2Called = true;
 					}
-					else if (args.path === "/nestedProp/prop3") {
+					else if (args.path === "{root}.nestedProp.prop3") {
 						prop3Called = true;
 					}
-					else if (args.path === "/nestedProp/prop4") {
+					else if (args.path === "{root}.nestedProp.prop4") {
 						prop4Called = true;
 					}
-					else if (args.path === "/array/i/prop5") {
+					else if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					else if (args.path === "/array/i/prop6") {
+					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
 				}, {
-					exclude: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 				});
 
 				model.prop1(dataSampler.generateString(10));
@@ -644,17 +644,17 @@
 					arrayNewItemCalled = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					if (args.path === "/array/i/prop6") {
+					if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
-					else if (args.path === "/array") {
+					else if (args.path === "{root}.array") {
 						arrayNewItemCalled = true;
 					}
 				}, {
-					exclude: ["/array"]
+					exclude: ["{root}.array"]
 				});
 
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
@@ -672,17 +672,17 @@
 					arrayNewItemCalled = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/array/i/prop5") {
+					if (args.path === "{root}.array[i].prop5") {
 						prop5Called = true;
 					}
-					if (args.path === "/array/i/prop6") {
+					if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
-					else if (args.path === "/array") {
+					else if (args.path === "{root}.array") {
 						arrayNewItemCalled = true;
 					}
 				}, {
-					exclude: ["/array/i"]
+					exclude: ["{root}.array[i]"]
 				});
 
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
@@ -698,12 +698,12 @@
 				var prop1Called = false;
 
 				model.shelby.subscribe(function(args) {
-					if (args.path === "/prop1") {
+					if (args.path === "{root}.prop1") {
 						prop1Called = true;
 					}
 				}, {
-					include: ["/prop1"],
-					exclude: ["/prop1"]
+					include: ["{root}.prop1"],
+					exclude: ["{root}.prop1"]
 				});
 
 				model.prop1(dataSampler.generateString(10));
@@ -801,7 +801,7 @@
 
 				it("The property path", function() {
 					model.shelby.subscribe(function(args) {
-						expect(args.path).toBe("/prop1");
+						expect(args.path).toBe("{root}.prop1");
 					});
 
 					model.prop1(dataSampler.generateString(10));
@@ -809,13 +809,13 @@
 
 				it("The property immediate parent", function() {
 					model.shelby.subscribe(function(args) {
-						if (args.path === "/prop1") {
+						if (args.path === "{root}.prop1") {
 							expect(areEquals(args.parent, model)).toBeTruthy();
 						}
-						else if (args.path === "/nestedProp/prop3") {
+						else if (args.path === "{root}.nestedProp.prop3") {
 							expect(areEquals(args.parent, model.nestedProp)).toBeTruthy();
 						}
-						else if (args.path === "/array/i/prop5") {
+						else if (args.path === "{root}.array[i].prop5") {
 							expect(areEquals(args.parent, model.array.peek()[0])).toBeTruthy();
 						}
 					});
@@ -1029,7 +1029,7 @@
 							works = false;
 						}
 					}, {
-						include: ["/array/i/prop5", "/array/i/prop6"]
+						include: ["{root}.array[i].prop5", "{root}.array[i].prop6"]
 					});
 
 					var membersCountBefore = subscription.members.length;
@@ -1050,7 +1050,7 @@
 								works = true;
 							}
 						}, {
-							include: ["/array/i/prop1"]
+							include: ["{root}.array[i].prop1"]
 						});
 
 						model.array.push(newItem);
@@ -1065,7 +1065,7 @@
 						var subscription = model.shelby.subscribe(function(args) {
 							works = false;
 						}, {
-							include: ["/array/i/prop1"]
+							include: ["{root}.array[i].prop1"]
 						});
 
 						model.array.push(newItem);
@@ -1082,7 +1082,7 @@
 							works = false;
 						}
 					}, {
-						exclude: ["/array/i/prop1"]
+						exclude: ["{root}.array[i].prop1"]
 					});
 
 					var membersCountBefore = subscription.members.length;
@@ -1124,7 +1124,7 @@
 							works = false;
 						}
 					}, {
-						exclude: ["/array/i/array2/i/prop1"]
+						exclude: ["{root}.array[i].array2[i].prop1"]
 					});
 
 					var newArrayItem = {

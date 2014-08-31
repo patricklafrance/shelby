@@ -168,7 +168,7 @@ gulp.task("release", function(callback) {
 });
 
 gulp.task("watch", function() {
-	gulp.watch(paths.scripts.src, ["build"]);
+	gulp.watch(paths.scripts.src.concat(paths.scripts.test.specifications), ["build"]);
 });
 
 ////////////////////////////////////////////////////////

@@ -53,7 +53,7 @@
 				};
 				
 				propertyExtender.add(obj, {
-					"/array": {
+					"{root}.array": {
 						extender: function(target, type) {
 							works = type === Shelby.PropertyType.Array;
 						}
@@ -71,7 +71,7 @@
 				};
 
 				propertyExtender.add(obj, {
-					"/obs": {
+					"{root}.obs": {
 						extender: function(target, type) {
 							works = type === Shelby.PropertyType.Array;
 						}
@@ -186,7 +186,7 @@
 			};
 
 			propertyExtender.add(obj, {
-				"/prop2": {
+				"{root}.prop2": {
 					extender: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
 					}
@@ -209,7 +209,7 @@
 						target[Shelby.namespace].fct1 = $.noop;
 					}
 				},
-				"/prop2": {
+				"{root}.prop2": {
 					extender2: function(target) {
 						target[Shelby.namespace].fct2 = $.noop;
 					}

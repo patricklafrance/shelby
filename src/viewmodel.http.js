@@ -289,57 +289,6 @@
 
             return this._remove($.extend(requestOptions, options));
         },
-
-        // // Create a new operation context with the following structure:
-        // //  - url: The request URL.
-        // //  - method: The operation method.
-        // //  - data: The request data.
-        // _createOperationContext: function(request) {
-        //     return {
-        //         url: request.url,
-        //         method: OperationMethod.fromHttpVerb(request.type),
-        //         data: request.data
-        //     };
-        // },
-        
-        // _createRequestErrorData: function(operationContext, jqxhr, textStatus) {
-        //     var data = null;
-            
-        //     if (!utils.isNull(jqxhr.responseJSON)) {
-        //         data = jqxhr.responseJSON;
-        //     }
-        //     else if (!utils.isNull(jqxhr.responseXML)) {
-        //         data = jqxhr.responseXML;
-        //     }
-        //     else {
-        //         data = jqxhr.responseText;
-        //     }
-            
-        //     operationContext.statusCode = jqxhr.status;
-        //     operationContext.statusText = jqxhr.statusText;
-        //     operationContext.exception = textStatus;
-        
-        //     return {
-        //         data: data,
-        //         operationContext: operationContext
-        //     };
-        // },
-
-        // _getOperationMethod: function(httpVerb) {
-        //     var method = OperationMethod.Get;
-
-        //     if (httpVerb === "POST") {
-        //         method = OperationMethod.Post;
-        //     }
-        //     else if (httpVerb === "PUT") {
-        //         method = OperationMethod.Put;
-        //     }
-        //     else if (httpVerb === "DELETE") {
-        //         method = OperationMethod.Delete;
-        //     }
-
-        //     return method;
-        // },
         
         _getUrl: function(operation) {
             if (!utils.isNullOrEmpty(this._url)) {
@@ -400,7 +349,7 @@
             }
 
             return method;
-        };
+        }
     };
 
     // ---------------------------------

@@ -305,8 +305,7 @@ Shelby.debug = false;
 // ---------------------------------
 
 (function(utils) {
-    // Function use by some of the Shelby object to let you extend them with
-    // additional instance properties.
+    // Function use by the Shelby components to let you extend them.
     Shelby.extend = function(/* objects */) {
         if (arguments.length === 0) {
             throw new Error("At least 1 non-null plain object is required to extend a Shelby object.");
@@ -512,7 +511,7 @@ Shelby.debug = false;
                 var unwrappedArray = ko.utils.peekObservable(array);
             
                 for (var i = 0, max = unwrappedArray.length; i < max; i += 1) {
-                    proceed = this._next("i", unwrappedArray[i], path, array);
+                    proceed = this._next("[i]", unwrappedArray[i], path, array);
                     
                     if (proceed === false) {
                         break;
@@ -544,11 +543,15 @@ Shelby.debug = false;
         },
         
         _augmentPath: function(actualPath, newPart) {
-            if (actualPath === "/") {
+            if (newPart === "") {
+                return "{root}";
+            }
+
+            if (newPart === "[i]") {
                 return actualPath + newPart;
             }
             
-            return actualPath + "/" + newPart;
+            return utils.stringFormat("{1}.{2}", actualPath, newPart);
         }
     };
     
@@ -658,16 +661,16 @@ Shelby.debug = false;
             return utils.arrayMap(paths, function(path) {
                 // If this is a path matching array items, create a function that use a regular expression to match the current paths representing array items properties,
                 // otherwise create a function that use the equality operator to match the current paths against the path.
-                if (utils.stringEndsWith(path, "/i")) {
+                if (utils.stringEndsWith(path, "[i]")) {
                     // Transform "/i" into regex expression [^]+ (means that everything is accepted).
                     var pattern = null;
 
                     try {
-                        pattern = new RegExp(path.replace(/\/i/g, "[^]+"));
+                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]+"));
                     }
                     catch (e) {
                         // IE8 cause a RegExpError exception when the ']' character is not escaped.
-                        pattern = new RegExp(path.replace(/\/i/g, "[^]]+"));
+                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]]+"));
                     }
 
                     return function(current) {
@@ -716,7 +719,7 @@ Shelby.debug = false;
         },
 
         _isArrayPath: function(path, current) {
-            return path.indexOf(current + "/i") !== -1;
+            return path.indexOf(current + "[i]") !== -1;
         }
     };
 
@@ -1019,12 +1022,12 @@ Shelby.debug = false;
                 // Must do this check because of the automatic subscription of array's new items.
                 if (utils.isImplementingShelby(property.value)) {
                     // Must consider a contextual path and parent to fully support the automatic subscription of array's new items.
-                    var path = property.path === "/" && !utils.isNullOrEmpty(context.path) ? context.path : context.path + property.path;
-                    var parent = property.path === "/" && !utils.isNull(context.parent) ? context.parent : property.parent;
+                    var path = utils.isNullOrEmpty(context.path) ? property.path : utils.stringFormat("{1}{2}", context.path, property.path.replace("{root}", ""));
+                    var parent = utils.isNull(context.parent) ? property.parent : context.parent;
                     var evaluationResult = propertyEvaluator(path);
 
                     // Even if this is not a perfect match, there is cases (like arrays) when we want to add a subscription
-                    // to the property to handle special behaviours (like item's automatic subscriptions for arrays).
+                    // to the property to handle special behaviors (like item's automatic subscriptions for arrays).
                     if (evaluationResult.isValid) {
                         // Abstraction to add additional informations when a subscription is triggered.
                         var proxyCallback = function(value, extendArguments, extender) {
@@ -1045,7 +1048,7 @@ Shelby.debug = false;
                                         // If a custom extender indicate that an item is added to an array, automatically 
                                         // subscribe to that new item.
                                         that._addToSubscription(this.value, subscription, propertyEvaluator, options, {
-                                            path: utils.stringEnsureEndsWith(path, "/") + "i",
+                                            path: path + "[i]",
                                             parent: property.value
                                         });
                                     }
@@ -1631,20 +1634,10 @@ Shelby.debug = false;
     };
     
     Shelby.ViewModel.prototype = {
-        // Proxy constructor function that should be override by you. 
-        // If defined, it will be invoked when the model is created after all the 
-        // initialization logic is done.
         _initialize: null,
-    
-        // If defined by you, it will be invoked before binding the view model with the DOM. 
-        // By default, the bindings will be applied after your handler execution, if you want to do asynchronous
-        // operations your handler function must return true and then call the callback function parameter 
-        // when your operations are completed.
-        //  - callback: A function that you can call when your asynchronous operations are completed.
+        
         _beforeBind: null,
         _afterBind: null,
-
-        // If defined by you, it will be invoked when disposing the view model.
         _handleDispose: null,
 
         // Apply the KO bindings with the view model.
@@ -1694,8 +1687,8 @@ Shelby.debug = false;
             // Convert properties to observables.
             var mapped = factory.mapper().fromJS(obj, options);
             
-            // Extend all the properties.
-            this._addExtenders(mapped);
+            // Extend all the object properties.
+            this._applyExtendersToObject(mapped);
             
             return mapped;
         },
@@ -1704,19 +1697,19 @@ Shelby.debug = false;
             // Convert observables back to primitive values.
             var unmapped = factory.mapper().toJS(obj);
             
-            // Remove all extenders left on the properties (ex. on objects).
-            this._removeExtenders(unmapped);
+            // Remove all the extenders left on the object properties (ex. on objects).
+            this._removeExtendersFromObject(unmapped);
             
             return unmapped;
         },
 
-        _addExtenders: function(obj) {
+        _applyExtendersToObject: function(obj) {
             if (utils.objectSize(this._extenders) > 0) {
                 factory.propertyExtender().add(obj, this._extenders);
             }
         },
         
-        _removeExtenders: function(obj) {
+        _removeExtendersFromObject: function(obj) {
             factory.propertyExtender().remove(obj);
         },
         
@@ -1777,15 +1770,6 @@ Shelby.debug = false;
     "use strict";
 
     Shelby.HttpViewModel = Shelby.ViewModel.extend({
-        // Must be override by you to support REST or RPC HTTP requests for 
-        // "all" / "detail" / "add" / "update" / "remove" functions. 
-        // For REST requests, "_url" must be a string representing the endpoint URL.
-        // For RPC requests, "_url" must be an object literal having the following structure:
-        //  - all: "ALL_URL",
-        //  - detail: "DETAIL_URL",
-        //  - add: "ADD_URL",
-        //  - update: "UPDATE_URL",
-        //  - remove: "REMOVE_URL"
         _url: null,
 
         _beforeFetch: null,
@@ -1806,7 +1790,7 @@ Shelby.debug = false;
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = this._createOperationContext(request);
+            var operationContext = new OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -1856,7 +1840,7 @@ Shelby.debug = false;
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = that._createRequestErrorData(operationContext, jqxhr, textStatus);
+                var error = new RequestError(operationContext, jqxhr, textStatus);
                 
                 deferred.rejectWith(this, [error]);
 
@@ -2073,57 +2057,6 @@ Shelby.debug = false;
 
             return this._remove($.extend(requestOptions, options));
         },
-
-        // Create a new operation context with the following structure:
-        //  - url: The request URL.
-        //  - method: The operation method.
-        //  - data: The request data.
-        _createOperationContext: function(request) {
-            return {
-                url: request.url,
-                method: this._getOperationMethod(request.type),
-                data: request.data
-            };
-        },
-        
-        _createRequestErrorData: function(operationContext, jqxhr, textStatus) {
-            var data = null;
-            
-            if (!utils.isNull(jqxhr.responseJSON)) {
-                data = jqxhr.responseJSON;
-            }
-            else if (!utils.isNull(jqxhr.responseXML)) {
-                data = jqxhr.responseXML;
-            }
-            else {
-                data = jqxhr.responseText;
-            }
-            
-            operationContext.statusCode = jqxhr.status;
-            operationContext.statusText = jqxhr.statusText;
-            operationContext.exception = textStatus;
-        
-            return {
-                data: data,
-                operationContext: operationContext
-            };
-        },
-
-        _getOperationMethod: function(httpVerb) {
-            var method = OperationMethod.Get;
-
-            if (httpVerb === "POST") {
-                method = OperationMethod.Post;
-            }
-            else if (httpVerb === "PUT") {
-                method = OperationMethod.Put;
-            }
-            else if (httpVerb === "DELETE") {
-                method = OperationMethod.Delete;
-            }
-
-            return method;
-        },
         
         _getUrl: function(operation) {
             if (!utils.isNullOrEmpty(this._url)) {
@@ -2153,19 +2086,70 @@ Shelby.debug = false;
         }
     });
 
+    Shelby.HttpViewModel.extend = extend;
+
+    // ---------------------------------
+
     var UrlType = Shelby.HttpViewModel.UrlType = {
         Rest: "REST",
         Rpc: "RPC"
     };
+
+    // ---------------------------------
     
     var OperationMethod = Shelby.HttpViewModel.OperationMethod = {
         Get: "GET",
         Post: "POST",
         Put: "PUT",
-        Delete: "DELETE"
+        Delete: "DELETE",
+
+        fromHttpVerb: function(httpVerb) {
+            var method = OperationMethod.Get;
+
+            if (httpVerb === "POST") {
+                method = OperationMethod.Post;
+            }
+            else if (httpVerb === "PUT") {
+                method = OperationMethod.Put;
+            }
+            else if (httpVerb === "DELETE") {
+                method = OperationMethod.Delete;
+            }
+
+            return method;
+        }
     };
 
-    Shelby.HttpViewModel.extend = extend;
+    // ---------------------------------
+
+    var OperationContext = Shelby.HttpViewModel.OperationContext = function(request) {
+        this.url = request.url;
+        this.method =  OperationMethod.fromHttpVerb(request.type);
+        this.data = request.data;
+    };
+
+    // ---------------------------------
+
+    var RequestError = Shelby.HttpViewModel.RequestError = function(operationContext, jqxhr, textStatus) {
+        var response = null;
+        
+        if (!utils.isNull(jqxhr.responseJSON)) {
+            response = jqxhr.responseJSON;
+        }
+        else if (!utils.isNull(jqxhr.responseXML)) {
+            response = jqxhr.responseXML;
+        }
+        else {
+            response = jqxhr.responseText;
+        }
+        
+        operationContext.statusCode = jqxhr.status;
+        operationContext.statusText = jqxhr.statusText;
+        operationContext.exception = textStatus;
+    
+        this.operationContext = operationContext;
+        this.response = response;
+    };
 })(Shelby.extend,
    Shelby.utils,
    Shelby.Factory.instance);

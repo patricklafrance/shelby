@@ -83,7 +83,7 @@
                 var unwrappedArray = ko.utils.peekObservable(array);
             
                 for (var i = 0, max = unwrappedArray.length; i < max; i += 1) {
-                    proceed = this._next("i", unwrappedArray[i], path, array);
+                    proceed = this._next("[i]", unwrappedArray[i], path, array);
                     
                     if (proceed === false) {
                         break;
@@ -115,11 +115,15 @@
         },
         
         _augmentPath: function(actualPath, newPart) {
-            if (actualPath === "/") {
+            if (newPart === "") {
+                return "{root}";
+            }
+
+            if (newPart === "[i]") {
                 return actualPath + newPart;
             }
             
-            return actualPath + "/" + newPart;
+            return utils.stringFormat("{1}.{2}", actualPath, newPart);
         }
     };
     

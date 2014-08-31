@@ -350,7 +350,7 @@
 
 			it("When the \"include\" options is specified, only begin edition of properties to include", function() {
 				model.shelby.beginEdit({
-					include: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 				});
 
 				expect(model.prop1.shelby.isEditing).toBeTruthy();
@@ -364,7 +364,7 @@
 
 			it("When the \"include\" options is specified for an array, begin the edition of the array itself but do not begin the edition of the array items", function() {
 				model.shelby.beginEdit({
-					include: ["/array"]
+					include: ["{root}.array"]
 				});
 
 				expect(model.array.shelby.isEditing).toBeTruthy();
@@ -374,7 +374,7 @@
 
 			it("When the \"include\" options is specified for the items of an array, begin the edition of the items of the array but do not begin the edition of the array itself", function() {
 				model.shelby.beginEdit({
-					include: ["/array/i"]
+					include: ["{root}.array[i]"]
 				});
 
 				expect(model.array.shelby.isEditing).toBeFalsy();
@@ -384,7 +384,7 @@
 
 			it("When the \"exclude\" options is specified, begin the edition of the properties that are not excluded", function() {
 				model.shelby.beginEdit({
-					exclude: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 				});
 
 				expect(model.prop1.shelby.isEditing).toBeFalsy();
@@ -398,7 +398,7 @@
 
 			it("When the \"exclude\" options is specified for an array, do not begin the edition of the array itself but begin the edition of the items of the array", function() {
 				model.shelby.beginEdit({
-					exclude: ["/array"]
+					exclude: ["{root}.array"]
 				});
 
 				expect(model.array.shelby.isEditing).toBeFalsy();
@@ -408,7 +408,7 @@
 
 			it("When the \"exclude\" options is specified for the items of an array, do not begin the edition of items of the array but begin the edition of the array itself", function() {
 				model.shelby.beginEdit({
-					exclude: ["/array/i"]
+					exclude: ["{root}.array[i]"]
 				});
 
 				expect(model.array.shelby.isEditing).toBeTruthy();
@@ -418,7 +418,7 @@
 
 			it("When the \"include\" and \"exclude\" options are both specified, the \"include\" options is used", function() {
 				model.shelby.beginEdit({
-					include: ["/prop1"]
+					include: ["{root}.prop1"]
 				});
 
 				expect(model.prop1.shelby.isEditing).toBeTruthy();
@@ -426,7 +426,7 @@
 
 			it("Always save the specified options", function() {
 				var options = {
-					include: ["/prop1"]
+					include: ["{root}.prop1"]
 				};
 
 				model.shelby.beginEdit(options);
@@ -465,13 +465,13 @@
 
 				it("Do not overwrite the options", function() {
 					var options = {
-						include: ["/prop1"]
+						include: ["{root}.prop1"]
 					};
 
 					model.shelby.beginEdit(options);
 
 					model.shelby.beginEdit({
-						include: ["/prop2"]
+						include: ["{root}.prop2"]
 					});
 
 					expect(areEquals(options, model.shelby._editOptions)).toBeTruthy();
@@ -505,7 +505,7 @@
 						spyOn(model.array.peek()[0].prop6.shelby, "endEdit");
 
 						model.shelby.beginEdit({
-							include: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+							include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 						});
 
 						model.shelby.endEdit();
@@ -529,22 +529,22 @@
 						prop6Called = false;
 
 					model.shelby.subscribe(function(args) {
-						if (args.path === "/prop1") {
+						if (args.path === "{root}.prop1") {
 							prop1Called = true;
 						}
-						else if (args.path === "/prop2") {
+						else if (args.path === "{root}.prop2") {
 							prop2Called = true;
 						}
-						else if (args.path === "/nestedProp/prop3") {
+						else if (args.path === "{root}.nestedProp.prop3") {
 							prop3Called = true;
 						}
-						else if (args.path === "/nestedProp/prop4") {
+						else if (args.path === "{root}.nestedProp.prop4") {
 							prop4Called = true;
 						}
-						else if (args.path === "/array/i/prop5") {
+						else if (args.path === "{root}.array[i].prop5") {
 							prop5Called = true;
 						}
-						else if (args.path === "/array/i/prop6") {
+						else if (args.path === "{root}.array[i].prop6") {
 							prop6Called = true;
 						}
 					});
@@ -579,22 +579,22 @@
 						prop6Called = false;
 
 					model.shelby.subscribe(function(args) {
-						if (args.path === "/prop1") {
+						if (args.path === "{root}.prop1") {
 							prop1Called = true;
 						}
-						else if (args.path === "/prop2") {
+						else if (args.path === "{root}.prop2") {
 							prop2Called = true;
 						}
-						else if (args.path === "/nestedProp/prop3") {
+						else if (args.path === "{root}.nestedProp.prop3") {
 							prop3Called = true;
 						}
-						else if (args.path === "/nestedProp/prop4") {
+						else if (args.path === "{root}.nestedProp.prop4") {
 							prop4Called = true;
 						}
-						else if (args.path === "/array/i/prop5") {
+						else if (args.path === "{root}.array[i].prop5") {
 							prop5Called = true;
 						}
-						else if (args.path === "/array/i/prop6") {
+						else if (args.path === "{root}.array[i].prop6") {
 							prop6Called = true;
 						}
 					});
@@ -692,7 +692,7 @@
 					spyOn(model.array.peek()[0].prop6.shelby, "cancelEdit");
 
 					model.shelby.beginEdit({
-						include: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+						include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 					});
 
 					model.shelby.cancelEdit();
@@ -748,7 +748,7 @@
 					spyOn(model.array.peek()[0].prop6.shelby, "resetEdit");
 
 					model.shelby.beginEdit({
-						include: ["/prop1", "/nestedProp/prop3", "/array/i/prop5"]
+						include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
 					});
 
 					model.shelby.resetEdit();
