@@ -443,7 +443,7 @@ Shelby.debug = false;
             }
 
             this._reset(obj, options, context);
-            this._next("", obj, "", null);
+            this._next("{root}", obj, "", null);
         },
         
         _reset: function(obj, options, context) {
@@ -543,8 +543,8 @@ Shelby.debug = false;
         },
         
         _augmentPath: function(actualPath, newPart) {
-            if (utils.isNullOrEmpty("")) {
-                return "{root}";
+            if (newPart === "{root}") {
+                return newPart;
             }
 
             if (newPart === "[i]") {
