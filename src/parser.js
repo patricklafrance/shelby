@@ -115,7 +115,7 @@
         },
         
         _augmentPath: function(actualPath, newPart) {
-            if (newPart === "") {
+            if (utils.isNullOrEmpty("")) {
                 return "{root}";
             }
 
