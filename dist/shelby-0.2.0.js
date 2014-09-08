@@ -1625,20 +1625,17 @@ Shelby.debug = false;
     Shelby.Mapper.extend = extend;
 })(Shelby.extend);
 
-// Shelby.ViewModel
+Shelby._ViewModel = {};
+
+// Shelby._ViewModel.Bindable
 // ---------------------------------
 
-(function(namespace, extend, utils, factory) {
-    Shelby.ViewModel = function() {
-        this.element = null;
-    };
-    
-    Shelby.ViewModel.prototype = {
-        _initialize: null,
-        
+(function(utils) {
+    "use strict";
+
+    Shelby._ViewModel.Bindable = {
         _beforeBind: null,
         _afterBind: null,
-        _handleDispose: null,
 
         // Apply the KO bindings with the view model.
         //  - element : a DOM or jQuery element to use as the root.
@@ -1650,12 +1647,12 @@ Shelby.debug = false;
                 that._applyBindings();
                 deferred.resolve();
             };
-		
+        
             this.element = this._getDomElement(element);
             
             if ($.isFunction(this._beforeBind)) {
                 var isAsync = this._beforeBind.call(this, applyBindings);
-				
+                
                 if (isAsync !== true) {
                     applyBindings();
                 }
@@ -1663,10 +1660,10 @@ Shelby.debug = false;
             else {
                 applyBindings();
             }
-			
+            
             return deferred.promise();
         },
-        
+
         _getDomElement: function(element) {
             if (utils.isjQueryElement(element) && element.length > 0) {
                 element = element[0];
@@ -1682,7 +1679,36 @@ Shelby.debug = false;
                 this._afterBind.call(this);
             }
         },
-        
+
+        _disposeBindings: function() {
+            if (utils.isDomElement(this.element)) {
+                // Clean the KO bindings on the specified DOM element.
+                if (ko.dataFor(this.element)) {
+                    ko.cleanNode(this.element);
+                }
+            }
+        }
+    };
+})(Shelby.utils);
+
+// Shelby._ViewModel.Disposable
+// ---------------------------------
+
+(function() {
+    "use strict";
+
+    Shelby._ViewModel.Disposable = {
+        _handleDispose: null
+    };
+})();
+
+// Shelby._ViewModel.Extendable
+// ---------------------------------
+
+(function(namespace, utils, factory) {
+    "use strict";
+
+    Shelby._ViewModel.Extendable = {
         _fromJS: function(obj, options) {
             // Convert properties to observables.
             var mapped = factory.mapper().fromJS(obj, options);
@@ -1712,28 +1738,6 @@ Shelby.debug = false;
         _removeExtendersFromObject: function(obj) {
             factory.propertyExtender().remove(obj);
         },
-        
-        dispose: function() {
-            this._disposeAllSubscriptions();
-            this._disposeBindings();
-
-            if ($.isFunction(this._handleDispose)) {
-                this._handleDispose.call(this);
-            }
-
-            /* jshint -W051 */
-            delete this;
-            /* jshint +W051 */
-        },
-
-        _disposeBindings: function() {
-            if (utils.isDomElement(this.element)) {
-                // Clean the KO bindings on the specified DOM element.
-                if (ko.dataFor(this.element)) {
-                    ko.cleanNode(this.element);
-                }
-            }
-        },
 
         _disposeAllSubscriptions: function() {
             var action = function(property) {
@@ -1750,37 +1754,25 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.ViewModel.prototype._extenders = {
+    Shelby._ViewModel.Extendable._extenders = {
         "*": {
             "utility": Shelby.Extenders.utility,
             "subscribe": Shelby.Extenders.subscribe,
             "edit": Shelby.Extenders.edit
         }
     };
-    
-    Shelby.ViewModel.extend = extend;
-})(Shelby.namespace, 
-   Shelby.extend, 
-   Shelby.utils, 
+})(Shelby.namespace,
+   Shelby.utils,
    Shelby.Factory.instance);
 
-
+// Shelby._ViewModel.Http
+// ---------------------------------
 
 (function(extend, utils, factory) {
     "use strict";
 
-    Shelby.HttpViewModel = Shelby.ViewModel.extend({
+    Shelby._ViewModel.Http = {
         _url: null,
-
-        _beforeFetch: null,
-        _beforeSave: null,
-        _beforeRemove: null,
-        _afterFetch: null,
-        _afterSave: null,
-        _afterRemove: null,
-
-        _handleOperationError: null,
-        _handleOperationSuccess: null,
 
         _send: function(options, handlers) {
             if (utils.isNullOrEmpty(options.request.url)) {
@@ -1790,7 +1782,7 @@ Shelby.debug = false;
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = new OperationContext(request);
+            var operationContext = new Shelby.OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -1840,7 +1832,7 @@ Shelby.debug = false;
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = new RequestError(operationContext, jqxhr, textStatus);
+                var error = new Shelby.RequestError(operationContext, jqxhr, textStatus);
                 
                 deferred.rejectWith(this, [error]);
 
@@ -2084,20 +2076,39 @@ Shelby.debug = false;
             
             throw new Error("To use any of the AJAX operations, the \"_url\" property must be a non-null/empty string or a non-null object literal.");
         }
-    });
-
-    Shelby.HttpViewModel.extend = extend;
+    };
 
     // ---------------------------------
 
-    var UrlType = Shelby.HttpViewModel.UrlType = {
+    var UrlType = Shelby.UrlType = {
         Rest: "REST",
         Rpc: "RPC"
+    };
+})(Shelby.extend,
+   Shelby.utils,
+   Shelby.Factory.instance);
+
+// Shelby._ViewModel.HttpNotifications
+// ---------------------------------
+
+(function(utils) {
+    "use strict";
+
+    Shelby._ViewModel.HttpNotifications = {
+        _beforeFetch: null,
+        _beforeSave: null,
+        _beforeRemove: null,
+        _afterFetch: null,
+        _afterSave: null,
+        _afterRemove: null,
+
+        _handleOperationError: null,
+        _handleOperationSuccess: null
     };
 
     // ---------------------------------
     
-    var OperationMethod = Shelby.HttpViewModel.OperationMethod = {
+    var OperationMethod = Shelby.OperationMethod = {
         Get: "GET",
         Post: "POST",
         Put: "PUT",
@@ -2122,7 +2133,7 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    var OperationContext = Shelby.HttpViewModel.OperationContext = function(request) {
+    Shelby.OperationContext = function(request) {
         this.url = request.url;
         this.method =  OperationMethod.fromHttpVerb(request.type);
         this.data = request.data;
@@ -2130,7 +2141,7 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    var RequestError = Shelby.HttpViewModel.RequestError = function(operationContext, jqxhr, textStatus) {
+    Shelby.RequestError = function(operationContext, jqxhr, textStatus) {
         var response = null;
         
         if (!utils.isNull(jqxhr.responseJSON)) {
@@ -2150,9 +2161,86 @@ Shelby.debug = false;
         this.operationContext = operationContext;
         this.response = response;
     };
+})(Shelby.utils);
+
+// Shelby.ViewModel
+// ---------------------------------
+
+(function(extend, Bindable, Disposable, Extendable, Http, HttpNotifications) {
+    "use strict";
+
+    Shelby.ViewModel = function() {
+        // This is used by the binding functions.
+        this.element = null;
+    };
+
+    var prototype = $.extend(true, {}, 
+        Bindable,
+        Disposable,
+        Extendable,
+        Http,
+        HttpNotifications, {
+            _initialize: null,
+
+            dispose: function() {
+                this._disposeAllSubscriptions();
+                this._disposeBindings();
+
+                if ($.isFunction(this._handleDispose)) {
+                    this._handleDispose.call(this);
+                }
+
+                /* jshint -W051 */
+                delete this;
+                /* jshint +W051 */
+            }
+        });
+    
+    Shelby.ViewModel.prototype = prototype;
+    Shelby.ViewModel.extend = extend;
 })(Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby._ViewModel.Bindable,
+   Shelby._ViewModel.Disposable,
+   Shelby._ViewModel.Extendable,
+   Shelby._ViewModel.Http,
+   Shelby._ViewModel.HttpNotifications);
+
+
+
+// Shelby.ComponentViewModel
+// ---------------------------------
+
+(function(extend, Disposable, Extendable, Http) {
+    "use strict";
+
+    Shelby.ComponentViewModel = function() {
+    };
+
+    var prototype = $.extend(true, {},
+        Disposable,
+        Extendable,
+        Http, {
+            _initialize: null,
+
+            dispose: function() {
+                this._disposeAllSubscriptions();
+
+                if ($.isFunction(this._handleDispose)) {
+                    this._handleDispose.call(this);
+                }
+
+                /* jshint -W051 */
+                delete this;
+                /* jshint +W051 */
+            }
+        });
+
+    Shelby.ComponentViewModel.prototype = prototype;
+    Shelby.ComponentViewModel.extend = extend;
+})(Shelby.extend,
+   Shelby._ViewModel.Disposable,
+   Shelby._ViewModel.Extendable,
+   Shelby._ViewModel.Http);
 
 return Shelby;
 

@@ -1,0 +1,1 @@
+Shelby._ViewModel = {};

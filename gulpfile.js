@@ -54,8 +54,14 @@ var paths = {
 			"src/extender.utility.js",
 			"src/ajax.js",
 			"src/mapper.js",
+			"src/viewmodel.namespace.js",
+			"src/viewmodel.bindable.js",
+			"src/viewmodel.disposable.js",
+			"src/viewmodel.extendable.js",
+			"src/viewmodel.http.js",
+			"src/viewmodel.http.notifications.js",
 			"src/viewmodel.js",
-			"src/viewmodel.http.js"
+			"src/viewmodel.component.js"
 		],
 		test: {
 			specifications: [

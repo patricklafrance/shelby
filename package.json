@@ -28,7 +28,7 @@
   },
   "browser": {
     "jquery": "./lib/jquery-1.10.2.js",
-    "knockout": "./lib/knockout-3.0.0.js",
+    "knockout": "./lib/knockout-3.2.0.js",
     "knockout.viewmodel": "./lib/knockout.viewmodel"
   },
   "browserify-shim": {

@@ -1,18 +1,11 @@
+// Shelby._ViewModel.Http
+// ---------------------------------
+
 (function(extend, utils, factory) {
     "use strict";
 
-    Shelby.HttpViewModel = Shelby.ViewModel.extend({
+    Shelby._ViewModel.Http = {
         _url: null,
-
-        _beforeFetch: null,
-        _beforeSave: null,
-        _beforeRemove: null,
-        _afterFetch: null,
-        _afterSave: null,
-        _afterRemove: null,
-
-        _handleOperationError: null,
-        _handleOperationSuccess: null,
 
         _send: function(options, handlers) {
             if (utils.isNullOrEmpty(options.request.url)) {
@@ -22,7 +15,7 @@
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = new OperationContext(request);
+            var operationContext = new Shelby.OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -72,7 +65,7 @@
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = new RequestError(operationContext, jqxhr, textStatus);
+                var error = new Shelby.RequestError(operationContext, jqxhr, textStatus);
                 
                 deferred.rejectWith(this, [error]);
 
@@ -316,71 +309,13 @@
             
             throw new Error("To use any of the AJAX operations, the \"_url\" property must be a non-null/empty string or a non-null object literal.");
         }
-    });
-
-    Shelby.HttpViewModel.extend = extend;
+    };
 
     // ---------------------------------
 
-    var UrlType = Shelby.HttpViewModel.UrlType = {
+    var UrlType = Shelby.UrlType = {
         Rest: "REST",
         Rpc: "RPC"
-    };
-
-    // ---------------------------------
-    
-    var OperationMethod = Shelby.HttpViewModel.OperationMethod = {
-        Get: "GET",
-        Post: "POST",
-        Put: "PUT",
-        Delete: "DELETE",
-
-        fromHttpVerb: function(httpVerb) {
-            var method = OperationMethod.Get;
-
-            if (httpVerb === "POST") {
-                method = OperationMethod.Post;
-            }
-            else if (httpVerb === "PUT") {
-                method = OperationMethod.Put;
-            }
-            else if (httpVerb === "DELETE") {
-                method = OperationMethod.Delete;
-            }
-
-            return method;
-        }
-    };
-
-    // ---------------------------------
-
-    var OperationContext = Shelby.HttpViewModel.OperationContext = function(request) {
-        this.url = request.url;
-        this.method =  OperationMethod.fromHttpVerb(request.type);
-        this.data = request.data;
-    };
-
-    // ---------------------------------
-
-    var RequestError = Shelby.HttpViewModel.RequestError = function(operationContext, jqxhr, textStatus) {
-        var response = null;
-        
-        if (!utils.isNull(jqxhr.responseJSON)) {
-            response = jqxhr.responseJSON;
-        }
-        else if (!utils.isNull(jqxhr.responseXML)) {
-            response = jqxhr.responseXML;
-        }
-        else {
-            response = jqxhr.responseText;
-        }
-        
-        operationContext.statusCode = jqxhr.status;
-        operationContext.statusText = jqxhr.statusText;
-        operationContext.exception = textStatus;
-    
-        this.operationContext = operationContext;
-        this.response = response;
     };
 })(Shelby.extend,
    Shelby.utils,

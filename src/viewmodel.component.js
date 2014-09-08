@@ -1,25 +1,20 @@
-// Shelby.ViewModel
+// Shelby.ComponentViewModel
 // ---------------------------------
 
-(function(extend, Bindable, Disposable, Extendable, Http, HttpNotifications) {
+(function(extend, Disposable, Extendable, Http) {
     "use strict";
 
-    Shelby.ViewModel = function() {
-        // This is used by the binding functions.
-        this.element = null;
+    Shelby.ComponentViewModel = function() {
     };
 
-    var prototype = $.extend(true, {}, 
-        Bindable,
+    var prototype = $.extend(true, {},
         Disposable,
         Extendable,
-        Http,
-        HttpNotifications, {
+        Http, {
             _initialize: null,
 
             dispose: function() {
                 this._disposeAllSubscriptions();
-                this._disposeBindings();
 
                 if ($.isFunction(this._handleDispose)) {
                     this._handleDispose.call(this);
@@ -30,13 +25,10 @@
                 /* jshint +W051 */
             }
         });
-    
-    Shelby.ViewModel.prototype = prototype;
-    Shelby.ViewModel.extend = extend;
+
+    Shelby.ComponentViewModel.prototype = prototype;
+    Shelby.ComponentViewModel.extend = extend;
 })(Shelby.extend,
-   Shelby._ViewModel.Bindable,
    Shelby._ViewModel.Disposable,
    Shelby._ViewModel.Extendable,
-   Shelby._ViewModel.Http,
-   Shelby._ViewModel.HttpNotifications);
-
+   Shelby._ViewModel.Http);
