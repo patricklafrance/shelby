@@ -355,75 +355,79 @@ Shelby.debug = false;
     };
 })(Shelby.utils);
 
-// Shelby.Factory
-//
-// Factory creating lazy singleton for Shelby dependency objects. This allow you to easily
-// modify the dependency objects prototype before Shelby instantiate and use them.
+// Shelby.Components
 // ---------------------------------
 
 (function(extend, utils) {
-    Shelby.Factory = function() {
-        this._filters = null;
-        this._propertyExtender = null;
-        this._parser = null;
-        this._ajax = null;
-        this._mapper = null;
-        this._mediator = null;
+    "use strict";
+
+    var ComponentsFactory = Shelby.ComponentsFactory = function() {
+        this._components = {};
+        this._instances = {};
     };
-    
-    Shelby.Factory.prototype = {
-        filters: function() {
-            if (utils.isNull(this._filters)) {
-                this._filters = new Shelby.Filters();
+
+    Shelby.ComponentsFactory.prototype = {
+        registerComponent: function(name, factory) {
+            if (utils.isNullOrEmpty(name)) {
+                throw new Error("\"name\" must be a non-null or empty component name.");
             }
-            
-            return this._filters;
+
+            if (!$.isFunction(factory)) {
+                throw new Error("\"factory\" must be a function to create instances of the component.");
+            }
+
+            this._components[name] = factory;
         },
 
-        propertyExtender: function() {
-            if (utils.isNull(this._propertyExtender)) {
-                this._propertyExtender = new Shelby.PropertyExtender();
-            }
-            
-            return this._propertyExtender;
-        },
-        
-        parser: function() {
-            if (utils.isNull(this._parser)) {
-                this._parser = new Shelby.Parser();
-            }
-            
-            return this._parser;
-        },
-        
-        ajax: function() {
-            if (utils.isNull(this._ajax)) {
-                this._ajax = new Shelby.Ajax();
-            }
-            
-            return this._ajax;
-        },
-        
-        mapper: function() {
-            if (utils.isNull(this._mapper)) {
-                this._mapper = new Shelby.Mapper();
-            }
-            
-            return this._mapper;
-        },
+        getComponent: function(componentName) {
+            var instance = this._instances[componentName];
 
-        mediator: function() {
-            if (utils.isNull(this._mediator)) {
-                this._mediator = new Shelby.Mediator();
+            if (utils.isNull(instance)) {
+                var factory = this._components[componentName];
+
+                if (!$.isFunction(factory)) {
+                    throw new Error(utils.stringFormat("Cannot find a component factory for {1}", componentName));
+                }
+
+                instance = this._instances[componentName] = factory();
             }
-            
-            return this._mediator;
+
+            return instance;
         }
     };
-    
-    Shelby.Factory.extend = extend;
-    Shelby.Factory.instance = new Shelby.Factory();
-})(Shelby.extend, 
+
+    ComponentsFactory.extend = extend;
+
+    // ---------------------------------
+
+    var Components = Shelby.components = {
+        factory: null,
+
+        setComponentFactory: function(factory) {
+            if (utils.isNull(factory)) {
+                throw new Error("\"factory\" must be an object.");
+            }
+
+            this.factory = factory;
+        },
+
+        registerComponent: function(name, factory) {
+            this.factory.registerComponent(name, factory);
+        }
+    };
+
+    // Define functions to easily requiert native components.
+    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper"], function() {
+        var componentName = this;
+
+        Components[componentName] = function() {
+            return Components.factory.getComponent(componentName);
+        };
+    });
+
+    // Register a default factory.
+    Components.setComponentFactory(new ComponentsFactory()); 
+})(Shelby.extend,
    Shelby.utils);
 
 // Shelby.Parser
@@ -556,6 +560,11 @@ Shelby.debug = false;
     };
     
     Shelby.Parser.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("parser", function() {
+        return new Shelby.Parser();
+    });
 })(Shelby.extend,
    Shelby.utils);
 
@@ -724,6 +733,11 @@ Shelby.debug = false;
     };
 
     Shelby.Filters.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("filters", function() {
+        return new Shelby.Filters();
+    });
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);
@@ -731,7 +745,7 @@ Shelby.debug = false;
 // Shelby.Extenders - Core
 // ---------------------------------
 
-(function(namespace, extend, utils, factory) {
+(function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType = {
         Object: 0,
         Array: 1,
@@ -779,8 +793,8 @@ Shelby.debug = false;
                 };
                 
                 // Iterate on the target properties to extend all the objects and observables matching criterias.
-                factory.parser().parse(target, {
-                    filter: factory.filters().getExtendablePropertyFilter(),
+                Shelby.components.parser().parse(target, {
+                    filter: Shelby.components.filters().getExtendablePropertyFilter(),
                     onObject: action(PropertyType.Object),
                     onArray: action(PropertyType.Array),
                     onFunction: action(PropertyType.Scalar)
@@ -798,8 +812,8 @@ Shelby.debug = false;
             };
         
             // Iterate on the target properties to remove shelby extenders.
-            factory.parser().parse(target, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(target, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onObject: action,
                 onArray: action,
                 onFunction: action
@@ -826,15 +840,21 @@ Shelby.debug = false;
     };
     
     Shelby.PropertyExtender.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("propertyExtender", function() {
+        return new Shelby.PropertyExtender();
+    });
 })(Shelby.namespace,
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby.utils);
 
 // Shelby.Extenders - Subscribe
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     ko.extenders.shelbySubscribe = function(target) {
         // When true, all the subscriptions are pause.
         var pauseAllSubscriptions = false;
@@ -974,7 +994,7 @@ Shelby.debug = false;
             options = options || {};
             options.array = options.array || {};
 
-            var propertyFilter = factory.filters().getPathFilter(options.include, options.exclude);
+            var propertyFilter = Shelby.components.filters().getPathFilter(options.include, options.exclude);
             
             var subscription = {
                 // Unique identifier of the subscription.
@@ -1079,8 +1099,8 @@ Shelby.debug = false;
             };
             
             // Iterate on the target properties to subscribe on all the observables matching criterias.
-            factory.parser().parse(target, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(target, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -1103,8 +1123,8 @@ Shelby.debug = false;
             };
         
             // Iterate on the target properties to dispose the subscriptions from all the observables matching criterias.
-            factory.parser().parse(target, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(target, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -1198,14 +1218,14 @@ Shelby.debug = false;
     };
 })(Shelby.namespace, 
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);
 
 // Shelby.Extenders - Edit
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     ko.extenders.shelbyEdit = function(target) {
         if (!$.isFunction(target[namespace].pause) || !$.isFunction(target[namespace].resume)) {
             throw new Error(utils.stringFormat("\"shelbyEditable\" can only extends an observable having \"{1}.pause\" and \"{1}.resume\" functions.", namespace));
@@ -1429,7 +1449,7 @@ Shelby.debug = false;
             // Filter that handles the include / exclude options by evaluating the property
             // paths against the specified options and filter out the paths that doesn't match the 
             // options.
-            var propertyEvaluator = factory.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
+            var propertyEvaluator = Shelby.components.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
         
             var execute = function(property) {
                 if (propertyEvaluator(property.path).isPerfectMatch) {
@@ -1438,8 +1458,8 @@ Shelby.debug = false;
             };
         
             // Iterate on the target properties to execute the action on all the observables matching criterias.
-            factory.parser().parse(this._target(), {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this._target(), {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: execute,
                 onFunction: execute
             });
@@ -1453,14 +1473,14 @@ Shelby.debug = false;
     };
 })(Shelby.namespace,
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);
 
 // Shelby.Extenders - Utility
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     Shelby.Extenders.utility = function(target, type) {
         if (type !== PropertyType.Scalar) {
             // Copy all the functions to the target.
@@ -1494,8 +1514,8 @@ Shelby.debug = false;
             };
         
             // Iterate on the target properties to reset all the observables matching criterias.
-            factory.parser().parse(this._target(), {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this._target(), {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onFunction: action
             });
         },
@@ -1506,7 +1526,7 @@ Shelby.debug = false;
             }
 
             try {
-                factory.mapper().update(this._target(), obj);
+                Shelby.components.mapper().update(this._target(), obj);
             }
             catch (e) {
                 throw new Error("An error occurred while updating the target object. Make sure that all the observables properties of the target object has been created by the Shelby mapper.");
@@ -1517,9 +1537,7 @@ Shelby.debug = false;
     Shelby.Extenders.utility._ctor.extend = extend;
 })(Shelby.namespace, 
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);
 
 // Shelby.Ajax
 // ---------------------------------
@@ -1597,6 +1615,11 @@ Shelby.debug = false;
     });
     
     Ajax.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("ajax", function() {
+        return new Ajax();
+    });
 })(Shelby.debug,
    Shelby.extend, 
    Shelby.utils);
@@ -1623,6 +1646,11 @@ Shelby.debug = false;
     };
     
     Shelby.Mapper.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("mapper", function() {
+        return new Shelby.Mapper();
+    });
 })(Shelby.extend);
 
 Shelby._ViewModel = {};
@@ -1705,13 +1733,13 @@ Shelby._ViewModel = {};
 // Shelby._ViewModel.Extendable
 // ---------------------------------
 
-(function(namespace, utils, factory) {
+(function(namespace, utils) {
     "use strict";
 
     Shelby._ViewModel.Extendable = {
         _fromJS: function(obj, options) {
             // Convert properties to observables.
-            var mapped = factory.mapper().fromJS(obj, options);
+            var mapped = Shelby.components.mapper().fromJS(obj, options);
             
             // Extend all the object properties.
             this._applyExtendersToObject(mapped);
@@ -1721,7 +1749,7 @@ Shelby._ViewModel = {};
         
         _toJS: function(obj) {
             // Convert observables back to primitive values.
-            var unmapped = factory.mapper().toJS(obj);
+            var unmapped = Shelby.components.mapper().toJS(obj);
             
             // Remove all the extenders left on the object properties (ex. on objects).
             this._removeExtendersFromObject(unmapped);
@@ -1731,12 +1759,12 @@ Shelby._ViewModel = {};
 
         _applyExtendersToObject: function(obj) {
             if (utils.objectSize(this._extenders) > 0) {
-                factory.propertyExtender().add(obj, this._extenders);
+                Shelby.components.propertyExtender().add(obj, this._extenders);
             }
         },
         
         _removeExtendersFromObject: function(obj) {
-            factory.propertyExtender().remove(obj);
+            Shelby.components.propertyExtender().remove(obj);
         },
 
         _disposeAllSubscriptions: function() {
@@ -1747,8 +1775,8 @@ Shelby._ViewModel = {};
             };
         
             // Iterate on the view model properties to dispose all the subscriptions.
-            factory.parser().parse(this, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onObject: action
             });
         }
@@ -1762,13 +1790,12 @@ Shelby._ViewModel = {};
         }
     };
 })(Shelby.namespace,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby.utils);
 
 // Shelby._ViewModel.Http
 // ---------------------------------
 
-(function(extend, utils, factory) {
+(function(extend, utils) {
     "use strict";
 
     Shelby._ViewModel.Http = {
@@ -1802,7 +1829,7 @@ Shelby._ViewModel = {};
             }
 
             // Execute the AJAX request.
-            var promise = factory.ajax().send(request);
+            var promise = Shelby.components.ajax().send(request);
 
             // Using a "proxy" deferred to add custom mapping / error handling logics through 
             // the AJAX promise handlers.
@@ -1893,7 +1920,7 @@ Shelby._ViewModel = {};
                 onAfter: this._afterSave,
                 onResponse: function(response, requestOptions) {
                     if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
-                        factory.mapper().update(requestOptions.request.data, response);
+                        Shelby.components.mapper().update(requestOptions.request.data, response);
                     }
 
                     return response;
@@ -2085,8 +2112,7 @@ Shelby._ViewModel = {};
         Rpc: "RPC"
     };
 })(Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby.utils);
 
 // Shelby._ViewModel.HttpNotifications
 // ---------------------------------

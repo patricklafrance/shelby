@@ -1,7 +1,9 @@
 // Shelby.Extenders - Utility
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     Shelby.Extenders.utility = function(target, type) {
         if (type !== PropertyType.Scalar) {
             // Copy all the functions to the target.
@@ -35,8 +37,8 @@
             };
         
             // Iterate on the target properties to reset all the observables matching criterias.
-            factory.parser().parse(this._target(), {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this._target(), {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onFunction: action
             });
         },
@@ -47,7 +49,7 @@
             }
 
             try {
-                factory.mapper().update(this._target(), obj);
+                Shelby.components.mapper().update(this._target(), obj);
             }
             catch (e) {
                 throw new Error("An error occurred while updating the target object. Make sure that all the observables properties of the target object has been created by the Shelby mapper.");
@@ -58,6 +60,4 @@
     Shelby.Extenders.utility._ctor.extend = extend;
 })(Shelby.namespace, 
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);

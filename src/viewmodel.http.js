@@ -1,7 +1,7 @@
 // Shelby._ViewModel.Http
 // ---------------------------------
 
-(function(extend, utils, factory) {
+(function(extend, utils) {
     "use strict";
 
     Shelby._ViewModel.Http = {
@@ -35,7 +35,7 @@
             }
 
             // Execute the AJAX request.
-            var promise = factory.ajax().send(request);
+            var promise = Shelby.components.ajax().send(request);
 
             // Using a "proxy" deferred to add custom mapping / error handling logics through 
             // the AJAX promise handlers.
@@ -126,7 +126,7 @@
                 onAfter: this._afterSave,
                 onResponse: function(response, requestOptions) {
                     if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
-                        factory.mapper().update(requestOptions.request.data, response);
+                        Shelby.components.mapper().update(requestOptions.request.data, response);
                     }
 
                     return response;
@@ -318,5 +318,4 @@
         Rpc: "RPC"
     };
 })(Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby.utils);

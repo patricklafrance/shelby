@@ -1,13 +1,13 @@
 // Shelby._ViewModel.Extendable
 // ---------------------------------
 
-(function(namespace, utils, factory) {
+(function(namespace, utils) {
     "use strict";
 
     Shelby._ViewModel.Extendable = {
         _fromJS: function(obj, options) {
             // Convert properties to observables.
-            var mapped = factory.mapper().fromJS(obj, options);
+            var mapped = Shelby.components.mapper().fromJS(obj, options);
             
             // Extend all the object properties.
             this._applyExtendersToObject(mapped);
@@ -17,7 +17,7 @@
         
         _toJS: function(obj) {
             // Convert observables back to primitive values.
-            var unmapped = factory.mapper().toJS(obj);
+            var unmapped = Shelby.components.mapper().toJS(obj);
             
             // Remove all the extenders left on the object properties (ex. on objects).
             this._removeExtendersFromObject(unmapped);
@@ -27,12 +27,12 @@
 
         _applyExtendersToObject: function(obj) {
             if (utils.objectSize(this._extenders) > 0) {
-                factory.propertyExtender().add(obj, this._extenders);
+                Shelby.components.propertyExtender().add(obj, this._extenders);
             }
         },
         
         _removeExtendersFromObject: function(obj) {
-            factory.propertyExtender().remove(obj);
+            Shelby.components.propertyExtender().remove(obj);
         },
 
         _disposeAllSubscriptions: function() {
@@ -43,8 +43,8 @@
             };
         
             // Iterate on the view model properties to dispose all the subscriptions.
-            factory.parser().parse(this, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onObject: action
             });
         }
@@ -58,5 +58,4 @@
         }
     };
 })(Shelby.namespace,
-   Shelby.utils,
-   Shelby.Factory.instance);
+   Shelby.utils);

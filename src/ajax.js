@@ -74,6 +74,11 @@
     });
     
     Ajax.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("ajax", function() {
+        return new Ajax();
+    });
 })(Shelby.debug,
    Shelby.extend, 
    Shelby.utils);

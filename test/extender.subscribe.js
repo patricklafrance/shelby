@@ -401,7 +401,7 @@
 				}])
 			};
 
-			Shelby.Factory.instance.propertyExtender().add(model, {
+			Shelby.components.propertyExtender().add(model, {
 				"*": {
 					"subscribe": Shelby.Extenders.subscribe
 				}
@@ -986,7 +986,7 @@
 						prop1: ko.observable(dataSampler.generateString(10))
 					};
 
-					Shelby.Factory.instance.propertyExtender().add(newItem, {
+					Shelby.components.propertyExtender().add(newItem, {
 						"*": {
 							"subscribe": Shelby.Extenders.subscribe
 						}
@@ -1131,7 +1131,7 @@
 						array2: ko.observableArray([])
 					};
 
-					Shelby.Factory.instance.propertyExtender().add(newArrayItem, {
+					Shelby.components.propertyExtender().add(newArrayItem, {
 						"*": {
 							"subscribe": Shelby.Extenders.subscribe
 						}

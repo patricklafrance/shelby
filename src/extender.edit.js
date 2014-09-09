@@ -1,7 +1,9 @@
 // Shelby.Extenders - Edit
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     ko.extenders.shelbyEdit = function(target) {
         if (!$.isFunction(target[namespace].pause) || !$.isFunction(target[namespace].resume)) {
             throw new Error(utils.stringFormat("\"shelbyEditable\" can only extends an observable having \"{1}.pause\" and \"{1}.resume\" functions.", namespace));
@@ -225,7 +227,7 @@
             // Filter that handles the include / exclude options by evaluating the property
             // paths against the specified options and filter out the paths that doesn't match the 
             // options.
-            var propertyEvaluator = factory.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
+            var propertyEvaluator = Shelby.components.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
         
             var execute = function(property) {
                 if (propertyEvaluator(property.path).isPerfectMatch) {
@@ -234,8 +236,8 @@
             };
         
             // Iterate on the target properties to execute the action on all the observables matching criterias.
-            factory.parser().parse(this._target(), {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(this._target(), {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: execute,
                 onFunction: execute
             });
@@ -249,6 +251,4 @@
     };
 })(Shelby.namespace,
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);

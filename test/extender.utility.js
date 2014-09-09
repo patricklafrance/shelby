@@ -21,7 +21,7 @@
 					prop8: dataSampler.generateString(10)
 				};
 
-				Shelby.Factory.instance.propertyExtender().add(model, {
+				Shelby.components.propertyExtender().add(model, {
 					"*": {
 						"utility": Shelby.Extenders.utility
 					}
@@ -136,9 +136,9 @@
 
 					// The updateFrom utility expect that the observables has been map
 					// created by the shelby mapper. 
-					model = Shelby.Factory.instance.mapper().fromJS(model);
+					model = Shelby.components.mapper().fromJS(model);
 
-					Shelby.Factory.instance.propertyExtender().add(model, {
+					Shelby.components.propertyExtender().add(model, {
 						"*": {
 							"utility": Shelby.Extenders.utility
 						}
@@ -202,7 +202,7 @@
 						}]
 					};
 
-					Shelby.Factory.instance.propertyExtender().add(model, {
+					Shelby.components.propertyExtender().add(model, {
 						"*": {
 							"utility": Shelby.Extenders.utility
 						}

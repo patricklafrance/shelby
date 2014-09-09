@@ -45,7 +45,7 @@ var paths = {
 			"src/vars.js",
 			"src/utils.js",
 			"src/extend.js",
-			"src/factory.js",
+			"src/components.js",
 			"src/parser.js",
 			"src/filters.js",
 			"src/extender.core.js",
@@ -67,6 +67,7 @@ var paths = {
 			specifications: [
 				"test/utils.js",
 				"test/extend.js",
+				"test/components.js",
 				"test/parser.js",
 				"test/extender.core.js",
 				"test/extender.subscribe.js",

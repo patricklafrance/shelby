@@ -1,7 +1,9 @@
 // Shelby.Extenders - Subscribe
 // ---------------------------------
 
-(function(namespace, extend, utils, factory, PropertyType) {
+(function(namespace, extend, utils) {
+    var PropertyType = Shelby.PropertyType;
+
     ko.extenders.shelbySubscribe = function(target) {
         // When true, all the subscriptions are pause.
         var pauseAllSubscriptions = false;
@@ -141,7 +143,7 @@
             options = options || {};
             options.array = options.array || {};
 
-            var propertyFilter = factory.filters().getPathFilter(options.include, options.exclude);
+            var propertyFilter = Shelby.components.filters().getPathFilter(options.include, options.exclude);
             
             var subscription = {
                 // Unique identifier of the subscription.
@@ -246,8 +248,8 @@
             };
             
             // Iterate on the target properties to subscribe on all the observables matching criterias.
-            factory.parser().parse(target, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(target, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -270,8 +272,8 @@
             };
         
             // Iterate on the target properties to dispose the subscriptions from all the observables matching criterias.
-            factory.parser().parse(target, {
-                filter: factory.filters().getExtendedPropertyFilter(),
+            Shelby.components.parser().parse(target, {
+                filter: Shelby.components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -365,6 +367,4 @@
     };
 })(Shelby.namespace, 
    Shelby.extend,
-   Shelby.utils,
-   Shelby.Factory.instance,
-   Shelby.PropertyType);
+   Shelby.utils);

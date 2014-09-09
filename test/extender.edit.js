@@ -311,7 +311,7 @@
 				}])
 			};
 
-			Shelby.Factory.instance.propertyExtender().add(model, {
+			Shelby.components.propertyExtender().add(model, {
 				"*": {
 					"subscribe": Shelby.Extenders.subscribe,
 					"edit": Shelby.Extenders.edit
