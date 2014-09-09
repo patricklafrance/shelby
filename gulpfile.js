@@ -74,7 +74,6 @@ var paths = {
 				"test/extender.utility.js",
 				"test/ajax.js",
 				"test/viewmodel.js",
-				"test/viewmodel.http.js",
 				"test/runner.html.js",
 			],
 			browsersify: ["./test/exports/browserify.main.js"]

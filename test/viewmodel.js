@@ -56,4 +56,40 @@
 	describe("ViewModel.dispose", function() {
 
 	});
+
+    describe("ViewModel.all", function() {
+        it("When using a REST endpoint and the \"url\" property is not a valid URL, throw an exception", function() {
+
+        });
+
+        it("When using an RPC endpoint and the \"url\" property is not an object having a property named \"all\" with a valid URL as a value, throw an exception", function() {
+
+        });
+
+        describe("When an \"beforeFetch\" handler is specified", function() {
+            it("Always call the handler before sending the request", function() {
+
+            });
+        });
+
+        it("", function() {
+
+        });
+    });
+
+    describe("ViewModel.detail", function() {
+
+    });
+
+    describe("ViewModel.add", function() {
+
+    });
+
+    describe("ViewModel.update", function() {
+
+    });
+
+    describe("ViewModel.remove", function() {
+
+    });
 })(jQuery);
