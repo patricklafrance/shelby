@@ -25,7 +25,7 @@
                     
                     // The original jQuery AJAX "beforeSend" function support returning "false" to abort the
                     // request, allow a return value to support that behaviour.
-                    return handlers.onBefore.apply(this, args);
+                    return handlers.onBefore.apply(that, args);
                 };
             }
 
@@ -48,7 +48,7 @@
                     // If the caller did NOT specify to NOT process the response, process the response. 
                     if (options.response.process !== false) {
                         if ($.isFunction(options.response.extractor)) {
-                            response = options.response.extractor.call(this, response);
+                            response = options.response.extractor.call(that, response);
                         }
 
                         if ($.isFunction(handlers.onResponse)) {
@@ -60,7 +60,7 @@
                 deferred.resolveWith(this, [response]);
 
                 if ($.isFunction(that._handleOperationSuccess)) {
-                    that._handleOperationSuccess.call(this, operationContext);
+                    that._handleOperationSuccess.call(that, operationContext);
                 }
             });
 
@@ -70,7 +70,7 @@
                 deferred.rejectWith(this, [error]);
 
                 if ($.isFunction(that._handleOperationError)) {
-                    that._handleOperationError.call(this, error);
+                    that._handleOperationError.call(that, error);
                 }
             });
 
@@ -80,7 +80,7 @@
                     var args = $.makeArray(arguments);
                     args.unshift(operationContext);
 
-                    handlers.onAfter.apply(this, args);
+                    handlers.onAfter.apply(that, args);
                 });
             }
             

@@ -421,7 +421,7 @@ Shelby.debug = false;
     };
 
     // Define functions to easily requiert native components.
-    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper"], function() {
+    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper", "eventManager"], function() {
         var componentName = this;
 
         Components[componentName] = function() {
@@ -1842,7 +1842,7 @@ Shelby._ViewModel = {};
                     
                     // The original jQuery AJAX "beforeSend" function support returning "false" to abort the
                     // request, allow a return value to support that behaviour.
-                    return handlers.onBefore.apply(this, args);
+                    return handlers.onBefore.apply(that, args);
                 };
             }
 
@@ -1865,7 +1865,7 @@ Shelby._ViewModel = {};
                     // If the caller did NOT specify to NOT process the response, process the response. 
                     if (options.response.process !== false) {
                         if ($.isFunction(options.response.extractor)) {
-                            response = options.response.extractor.call(this, response);
+                            response = options.response.extractor.call(that, response);
                         }
 
                         if ($.isFunction(handlers.onResponse)) {
@@ -1877,7 +1877,7 @@ Shelby._ViewModel = {};
                 deferred.resolveWith(this, [response]);
 
                 if ($.isFunction(that._handleOperationSuccess)) {
-                    that._handleOperationSuccess.call(this, operationContext);
+                    that._handleOperationSuccess.call(that, operationContext);
                 }
             });
 
@@ -1887,7 +1887,7 @@ Shelby._ViewModel = {};
                 deferred.rejectWith(this, [error]);
 
                 if ($.isFunction(that._handleOperationError)) {
-                    that._handleOperationError.call(this, error);
+                    that._handleOperationError.call(that, error);
                 }
             });
 
@@ -1897,7 +1897,7 @@ Shelby._ViewModel = {};
                     var args = $.makeArray(arguments);
                     args.unshift(operationContext);
 
-                    handlers.onAfter.apply(this, args);
+                    handlers.onAfter.apply(that, args);
                 });
             }
             
@@ -2137,13 +2137,13 @@ Shelby._ViewModel = {};
 })(Shelby.extend,
    Shelby.utils);
 
-// Shelby._ViewModel.HttpNotifications
+// Shelby._ViewModel.HttpEvent
 // ---------------------------------
 
 (function(utils) {
     "use strict";
 
-    Shelby._ViewModel.HttpNotifications = {
+    Shelby._ViewModel.HttpEvent = {
         _beforeFetch: null,
         _beforeSave: null,
         _beforeRemove: null,
@@ -2212,10 +2212,106 @@ Shelby._ViewModel = {};
     };
 })(Shelby.utils);
 
+(function(extend, utils) {
+    "use strict";
+
+    Shelby.EventManager = function() {
+        this._eventHandlers = {};
+    };
+
+    Shelby.EventManager.prototype = {
+        notifyHandlers: function(eventName, context, parameters) {
+            if (utils.isNullOrEmpty(eventName)) {
+                throw new Error("\"eventName\" must be a non null or empty string.");
+            }
+
+            var handlers = this._eventHandlers[eventName];
+
+            if ($.isArray(handlers))  {
+                for (var i = 0, max = handlers.length; i < max; i += 1) {
+                    handlers[i].callback.apply(context, parameters);
+                }
+            }
+        },
+
+        registerEventHandler: function(eventName, callback) {
+            if (utils.isNullOrEmpty(eventName)) {
+                throw new Error("\"eventName\" must be a non null or empty string.");
+            }
+
+            if (!$.isFunction(callback)) {
+                throw new Error("\"callback\" must be a function.");
+            }
+
+            if (utils.stringContains(eventName, ".")) {
+                var descriptor = this._parseEventName(eventName);
+
+                this._addEventHandler(descriptor.event, descriptor.name, callback);
+            }
+            else {
+                this._addEventHandler(eventName, null, callback);
+            }
+        },
+
+        _addEventHandler: function(event, name, callback) {
+            if (!$.isArray(this._eventHandlers[event])) {
+                this._eventHandlers[event] = [];
+            }
+
+            this._eventHandlers[event].push({
+                name: name,
+                callback: callback
+            });
+        },
+
+        removeEventHandler: function(eventName) {
+            if (utils.isNullOrEmpty(eventName) || !utils.stringContains(eventName, ".")) {
+                throw new Error("\"eventName\" must be a non null or empty string and be a named event (ex. foo.beforeFetch).");
+            }
+
+            var descriptor = this._parseEventName(eventName);
+            var handlers = this._eventHandlers[descriptor.event];
+
+            if ($.isArray(handlers)) {
+                utils.arrayRemoveValue(handlers, descriptor.name, function(item) {
+                    return item.name === descriptor.name;
+                });
+            }
+        },
+
+        _parseEventName: function(eventName) {
+            var dotIndex = eventName.lastIndexOf(".");
+
+            return {
+                name: eventName.substring(0, dotIndex),
+                event: eventName.substring(dotIndex + 1)
+            };
+        }
+    };
+
+    Shelby.EventManager.extend = extend;
+
+    // Register the components.
+    Shelby.components.registerComponent("eventManager", function() {
+        return new Shelby.EventManager();
+    });
+
+    // ---------------------------------
+
+    Shelby.registerEventHandler = function(eventName, callback) {
+        Shelby.components.eventManager().registerEventHandler(eventName, callback);
+    };
+
+    Shelby.removeEventHandler = function(eventName) {
+        Shelby.components.eventManager().removeEventHandler(eventName);
+    };
+})(Shelby.extend,
+   Shelby.utils);
+
 // Shelby.ViewModel
 // ---------------------------------
 
-(function(extend, Bindable, Disposable, Extendable, Http, HttpNotifications) {
+(function(extend, Bindable, Disposable, Extendable, Http, HttpEvent) {
     "use strict";
 
     Shelby.ViewModel = function() {
@@ -2228,7 +2324,7 @@ Shelby._ViewModel = {};
         Disposable,
         Extendable,
         Http,
-        HttpNotifications, {
+        HttpEvent, {
             _initialize: null,
 
             dispose: function() {
@@ -2252,7 +2348,7 @@ Shelby._ViewModel = {};
    Shelby._ViewModel.Disposable,
    Shelby._ViewModel.Extendable,
    Shelby._ViewModel.Http,
-   Shelby._ViewModel.HttpNotifications);
+   Shelby._ViewModel.HttpEvent);
 
 
 

@@ -1,10 +1,10 @@
-// Shelby._ViewModel.HttpNotifications
+// Shelby._ViewModel.HttpEvent
 // ---------------------------------
 
 (function(utils) {
     "use strict";
 
-    Shelby._ViewModel.HttpNotifications = {
+    Shelby._ViewModel.HttpEvent = {
         _beforeFetch: null,
         _beforeSave: null,
         _beforeRemove: null,

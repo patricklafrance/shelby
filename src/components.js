@@ -60,7 +60,7 @@
     };
 
     // Define functions to easily requiert native components.
-    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper"], function() {
+    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper", "eventManager"], function() {
         var componentName = this;
 
         Components[componentName] = function() {

@@ -59,7 +59,8 @@ var paths = {
 			"src/viewmodel.disposable.js",
 			"src/viewmodel.extendable.js",
 			"src/viewmodel.http.js",
-			"src/viewmodel.http.notifications.js",
+			"src/viewmodel.http.event.js",
+			"src/viewmodel.event.manager.js",
 			"src/viewmodel.js",
 			"src/viewmodel.component.js"
 		],
@@ -74,6 +75,7 @@ var paths = {
 				"test/extender.edit.js",
 				"test/extender.utility.js",
 				"test/ajax.js",
+				"test/viewmodel.event.manager.js",
 				"test/viewmodel.js",
 				"test/runner.html.js",
 			],

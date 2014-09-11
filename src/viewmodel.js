@@ -1,7 +1,7 @@
 // Shelby.ViewModel
 // ---------------------------------
 
-(function(extend, Bindable, Disposable, Extendable, Http, HttpNotifications) {
+(function(extend, Bindable, Disposable, Extendable, Http, HttpEvent) {
     "use strict";
 
     Shelby.ViewModel = function() {
@@ -14,7 +14,7 @@
         Disposable,
         Extendable,
         Http,
-        HttpNotifications, {
+        HttpEvent, {
             _initialize: null,
 
             dispose: function() {
@@ -38,5 +38,5 @@
    Shelby._ViewModel.Disposable,
    Shelby._ViewModel.Extendable,
    Shelby._ViewModel.Http,
-   Shelby._ViewModel.HttpNotifications);
+   Shelby._ViewModel.HttpEvent);
 
