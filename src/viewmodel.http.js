@@ -103,7 +103,7 @@
                 onAfter: this._afterFetch,
                 onResponse: function(response) {
                     // Convert the response properties to observables.
-                    return this._fromJS(response, options.response.mapping);
+                    return this._fromJS(response, options.response.mapping, options.response.extenders);
                 }
             });
         },

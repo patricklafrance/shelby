@@ -1737,12 +1737,12 @@ Shelby._ViewModel = {};
     "use strict";
 
     Shelby._ViewModel.Extendable = {
-        _fromJS: function(obj, options) {
+        _fromJS: function(obj, mappingOptions, extenders) {
             // Convert properties to observables.
-            var mapped = Shelby.components.mapper().fromJS(obj, options);
+            var mapped = Shelby.components.mapper().fromJS(obj, mappingOptions);
             
             // Extend all the object properties.
-            this._applyExtendersToObject(mapped);
+            this._applyExtendersToObject(mapped, extenders);
             
             return mapped;
         },
@@ -1757,9 +1757,13 @@ Shelby._ViewModel = {};
             return unmapped;
         },
 
-        _applyExtendersToObject: function(obj) {
-            if (utils.objectSize(this._extenders) > 0) {
-                Shelby.components.propertyExtender().add(obj, this._extenders);
+        _applyExtendersToObject: function(obj, extenders) {
+            if (utils.isNull(extenders)) {
+                extenders = this._extenders;
+            }
+
+            if (utils.objectSize(extenders) > 0) {
+                Shelby.components.propertyExtender().add(obj, extenders);
             }
         },
         
@@ -1897,7 +1901,7 @@ Shelby._ViewModel = {};
                 onAfter: this._afterFetch,
                 onResponse: function(response) {
                     // Convert the response properties to observables.
-                    return this._fromJS(response, options.response.mapping);
+                    return this._fromJS(response, options.response.mapping, options.response.extenders);
                 }
             });
         },
