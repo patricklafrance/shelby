@@ -401,18 +401,18 @@ Shelby.debug = false;
     // ---------------------------------
 
     var Components = Shelby.components = {
-        factory: null,
+        _factory: null,
 
         setComponentFactory: function(factory) {
             if (utils.isNull(factory)) {
                 throw new Error("\"factory\" must be an object.");
             }
 
-            this.factory = factory;
+            this._factory = factory;
         },
 
         registerComponent: function(name, factory) {
-            this.factory.registerComponent(name, factory);
+            this._factory.registerComponent(name, factory);
         }
     };
 
@@ -421,7 +421,7 @@ Shelby.debug = false;
         var componentName = this;
 
         Components[componentName] = function() {
-            return Components.factory.getComponent(componentName);
+            return Components._factory.getComponent(componentName);
         };
     });
 
