@@ -607,6 +607,16 @@
         });
     });
 
+    describe("Utils.stringStartsWith", function() {
+        it("When the string starts with the value, return true", function() {
+            expect(utils.stringStartsWith("Hello world", "Hel")).toBeTruthy();
+        });
+
+        it("When the string do not starts with the value, return false", function() {
+            expect(utils.stringStartsWith("Hello world", "world")).toBeFalsy();
+        });
+    });
+
     describe("Utils.stringEndsWith", function() {
         it("When the string ends with the value, returns true", function() {
             expect(utils.stringEndsWith("Hello world", "d")).toBeTruthy();

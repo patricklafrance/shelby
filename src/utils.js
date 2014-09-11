@@ -222,6 +222,10 @@
         stringContains: function(str, value) {
             return str.indexOf(value) !== -1;
         },
+
+        stringStartsWith: function(str, value) {
+            return str.indexOf(value) === 0;
+        },
         
         stringEndsWith: function(str, value) {
             return str.indexOf(value, str.length - value.length) !== -1;       

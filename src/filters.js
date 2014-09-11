@@ -98,38 +98,53 @@
             var that = this;
 
             return utils.arrayMap(paths, function(path) {
-                // If this is a path matching array items, create a function that use a regular expression to match the current paths representing array items properties,
-                // otherwise create a function that use the equality operator to match the current paths against the path.
-                if (utils.stringEndsWith(path, "[i]")) {
-                    // Transform "/i" into regex expression [^]+ (means that everything is accepted).
-                    var pattern = null;
+                if (utils.stringStartsWith(path, "{root}")) {
+                    // If this is a path matching array items, create a function that use a regular expression to match the current paths representing array items properties,
+                    // otherwise create a function that use the equality operator to match the current paths against the path.
+                    if (utils.stringEndsWith(path, "[i]")) {
+                        // Transform "[i]" into regex expression [^]+ (means that everything is accepted).
+                        var pattern = null;
 
-                    try {
-                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]+"));
-                    }
-                    catch (e) {
-                        // IE8 cause a RegExpError exception when the ']' character is not escaped.
-                        pattern = new RegExp(path.replace(/\[i\]/g, "[^]]+"));
-                    }
-
-                    return function(current) {
-                        if (pattern.test(current)) {
-                            return that._createPerfectMatchEvaluationResult();
+                        try {
+                            pattern = new RegExp(path.replace(/\[i\]/g, "[^]+"));
                         }
-                        else if (that._isArrayPath(path, current)) {
-                            return that._createImperfectMatchEvaluationResult();
+                        catch (e) {
+                            // IE8 cause a RegExpError exception when the ']' character is not escaped.
+                            pattern = new RegExp(path.replace(/\[i\]/g, "[^]]+"));
                         }
 
-                        return that._createInvalidEvaluationResult();
-                    };
+                        return function(current) {
+                            if (pattern.test(current)) {
+                                return that._createPerfectMatchEvaluationResult();
+                            }
+                            else if (that._isArrayPath(path, current)) {
+                                return that._createImperfectMatchEvaluationResult();
+                            }
+
+                            return that._createInvalidEvaluationResult();
+                        };
+                    }
+                    else {
+                        return function(current) {
+                            if (path === current) {
+                                return that._createPerfectMatchEvaluationResult();
+                            }
+                            else if (that._isArrayPath(path, current)) {
+                                return that._createImperfectMatchEvaluationResult();
+                            }
+
+                            return that._createInvalidEvaluationResult();
+                        };
+                    }
                 }
                 else {
                     return function(current) {
-                        if (path === current) {
+                        if (utils.stringContains(current, path)) {
+                            if (that._isArrayPath(path, current)) {
+                                return that._createImperfectMatchEvaluationResult();
+                            }
+
                             return that._createPerfectMatchEvaluationResult();
-                        }
-                        else if (that._isArrayPath(path, current)) {
-                            return that._createImperfectMatchEvaluationResult();
                         }
 
                         return that._createInvalidEvaluationResult();

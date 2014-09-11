@@ -301,13 +301,16 @@
 			model = {
 				prop1: ko.observable(dataSampler.generateString(10)),
 				prop2: ko.observable(dataSampler.generateString(10)),
+				iamtoken2: ko.observable(dataSampler.generateString(10)),
 				nestedProp: {
 					prop3: ko.observable(dataSampler.generateString(10)),
-					prop4: ko.observable(dataSampler.generateString(10))
+					prop4: ko.observable(dataSampler.generateString(10)),
+					iamtoken2: ko.observable(dataSampler.generateString(10))
 				},
 				array: ko.observableArray([{
 					prop5: ko.observable(dataSampler.generateString(10)),
-					prop6: ko.observable(dataSampler.generateString(10))
+					prop6: ko.observable(dataSampler.generateString(10)),
+					iamtoken2: ko.observable(dataSampler.generateString(10))
 				}])
 			};
 
@@ -318,7 +321,7 @@
 				}
 			});
 
-			modelPropertyCount = 7;
+			modelPropertyCount = 10;
 		});
 
 		describe("Shelby.Extenders.edit.beginEdit", function() {
@@ -350,7 +353,7 @@
 
 			it("When the \"include\" options is specified, only begin edition of properties to include", function() {
 				model.shelby.beginEdit({
-					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
+					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
 				expect(model.prop1.shelby.isEditing).toBeTruthy();
@@ -360,6 +363,9 @@
 				expect(model.array.shelby.isEditing).toBeFalsy();
 				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeTruthy();
 				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeFalsy();
+				expect(model.iamtoken2.shelby.isEditing).toBeTruthy();
+				expect(model.nestedProp.iamtoken2.shelby.isEditing).toBeTruthy();
+				expect(model.array.peek()[0].iamtoken2.shelby.isEditing).toBeTruthy();
 			});
 
 			it("When the \"include\" options is specified for an array, begin the edition of the array itself but do not begin the edition of the array items", function() {
@@ -384,7 +390,7 @@
 
 			it("When the \"exclude\" options is specified, begin the edition of the properties that are not excluded", function() {
 				model.shelby.beginEdit({
-					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
+					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
 				expect(model.prop1.shelby.isEditing).toBeFalsy();
@@ -394,6 +400,9 @@
 				expect(model.array.shelby.isEditing).toBeTruthy();
 				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeFalsy();
 				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeTruthy();
+				expect(model.iamtoken2.shelby.isEditing).toBeFalsy();
+				expect(model.nestedProp.iamtoken2.shelby.isEditing).toBeFalsy();
+				expect(model.array.peek()[0].iamtoken2.shelby.isEditing).toBeFalsy();
 			});
 
 			it("When the \"exclude\" options is specified for an array, do not begin the edition of the array itself but begin the edition of the items of the array", function() {

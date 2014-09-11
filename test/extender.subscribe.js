@@ -391,13 +391,16 @@
 			model = {
 				prop1: ko.observable(dataSampler.generateString(10)),
 				prop2: ko.observable(dataSampler.generateString(10)),
+				token: ko.observable(dataSampler.generateString(10)),
 				nestedProp: {
 					prop3: ko.observable(dataSampler.generateString(10)),
-					prop4: ko.observable(dataSampler.generateString(10))
+					prop4: ko.observable(dataSampler.generateString(10)),
+					token: ko.observable(dataSampler.generateString(10)),
 				},
 				array: ko.observableArray([{
 					prop5: ko.observable(dataSampler.generateString(10)),
-					prop6: ko.observable(dataSampler.generateString(10))
+					prop6: ko.observable(dataSampler.generateString(10)),
+					token: ko.observable(dataSampler.generateString(10))
 				}])
 			};
 
@@ -407,7 +410,7 @@
 				}
 			});
 
-			modelPropertyCount = 7;
+			modelPropertyCount = 10;
 		});
 
 		describe("subscribe", function() {
@@ -474,7 +477,10 @@
 					prop3Called = false,
 					prop4Called = false,
 					prop5Called = false,
-					prop6Called = false;
+					prop6Called = false,
+					tokenCalled = false,
+					nestedPropTokenCalled = false,
+					arrayTokenCalled = false;
 
 				model.shelby.subscribe(function(args) {
 					if (args.path === "{root}.prop1") {
@@ -495,8 +501,17 @@
 					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
+					else if (args.path === "{root}.token") {
+						tokenCalled = true;
+					}
+					else if (args.path === "{root}.nestedProp.token") {
+						nestedPropTokenCalled = true;
+					}
+					else if (args.path === "{root}.array[i].token") {
+						arrayTokenCalled = true;
+					}
 				}, {
-					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
+					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
 				model.prop1(dataSampler.generateString(10));
@@ -505,6 +520,9 @@
 				model.nestedProp.prop4(dataSampler.generateString(10));
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
 				model.array.peek()[0].prop6(dataSampler.generateString(10));
+				model.token(dataSampler.generateString(10));
+				model.nestedProp.token(dataSampler.generateString(10));
+				model.array.peek()[0].token(dataSampler.generateString(10));
 
 				expect(prop1Called).toBeTruthy();
 				expect(prop2Called).toBeFalsy();
@@ -512,6 +530,9 @@
 				expect(prop4Called).toBeFalsy();
 				expect(prop5Called).toBeTruthy();
 				expect(prop6Called).toBeFalsy();
+				expect(tokenCalled).toBeTruthy();
+				expect(nestedPropTokenCalled).toBeTruthy();
+				expect(arrayTokenCalled).toBeTruthy();
 			});
 
 			it("When the \"include\" options is specified for an array, the callback is called when an item is added or removed from the array but is not called when an array item is modified.", function() {
@@ -598,7 +619,10 @@
 					prop3Called = false,
 					prop4Called = false,
 					prop5Called = false,
-					prop6Called = false;
+					prop6Called = false,
+					tokenCalled = false,
+					nestedPropTokenCalled = false,
+					arrayTokenCalled = false;
 
 				model.shelby.subscribe(function(args) {
 					if (args.path === "{root}.prop1") {
@@ -619,8 +643,17 @@
 					else if (args.path === "{root}.array[i].prop6") {
 						prop6Called = true;
 					}
+					else if (args.path === "{root}.token") {
+						tokenCalled = true;
+					}
+					else if (args.path === "{root}.nestedProp.token") {
+						nestedPropTokenCalled = true;
+					}
+					else if (args.path === "{root}.array[i].token") {
+						arrayTokenCalled = true;
+					}
 				}, {
-					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5"]
+					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
 				model.prop1(dataSampler.generateString(10));
@@ -629,6 +662,9 @@
 				model.nestedProp.prop4(dataSampler.generateString(10));
 				model.array.peek()[0].prop5(dataSampler.generateString(10));
 				model.array.peek()[0].prop6(dataSampler.generateString(10));
+				model.token(dataSampler.generateString(10));
+				model.nestedProp.token(dataSampler.generateString(10));
+				model.array.peek()[0].token(dataSampler.generateString(10));
 
 				expect(prop1Called).toBeFalsy();
 				expect(prop2Called).toBeTruthy();
@@ -636,6 +672,9 @@
 				expect(prop4Called).toBeTruthy();
 				expect(prop5Called).toBeFalsy();
 				expect(prop6Called).toBeTruthy();
+				expect(tokenCalled).toBeFalsy();
+				expect(nestedPropTokenCalled).toBeFalsy();
+				expect(arrayTokenCalled).toBeFalsy();
 			});
 
 			it("When the \"exclude\" options is specified for an array, the callback is not called when an item is added or removed from the array but is called when an array item is updated.", function() {
@@ -1017,8 +1056,8 @@
 
 					model.array.pop();
 
-					// "-2" because the first array item contains 2 subscriptions.
-					expect(membersCountBefore - 2).toBe(subscription.members.length);
+					// "-3" because the first array item contains 3 properties, which means 3 subscriptions.
+					expect(membersCountBefore - 3).toBe(subscription.members.length);
 				});
 
 				it("When a new item that do not match the specified \"include\" option is added to an array, do not add the item to the subscription", function() {
