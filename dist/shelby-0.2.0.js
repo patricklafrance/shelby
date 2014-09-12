@@ -1815,11 +1815,142 @@ Shelby._ViewModel = {};
 })(Shelby.namespace,
    Shelby.utils);
 
+// Shelby._ViewModel.HttpEvent
+// ---------------------------------
+
+(function(utils) {
+    "use strict";
+
+    function call(handler, args) {
+        if ($.isFunction(handler)) {
+            /* jshint -W040 */
+            handler.apply(this, args);
+            /* jshint +W040 */
+        }
+    }
+
+    Shelby._ViewModel.HttpEvent = {
+        _beforeFetch: null,
+        _beforeSave: null,
+        _beforeRemove: null,
+        _afterFetch: null,
+        _afterSave: null,
+        _afterRemove: null,
+
+        _handleOperationError: null,
+        _handleOperationSuccess: null,
+
+        _notify: function(eventName, args) {
+            switch (eventName) {
+                case HttpEvent.BeforeFetch:
+                    call(this._beforeFetch, args);
+                    break;
+                case HttpEvent.BeforeSave:
+                    call(this._beforeSave, args);
+                    break;
+                case HttpEvent.BeforeRemove:
+                    call(this._beforeRemove, args);
+                    break;
+                case HttpEvent.AfterFetch:
+                    call(this._afterFetch, args);
+                    break;
+                case HttpEvent.AfterSave:
+                    call(this._afterSave, args);
+                    break;
+                case HttpEvent.AfterRemove:
+                    call(this._afterRemove, args);
+                    break;
+                case HttpEvent.OperationError:
+                    call(this._handleOperationError, args);
+                    break;
+                case HttpEvent.OperationSuccess:
+                    call(this._handleOperationSuccess, args);
+                    break;
+            }
+
+            Shelby.components.eventManager().notifyHandlers(eventName, args, this);
+        }
+    };
+
+    // ---------------------------------
+
+    var HttpEvent = Shelby.HttpEvent = {
+        BeforeFetch: "beforeFetch",
+        BeforeSave: "beforeSave",
+        BeforeRemove: "beforeRemove",
+        AfterFetch: "afterFetch",
+        AfterSave: "afterSave",
+        AfterRemove: "afterRemove",
+        OperationError: "operationError",
+        OperationSuccess: "operationSuccess"
+    };
+
+    // ---------------------------------
+    
+    var OperationMethod = Shelby.OperationMethod = {
+        Get: "GET",
+        Post: "POST",
+        Put: "PUT",
+        Delete: "DELETE",
+
+        fromHttpVerb: function(httpVerb) {
+            var method = OperationMethod.Get;
+
+            if (httpVerb === "POST") {
+                method = OperationMethod.Post;
+            }
+            else if (httpVerb === "PUT") {
+                method = OperationMethod.Put;
+            }
+            else if (httpVerb === "DELETE") {
+                method = OperationMethod.Delete;
+            }
+
+            return method;
+        }
+    };
+
+    // ---------------------------------
+
+    Shelby.OperationContext = function(request) {
+        this.url = request.url;
+        this.method =  OperationMethod.fromHttpVerb(request.type);
+        this.data = request.data;
+    };
+
+    // ---------------------------------
+
+    Shelby.RequestError = function(operationContext, jqxhr, textStatus) {
+        var response = null;
+        
+        if (!utils.isNull(jqxhr.responseJSON)) {
+            response = jqxhr.responseJSON;
+        }
+        else if (!utils.isNull(jqxhr.responseXML)) {
+            response = jqxhr.responseXML;
+        }
+        else {
+            response = jqxhr.responseText;
+        }
+        
+        operationContext.statusCode = jqxhr.status;
+        operationContext.statusText = jqxhr.statusText;
+        operationContext.exception = textStatus;
+    
+        this.operationContext = operationContext;
+        this.response = response;
+    };
+})(Shelby.utils);
+
 // Shelby._ViewModel.Http
 // ---------------------------------
 
 (function(extend, utils) {
     "use strict";
+
+    var HttpEvent = Shelby.HttpEvent;
+    var OperationContext = Shelby.OperationContext;
+    var RequestError = Shelby.RequestError;
 
     Shelby._ViewModel.Http = {
         _url: null,
@@ -1832,7 +1963,7 @@ Shelby._ViewModel = {};
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = new Shelby.OperationContext(request);
+            var operationContext = new OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -1876,18 +2007,18 @@ Shelby._ViewModel = {};
             
                 deferred.resolveWith(this, [response]);
 
-                if ($.isFunction(that._handleOperationSuccess)) {
-                    that._handleOperationSuccess.call(that, operationContext);
+                if ($.isFunction(that._notify)) {
+                    that._notify.call(that, HttpEvent.OperationSuccess, [operationContext]);
                 }
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = new Shelby.RequestError(operationContext, jqxhr, textStatus);
+                var error = [new RequestError(operationContext, jqxhr, textStatus)];
                 
-                deferred.rejectWith(this, [error]);
+                deferred.rejectWith(this, error);
 
-                if ($.isFunction(that._handleOperationError)) {
-                    that._handleOperationError.call(that, error);
+                if ($.isFunction(that._notify)) {
+                    that._notify.call(that, HttpEvent.OperationError, error);
                 }
             });
 
@@ -1905,6 +2036,8 @@ Shelby._ViewModel = {};
         },
 
         _fetch: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -1916,8 +2049,16 @@ Shelby._ViewModel = {};
             options.request.type = options.request.type || "GET";
 
             return this._send(options, {
-                onBefore: this._beforeFetch,
-                onAfter: this._afterFetch,
+                onBefore: function() {
+                    if ($.isFunction(this._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeFetch, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(this._notify)) {
+                        that._notify.call(that, HttpEvent.AfterFetch, arguments);
+                    }
+                },
                 onResponse: function(response) {
                     // Convert the response properties to observables.
                     return this._fromJS(response, options.response.mapping, options.response.extenders);
@@ -1926,6 +2067,8 @@ Shelby._ViewModel = {};
         },
 
         _save: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -1939,8 +2082,16 @@ Shelby._ViewModel = {};
             }
 
             return this._send(options, {
-                onBefore: this._beforeSave,
-                onAfter: this._afterSave,
+                onBefore: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeSave, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.AfterSave, arguments);
+                    }
+                },
                 onResponse: function(response, requestOptions) {
                     if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
                         Shelby.components.mapper().update(requestOptions.request.data, response);
@@ -1952,6 +2103,8 @@ Shelby._ViewModel = {};
         },
 
         _remove: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -1963,8 +2116,16 @@ Shelby._ViewModel = {};
             options.request.type = options.request.type || "DELETE";
 
             return this._send(options, {
-                onBefore: this._beforeSave,
-                onAfter: this._afterSave
+                onBefore: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeRemove, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.AfterRemove, arguments);
+                    }
+                }
             });
         },
         
@@ -2137,81 +2298,6 @@ Shelby._ViewModel = {};
 })(Shelby.extend,
    Shelby.utils);
 
-// Shelby._ViewModel.HttpEvent
-// ---------------------------------
-
-(function(utils) {
-    "use strict";
-
-    Shelby._ViewModel.HttpEvent = {
-        _beforeFetch: null,
-        _beforeSave: null,
-        _beforeRemove: null,
-        _afterFetch: null,
-        _afterSave: null,
-        _afterRemove: null,
-
-        _handleOperationError: null,
-        _handleOperationSuccess: null
-    };
-
-    // ---------------------------------
-    
-    var OperationMethod = Shelby.OperationMethod = {
-        Get: "GET",
-        Post: "POST",
-        Put: "PUT",
-        Delete: "DELETE",
-
-        fromHttpVerb: function(httpVerb) {
-            var method = OperationMethod.Get;
-
-            if (httpVerb === "POST") {
-                method = OperationMethod.Post;
-            }
-            else if (httpVerb === "PUT") {
-                method = OperationMethod.Put;
-            }
-            else if (httpVerb === "DELETE") {
-                method = OperationMethod.Delete;
-            }
-
-            return method;
-        }
-    };
-
-    // ---------------------------------
-
-    Shelby.OperationContext = function(request) {
-        this.url = request.url;
-        this.method =  OperationMethod.fromHttpVerb(request.type);
-        this.data = request.data;
-    };
-
-    // ---------------------------------
-
-    Shelby.RequestError = function(operationContext, jqxhr, textStatus) {
-        var response = null;
-        
-        if (!utils.isNull(jqxhr.responseJSON)) {
-            response = jqxhr.responseJSON;
-        }
-        else if (!utils.isNull(jqxhr.responseXML)) {
-            response = jqxhr.responseXML;
-        }
-        else {
-            response = jqxhr.responseText;
-        }
-        
-        operationContext.statusCode = jqxhr.status;
-        operationContext.statusText = jqxhr.statusText;
-        operationContext.exception = textStatus;
-    
-        this.operationContext = operationContext;
-        this.response = response;
-    };
-})(Shelby.utils);
-
 (function(extend, utils) {
     "use strict";
 
@@ -2220,7 +2306,7 @@ Shelby._ViewModel = {};
     };
 
     Shelby.EventManager.prototype = {
-        notifyHandlers: function(eventName, context, parameters) {
+        notifyHandlers: function(eventName, args, context) {
             if (utils.isNullOrEmpty(eventName)) {
                 throw new Error("\"eventName\" must be a non null or empty string.");
             }
@@ -2229,7 +2315,7 @@ Shelby._ViewModel = {};
 
             if ($.isArray(handlers))  {
                 for (var i = 0, max = handlers.length; i < max; i += 1) {
-                    handlers[i].callback.apply(context, parameters);
+                    handlers[i].callback.apply(context, args);
                 }
             }
         },
@@ -2280,11 +2366,11 @@ Shelby._ViewModel = {};
         },
 
         _parseEventName: function(eventName) {
-            var dotIndex = eventName.lastIndexOf(".");
+            var dotIndex = eventName.indexOf(".");
 
             return {
-                name: eventName.substring(0, dotIndex),
-                event: eventName.substring(dotIndex + 1)
+                name: eventName.substring(dotIndex + 1),
+                event: eventName.substring(0, dotIndex)
             };
         }
     };

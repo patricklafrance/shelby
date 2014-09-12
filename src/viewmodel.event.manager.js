@@ -6,7 +6,7 @@
     };
 
     Shelby.EventManager.prototype = {
-        notifyHandlers: function(eventName, context, parameters) {
+        notifyHandlers: function(eventName, args, context) {
             if (utils.isNullOrEmpty(eventName)) {
                 throw new Error("\"eventName\" must be a non null or empty string.");
             }
@@ -15,7 +15,7 @@
 
             if ($.isArray(handlers))  {
                 for (var i = 0, max = handlers.length; i < max; i += 1) {
-                    handlers[i].callback.apply(context, parameters);
+                    handlers[i].callback.apply(context, args);
                 }
             }
         },
@@ -66,11 +66,11 @@
         },
 
         _parseEventName: function(eventName) {
-            var dotIndex = eventName.lastIndexOf(".");
+            var dotIndex = eventName.indexOf(".");
 
             return {
-                name: eventName.substring(0, dotIndex),
-                event: eventName.substring(dotIndex + 1)
+                name: eventName.substring(dotIndex + 1),
+                event: eventName.substring(0, dotIndex)
             };
         }
     };

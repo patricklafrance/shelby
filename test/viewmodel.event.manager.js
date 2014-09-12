@@ -37,14 +37,14 @@
             });
 
             it("Can register a named handler", function() {
-                eventManager.registerEventHandler("context." + eventName, $.noop);
+                eventManager.registerEventHandler(eventName + ".context", $.noop);
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(1);
                 expect(eventManager._eventHandlers[eventName][0].name).toBe("context");
             });
 
             it("Can register a named handler that contains multiple dot", function() {
-                eventManager.registerEventHandler("context.foo.bar." + eventName, $.noop);
+                eventManager.registerEventHandler(eventName + ".context.foo.bar", $.noop);
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(1);
                 expect(eventManager._eventHandlers[eventName][0].name).toBe("context.foo.bar");
@@ -62,27 +62,27 @@
             });
 
             it("Can remove a named handler", function() {
-                eventManager.registerEventHandler("context." + eventName, $.noop);
+                eventManager.registerEventHandler(eventName + ".context", $.noop);
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(1);
 
-                eventManager.removeEventHandler("context." + eventName);
+                eventManager.removeEventHandler(eventName + ".context");
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(0);
             });
 
             it("Can remove a named handler that contains multiple dot", function() {
-                eventManager.registerEventHandler("context.foo.bar." + eventName, $.noop);
+                eventManager.registerEventHandler(eventName + ".context.foo.bar", $.noop);
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(1);
 
-                eventManager.removeEventHandler("context.foo.bar." + eventName);
+                eventManager.removeEventHandler(eventName + ".context.foo.bar");
 
                 expect(eventManager._eventHandlers[eventName].length).toBe(0);
             });
 
             it("When the named handler do not exists, do nothing", function() {
-                eventManager.removeEventHandler("context." + eventName);
+                eventManager.removeEventHandler(eventName + ".context");
             });
         });
 
@@ -102,7 +102,7 @@
             it("Can notify named handlers", function() {
                 var works = false;
 
-                eventManager.registerEventHandler("context."  +  eventName, function() {
+                eventManager.registerEventHandler(eventName + ".context", function() {
                     works = true;
                 });
 
@@ -138,11 +138,11 @@
                     count += 1;
                 });
 
-                eventManager.registerEventHandler("context." + eventName, function() {
+                eventManager.registerEventHandler(eventName + ".context", function() {
                     count += 1;
                 });
 
-                eventManager.registerEventHandler("context.foo.bar." + eventName, function() {
+                eventManager.registerEventHandler(eventName + ".context.foo.bar", function() {
                     count += 1;
                 });
 

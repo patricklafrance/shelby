@@ -58,8 +58,8 @@ var paths = {
 			"src/viewmodel.bindable.js",
 			"src/viewmodel.disposable.js",
 			"src/viewmodel.extendable.js",
-			"src/viewmodel.http.js",
 			"src/viewmodel.http.event.js",
+			"src/viewmodel.http.js",
 			"src/viewmodel.event.manager.js",
 			"src/viewmodel.js",
 			"src/viewmodel.component.js"

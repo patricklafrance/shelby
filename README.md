@@ -584,8 +584,8 @@ Shelby.ViewModel.registerEventHandler("beforeFetch", handlerFunction);
 If you need to remove that event handler later, you must use a **_named_** event.
 
 ```javascript
-Shelby.ViewModel.registerEventHandler("context:beforeFetch", handlerFunction);
-Shelby.ViewModel.removeEventHandler("context:beforeFetch");
+Shelby.ViewModel.registerEventHandler("beforeFetch.foo", handlerFunction);
+Shelby.ViewModel.removeEventHandler("beforeFetch.foo");
 ```
 
 The following event handlers are available:
@@ -595,8 +595,8 @@ The following event handlers are available:
 * afterFetch
 * afterSave
 * afterRemove
-* handleOperationError
-* handleOperationSuccess
+* operationError
+* operationSuccess
 
 You can see a sample [here](https://github.com/patricklafrance/shelby/blob/master/samples/global_events.js).
 

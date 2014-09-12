@@ -4,6 +4,10 @@
 (function(extend, utils) {
     "use strict";
 
+    var HttpEvent = Shelby.HttpEvent;
+    var OperationContext = Shelby.OperationContext;
+    var RequestError = Shelby.RequestError;
+
     Shelby._ViewModel.Http = {
         _url: null,
 
@@ -15,7 +19,7 @@
             var that = this;
 
             var request = $.extend({ context: this }, options.request);
-            var operationContext = new Shelby.OperationContext(request);
+            var operationContext = new OperationContext(request);
 
             if ($.isFunction(handlers.onBefore)) {
                 request.beforeSend = function() {
@@ -59,18 +63,18 @@
             
                 deferred.resolveWith(this, [response]);
 
-                if ($.isFunction(that._handleOperationSuccess)) {
-                    that._handleOperationSuccess.call(that, operationContext);
+                if ($.isFunction(that._notify)) {
+                    that._notify.call(that, HttpEvent.OperationSuccess, [operationContext]);
                 }
             });
 
             promise.fail(function(jqxhr, textStatus) {
-                var error = new Shelby.RequestError(operationContext, jqxhr, textStatus);
+                var error = [new RequestError(operationContext, jqxhr, textStatus)];
                 
-                deferred.rejectWith(this, [error]);
+                deferred.rejectWith(this, error);
 
-                if ($.isFunction(that._handleOperationError)) {
-                    that._handleOperationError.call(that, error);
+                if ($.isFunction(that._notify)) {
+                    that._notify.call(that, HttpEvent.OperationError, error);
                 }
             });
 
@@ -88,6 +92,8 @@
         },
 
         _fetch: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -99,8 +105,16 @@
             options.request.type = options.request.type || "GET";
 
             return this._send(options, {
-                onBefore: this._beforeFetch,
-                onAfter: this._afterFetch,
+                onBefore: function() {
+                    if ($.isFunction(this._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeFetch, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(this._notify)) {
+                        that._notify.call(that, HttpEvent.AfterFetch, arguments);
+                    }
+                },
                 onResponse: function(response) {
                     // Convert the response properties to observables.
                     return this._fromJS(response, options.response.mapping, options.response.extenders);
@@ -109,6 +123,8 @@
         },
 
         _save: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -122,8 +138,16 @@
             }
 
             return this._send(options, {
-                onBefore: this._beforeSave,
-                onAfter: this._afterSave,
+                onBefore: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeSave, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.AfterSave, arguments);
+                    }
+                },
                 onResponse: function(response, requestOptions) {
                     if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
                         Shelby.components.mapper().update(requestOptions.request.data, response);
@@ -135,6 +159,8 @@
         },
 
         _remove: function(options) {
+            var that = this;
+
             if (utils.isNull(options)) {
                 throw new Error("\"options\" must be a non null object literal.");
             }
@@ -146,8 +172,16 @@
             options.request.type = options.request.type || "DELETE";
 
             return this._send(options, {
-                onBefore: this._beforeSave,
-                onAfter: this._afterSave
+                onBefore: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.BeforeRemove, arguments);
+                    }
+                },
+                onAfter: function() {
+                    if ($.isFunction(that._notify)) {
+                        that._notify.call(that, HttpEvent.AfterRemove, arguments);
+                    }
+                }
             });
         },
         

@@ -4,6 +4,14 @@
 (function(utils) {
     "use strict";
 
+    function call(handler, args) {
+        if ($.isFunction(handler)) {
+            /* jshint -W040 */
+            handler.apply(this, args);
+            /* jshint +W040 */
+        }
+    }
+
     Shelby._ViewModel.HttpEvent = {
         _beforeFetch: null,
         _beforeSave: null,
@@ -13,7 +21,51 @@
         _afterRemove: null,
 
         _handleOperationError: null,
-        _handleOperationSuccess: null
+        _handleOperationSuccess: null,
+
+        _notify: function(eventName, args) {
+            switch (eventName) {
+                case HttpEvent.BeforeFetch:
+                    call(this._beforeFetch, args);
+                    break;
+                case HttpEvent.BeforeSave:
+                    call(this._beforeSave, args);
+                    break;
+                case HttpEvent.BeforeRemove:
+                    call(this._beforeRemove, args);
+                    break;
+                case HttpEvent.AfterFetch:
+                    call(this._afterFetch, args);
+                    break;
+                case HttpEvent.AfterSave:
+                    call(this._afterSave, args);
+                    break;
+                case HttpEvent.AfterRemove:
+                    call(this._afterRemove, args);
+                    break;
+                case HttpEvent.OperationError:
+                    call(this._handleOperationError, args);
+                    break;
+                case HttpEvent.OperationSuccess:
+                    call(this._handleOperationSuccess, args);
+                    break;
+            }
+
+            Shelby.components.eventManager().notifyHandlers(eventName, args, this);
+        }
+    };
+
+    // ---------------------------------
+
+    var HttpEvent = Shelby.HttpEvent = {
+        BeforeFetch: "beforeFetch",
+        BeforeSave: "beforeSave",
+        BeforeRemove: "beforeRemove",
+        AfterFetch: "afterFetch",
+        AfterSave: "afterSave",
+        AfterRemove: "afterRemove",
+        OperationError: "operationError",
+        OperationSuccess: "operationSuccess"
     };
 
     // ---------------------------------
