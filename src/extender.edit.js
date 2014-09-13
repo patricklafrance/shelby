@@ -122,7 +122,7 @@
         }
     };
     
-    Shelby.editExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.editExtender._ctor = Shelby.extenderBase.extend({
         _initialize: function() {
             this.isEditing = false;
         

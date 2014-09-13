@@ -857,7 +857,7 @@ Shelby.debug = false;
 
     // ---------------------------------
     
-    Shelby.baseExtender = function(target) {
+    Shelby.extenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -865,7 +865,7 @@ Shelby.debug = false;
         }
     };
     
-    Shelby.baseExtender.extend = extend;
+    Shelby.extenderBase.extend = extend;
 
     // ---------------------------------
 
@@ -1079,7 +1079,7 @@ Shelby.debug = false;
         }
     };
     
-    Shelby.subscribeExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.subscribeExtender._ctor = Shelby.extenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -1444,7 +1444,7 @@ Shelby.debug = false;
         }
     };
     
-    Shelby.editExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.editExtender._ctor = Shelby.extenderBase.extend({
         _initialize: function() {
             this.isEditing = false;
         
@@ -1588,7 +1588,7 @@ Shelby.debug = false;
         }
     };
     
-    Shelby.utilityExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.utilityExtender._ctor = Shelby.extenderBase.extend({
         reset: function() {
             var value = null;
             var options = {};

@@ -128,7 +128,7 @@
         }
     };
     
-    Shelby.subscribeExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.subscribeExtender._ctor = Shelby.extenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },

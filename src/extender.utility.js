@@ -11,7 +11,7 @@
         }
     };
     
-    Shelby.utilityExtender._ctor = Shelby.baseExtender.extend({
+    Shelby.utilityExtender._ctor = Shelby.extenderBase.extend({
         reset: function() {
             var value = null;
             var options = {};

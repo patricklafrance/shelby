@@ -13,7 +13,7 @@
 
     // ---------------------------------
     
-    Shelby.baseExtender = function(target) {
+    Shelby.extenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -21,7 +21,7 @@
         }
     };
     
-    Shelby.baseExtender.extend = extend;
+    Shelby.extenderBase.extend = extend;
 
     // ---------------------------------
 
