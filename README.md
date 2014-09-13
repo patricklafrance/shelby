@@ -1,13 +1,13 @@
 Shelby
 ===========
 
-Shelby is a set of highly extensible objects to quickly build Knockout view models that will handle most of your application business cases. 
+Shelby is a toolkit to quickly build Knockout view models that will handle the common business cases.
 
 **It provides features to**
 
 * Communicate with REST and RPC endpoints in an asynchronous way with promises.
 * Automatically map or unmap the models observables that are sent or received throught HTTP requests.
-* Create a subscription to track all the changes of a set of observables (including arrays items).
+* Create a subscription to track all the changes on a set of observables (including arrays items) and pause / resume any subscriptions.
 * Start a transaction on a single or a set of observables, providing the ability to commit or rollback the changes.
 
 **Shelby is not**

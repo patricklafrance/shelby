@@ -1,3 +1,6 @@
+// Shelby.EventManager
+// ---------------------------------
+
 (function(extend, utils) {
     "use strict";
 

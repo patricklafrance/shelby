@@ -43,7 +43,7 @@
 
     // ---------------------------------
 
-    var Components = Shelby.components = {
+    Shelby.components = {
         _factory: null,
 
         setComponentFactory: function(factory) {
@@ -55,20 +55,18 @@
         },
 
         registerComponent: function(name, factory) {
+            var that = this;
+
             this._factory.registerComponent(name, factory);
+
+            // Define a shortcut function.
+            this[name] = function() {
+                return that._factory.getComponent(name);
+            };
         }
     };
 
-    // Define functions to easily requiert native components.
-    $.each(["filters", "propertyExtender", "parser", "ajax", "mapper", "eventManager"], function() {
-        var componentName = this;
-
-        Components[componentName] = function() {
-            return Components._factory.getComponent(componentName);
-        };
-    });
-
     // Register a default factory.
-    Components.setComponentFactory(new ComponentsFactory()); 
+    Shelby.components.setComponentFactory(new ComponentsFactory()); 
 })(Shelby.extend,
    Shelby.utils);
