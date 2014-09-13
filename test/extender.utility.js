@@ -21,7 +21,7 @@
 					prop8: dataSampler.generateString(10)
 				};
 
-				Shelby.components.propertyExtender().add(model, {
+				Shelby.components.propertyExtender().addExtenders(model, {
 					"*": {
 						"utility": Shelby.Extenders.utility
 					}
@@ -138,7 +138,7 @@
 					// created by the shelby mapper. 
 					model = Shelby.components.mapper().fromJS(model);
 
-					Shelby.components.propertyExtender().add(model, {
+					Shelby.components.propertyExtender().addExtenders(model, {
 						"*": {
 							"utility": Shelby.Extenders.utility
 						}
@@ -202,7 +202,7 @@
 						}]
 					};
 
-					Shelby.components.propertyExtender().add(model, {
+					Shelby.components.propertyExtender().addExtenders(model, {
 						"*": {
 							"utility": Shelby.Extenders.utility
 						}

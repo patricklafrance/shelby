@@ -27,16 +27,16 @@
 
         _applyExtendersToObject: function(obj, extenders) {
             if (utils.isNull(extenders)) {
-                extenders = this._extenders;
+                extenders = Shelby.components.extenderRegistry().getExtenders();
             }
 
             if (utils.objectSize(extenders) > 0) {
-                Shelby.components.propertyExtender().add(obj, extenders);
+                Shelby.components.propertyExtender().addExtenders(obj, extenders);
             }
         },
         
         _removeExtendersFromObject: function(obj) {
-            Shelby.components.propertyExtender().remove(obj);
+            Shelby.components.propertyExtender().removeExtenders(obj);
         },
 
         _disposeAllSubscriptions: function() {
@@ -54,12 +54,8 @@
         }
     };
 
-    Shelby._ViewModel.Extendable._extenders = {
-        "*": {
-            "utility": Shelby.Extenders.utility,
-            "subscribe": Shelby.Extenders.subscribe,
-            "edit": Shelby.Extenders.edit
-        }
-    };
+    Shelby.registerExtender("utility", Shelby.Extenders.utility, "*");
+    Shelby.registerExtender("subscribe", Shelby.Extenders.subscribe, "*");
+    Shelby.registerExtender("edit", Shelby.Extenders.edit, "*");
 })(Shelby.namespace,
    Shelby.utils);

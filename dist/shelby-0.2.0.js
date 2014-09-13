@@ -767,7 +767,6 @@ Shelby.debug = false;
 
     Shelby.ExtenderRegistry = function() {
         this._extenders = {};
-        this._cache = {};
     };
 
     Shelby.ExtenderRegistry.prototype = {
@@ -797,7 +796,6 @@ Shelby.debug = false;
             }
 
             this._extenders[path][name] = extender;
-            this._invalidCache();
         },
 
         remove: function(name, path) {
@@ -817,35 +815,11 @@ Shelby.debug = false;
                 if (utils.objectSize(this._extenders[path]) === 0) {
                     delete this._extenders[path];
                 }
-
-                this._invalidCache();
             }
         },
 
-        getExtenders: function(path) {
-            if (utils.isNullOrEmpty(path)) {
-                path = "*";
-            }
-
-            var extenders = this._cache[path];
-
-            if (utils.isNull(extenders)) {
-                extenders = [];
-
-                if (!utils.isNull(this._extenders[path])) {
-                    for (var propertyKey in this._extenders[path]) {
-                        extenders.push(this._extenders[path][propertyKey]);
-                    }
-                }
-
-                this._cache[path] = extenders;
-            }
-
-            return extenders;
-        },
-
-        _invalidCache: function() {
-            this._cache = {};
+        getExtenders: function() {
+            return this._extenders;
         }
     };
 
@@ -868,7 +842,7 @@ Shelby.debug = false;
 })(Shelby.extend,
    Shelby.utils);
 
-// Shelby.Extenders - Core
+// Shelby.Extenders
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -899,7 +873,7 @@ Shelby.debug = false;
     };
     
     Shelby.PropertyExtender.prototype = {
-        add: function(target, extenders) {
+        addExtenders: function(target, extenders) {
             if (utils.isNull(target)) {
                 throw new Error("\"target\" must be an object.");
             }
@@ -928,7 +902,7 @@ Shelby.debug = false;
             }
         },
         
-        remove: function(target) {
+        removeExtenders: function(target) {
             if (utils.isNull(target)) {
                 throw new Error("\"target\" must be an object.");
             }
@@ -1885,16 +1859,16 @@ Shelby._ViewModel = {};
 
         _applyExtendersToObject: function(obj, extenders) {
             if (utils.isNull(extenders)) {
-                extenders = this._extenders;
+                extenders = Shelby.components.extenderRegistry().getExtenders();
             }
 
             if (utils.objectSize(extenders) > 0) {
-                Shelby.components.propertyExtender().add(obj, extenders);
+                Shelby.components.propertyExtender().addExtenders(obj, extenders);
             }
         },
         
         _removeExtendersFromObject: function(obj) {
-            Shelby.components.propertyExtender().remove(obj);
+            Shelby.components.propertyExtender().removeExtenders(obj);
         },
 
         _disposeAllSubscriptions: function() {
@@ -1912,13 +1886,9 @@ Shelby._ViewModel = {};
         }
     };
 
-    Shelby._ViewModel.Extendable._extenders = {
-        "*": {
-            "utility": Shelby.Extenders.utility,
-            "subscribe": Shelby.Extenders.subscribe,
-            "edit": Shelby.Extenders.edit
-        }
-    };
+    Shelby.registerExtender("utility", Shelby.Extenders.utility, "*");
+    Shelby.registerExtender("subscribe", Shelby.Extenders.subscribe, "*");
+    Shelby.registerExtender("edit", Shelby.Extenders.edit, "*");
 })(Shelby.namespace,
    Shelby.utils);
 

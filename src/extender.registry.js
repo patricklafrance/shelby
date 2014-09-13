@@ -6,7 +6,6 @@
 
     Shelby.ExtenderRegistry = function() {
         this._extenders = {};
-        this._cache = {};
     };
 
     Shelby.ExtenderRegistry.prototype = {
@@ -36,7 +35,6 @@
             }
 
             this._extenders[path][name] = extender;
-            this._invalidCache();
         },
 
         remove: function(name, path) {
@@ -56,35 +54,11 @@
                 if (utils.objectSize(this._extenders[path]) === 0) {
                     delete this._extenders[path];
                 }
-
-                this._invalidCache();
             }
         },
 
-        getExtenders: function(path) {
-            if (utils.isNullOrEmpty(path)) {
-                path = "*";
-            }
-
-            var extenders = this._cache[path];
-
-            if (utils.isNull(extenders)) {
-                extenders = [];
-
-                if (!utils.isNull(this._extenders[path])) {
-                    for (var propertyKey in this._extenders[path]) {
-                        extenders.push(this._extenders[path][propertyKey]);
-                    }
-                }
-
-                this._cache[path] = extenders;
-            }
-
-            return extenders;
-        },
-
-        _invalidCache: function() {
-            this._cache = {};
+        getExtenders: function() {
+            return this._extenders;
         }
     };
 

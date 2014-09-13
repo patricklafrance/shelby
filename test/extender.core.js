@@ -1,7 +1,7 @@
 (function($) {
 	"use strict";
 	
-	describe("PropertyExtender.add", function() {
+	describe("PropertyExtender.addExtenders", function() {
 		var propertyExtender = null;
 
 		beforeEach(function() {
@@ -9,13 +9,13 @@
 		});
 
 		it("When target is null, throw an exception", function() {
-			expect(function() { propertyExtender.add(null, {}); }).toThrow();
-			expect(function() { propertyExtender.add(undefined, {}); }).toThrow();
+			expect(function() { propertyExtender.addExtenders(null, {}); }).toThrow();
+			expect(function() { propertyExtender.addExtenders(undefined, {}); }).toThrow();
 		});
 
 		it("When extenders is null, throw an exception", function() {
-			expect(function() { propertyExtender.add({}, null); }).toThrow();
-			expect(function() { propertyExtender.add({}, undefined); }).toThrow();
+			expect(function() { propertyExtender.addExtenders({}, null); }).toThrow();
+			expect(function() { propertyExtender.addExtenders({}, undefined); }).toThrow();
 		});
 
 		it("Always create a shelby namespace on objects and observables properties", function() {
@@ -23,7 +23,7 @@
 				prop: ko.observable(dataSampler.generateString(5))
 			};
 
-			propertyExtender.add(obj, {});
+			propertyExtender.addExtenders(obj, {});
 
 			expect($.isPlainObject(obj[Shelby.namespace])).toBeTruthy();
 			expect($.isPlainObject(obj.prop[Shelby.namespace])).toBeTruthy();
@@ -34,7 +34,7 @@
 				var works = false;
 				var obj = {};
 
-				propertyExtender.add(obj, {
+				propertyExtender.addExtenders(obj, {
 					"*": {
 						extender: function(target, type) {
 							works = type === Shelby.PropertyType.Object;
@@ -52,7 +52,7 @@
 					array: ko.observableArray([])
 				};
 				
-				propertyExtender.add(obj, {
+				propertyExtender.addExtenders(obj, {
 					"{root}.array": {
 						extender: function(target, type) {
 							works = type === Shelby.PropertyType.Array;
@@ -70,7 +70,7 @@
 					obs: ko.observable(dataSampler.generateString(5))
 				};
 
-				propertyExtender.add(obj, {
+				propertyExtender.addExtenders(obj, {
 					"{root}.obs": {
 						extender: function(target, type) {
 							works = type === Shelby.PropertyType.Array;
@@ -85,7 +85,7 @@
 				prop: ko.observable(dataSampler.generateString(5))
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -93,7 +93,7 @@
 				}
 			});
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender: function(target) {
 						target[Shelby.namespace].fct2 = $.noop;
@@ -117,7 +117,7 @@
 				boolProp: true
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -142,7 +142,7 @@
 				}
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -162,7 +162,7 @@
 				prop2: ko.observable(dataSampler.generateString(5))
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender1: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -185,7 +185,7 @@
 				prop2: ko.observable(dataSampler.generateString(5))
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"{root}.prop2": {
 					extender: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -203,7 +203,7 @@
 				prop2: ko.observable(dataSampler.generateString(5))
 			};
 
-			propertyExtender.add(obj, {
+			propertyExtender.addExtenders(obj, {
 				"*": {
 					extender1: function(target) {
 						target[Shelby.namespace].fct1 = $.noop;
@@ -222,7 +222,7 @@
 		});
 	});
 
-	describe("PropertyExtender.remove", function() {
+	describe("PropertyExtender.removeExtenders", function() {
 		var propertyExtender = null;
 
 		beforeEach(function() {
@@ -230,8 +230,8 @@
 		});
 
 		it("When target is null, throw an exception", function() {
-			expect(function() { propertyExtender.remove(null); }).toThrow();
-			expect(function() { propertyExtender.remove(undefined); }).toThrow();
+			expect(function() { propertyExtender.removeExtenders(null); }).toThrow();
+			expect(function() { propertyExtender.removeExtenders(undefined); }).toThrow();
 		});
 
 		it("When a property has not been extended, do nothing", function() {
@@ -239,7 +239,7 @@
 				prop: ko.observable("prop value")
 			};
 
-			expect(function() { propertyExtender.remove(obj); }).not.toThrow();
+			expect(function() { propertyExtender.removeExtenders(obj); }).not.toThrow();
 			expect(obj.prop.peek()).toBe("prop value");
 		});
 
@@ -248,7 +248,7 @@
 				prop: "prop value"
 			};
 
-			expect(function() { propertyExtender.remove(obj); }).not.toThrow();
+			expect(function() { propertyExtender.removeExtenders(obj); }).not.toThrow();
 			expect(obj.prop).toBe("prop value");			
 		});
 
@@ -262,8 +262,8 @@
 				}
 			};
 
-			propertyExtender.add(obj, {});
-			propertyExtender.remove(obj);
+			propertyExtender.addExtenders(obj, {});
+			propertyExtender.removeExtenders(obj);
 
 			expect($.isPlainObject(obj[Shelby.namespace])).toBeFalsy();
 			expect($.isPlainObject(obj.prop1[Shelby.namespace])).toBeFalsy();

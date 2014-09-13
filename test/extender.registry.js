@@ -106,57 +106,17 @@
         });
 
         describe("getExtenders", function() {
-            var barFirstExtenderName = dataSampler.generateString(10);
-
-            beforeEach(function() {
+            it("Always returns all the extenders", function() {
                 extenderRegistry.add(dataSampler.generateString(10), $.noop, "*");
                 extenderRegistry.add(dataSampler.generateString(10), $.noop, "*");
-                extenderRegistry.add(dataSampler.generateString(10), $.noop, "*");
-
                 extenderRegistry.add(dataSampler.generateString(10), $.noop, "foo");
 
-                extenderRegistry.add(barFirstExtenderName, $.noop, "bar");
-                extenderRegistry.add(dataSampler.generateString(10), $.noop, "bar");
-            });
+                var extenders = extenderRegistry.getExtenders();
 
-            it("Always returns all the extenders for the specified \"path\"", function() {
-                expect(extenderRegistry.getExtenders("bar").length).toBe(2);
-            });
-
-            it("When the \"path\" is not specified, default to wildcard", function() {
-                expect(extenderRegistry.getExtenders().length).toBe(3);
-            });
-
-            it("When the \"path\" doesn't exists, returns an empty array", function() {
-                expect(extenderRegistry.getExtenders(dataSampler.generateString(10)).length).toBe(0);
-            });
-
-            it("When the \"path\" has been requested multiple times, retrieve the extenders from the cache", function() {
-                extenderRegistry.getExtenders("bar");
-
-                extenderRegistry._extenders = {};
-
-                expect(extenderRegistry.getExtenders("bar").length).toBe(2);
-            });
-
-            it("When an extender is added, invalid the cache", function() {
-                extenderRegistry.getExtenders("bar");
-
-                expect(extenderRegistry._cache["bar"].length).toBe(2);
-
-                extenderRegistry.add(dataSampler.generateString(10), $.noop, dataSampler.generateString(10));
-
-                expect(extenderRegistry._cache["bar"]).toBeUndefined();
-            });
-
-            it("When an extender is removed, invalid the cache", function() {
-                extenderRegistry.getExtenders("bar");
-
-                expect(extenderRegistry._cache["bar"].length).toBe(2);
-
-                extenderRegistry.remove(barFirstExtenderName, "bar");
-
-                expect(extenderRegistry._cache["bar"]).toBeUndefined();
+                expect(extenders["*"]).not.toBeUndefined();
+                expect(keys(extenders["*"]).length).toBe(2);
+                expect(extenders["foo"]).not.toBeUndefined();
+                expect(keys(extenders["foo"]).length).toBe(1);
             });
         });
     });

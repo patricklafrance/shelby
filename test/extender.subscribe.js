@@ -404,7 +404,7 @@
 				}])
 			};
 
-			Shelby.components.propertyExtender().add(model, {
+			Shelby.components.propertyExtender().addExtenders(model, {
 				"*": {
 					"subscribe": Shelby.Extenders.subscribe
 				}
@@ -1025,7 +1025,7 @@
 						prop1: ko.observable(dataSampler.generateString(10))
 					};
 
-					Shelby.components.propertyExtender().add(newItem, {
+					Shelby.components.propertyExtender().addExtenders(newItem, {
 						"*": {
 							"subscribe": Shelby.Extenders.subscribe
 						}
@@ -1170,7 +1170,7 @@
 						array2: ko.observableArray([])
 					};
 
-					Shelby.components.propertyExtender().add(newArrayItem, {
+					Shelby.components.propertyExtender().addExtenders(newArrayItem, {
 						"*": {
 							"subscribe": Shelby.Extenders.subscribe
 						}

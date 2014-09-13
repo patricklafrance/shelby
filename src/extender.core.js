@@ -1,4 +1,4 @@
-// Shelby.Extenders - Core
+// Shelby.Extenders
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -29,7 +29,7 @@
     };
     
     Shelby.PropertyExtender.prototype = {
-        add: function(target, extenders) {
+        addExtenders: function(target, extenders) {
             if (utils.isNull(target)) {
                 throw new Error("\"target\" must be an object.");
             }
@@ -58,7 +58,7 @@
             }
         },
         
-        remove: function(target) {
+        removeExtenders: function(target) {
             if (utils.isNull(target)) {
                 throw new Error("\"target\" must be an object.");
             }
