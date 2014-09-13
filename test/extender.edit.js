@@ -293,7 +293,7 @@
 		});
 	});
 
-	describe("Shelby.Extenders.edit", function() {
+	describe("Shelby.editExtender", function() {
 		var model = null,
 			modelPropertyCount = null;
 
@@ -316,15 +316,15 @@
 
 			Shelby.components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.Extenders.subscribe,
-					"edit": Shelby.Extenders.edit
+					"subscribe": Shelby.subscribeExtender,
+					"edit": Shelby.editExtender
 				}
 			});
 
 			modelPropertyCount = 10;
 		});
 
-		describe("Shelby.Extenders.edit.beginEdit", function() {
+		describe("Shelby.editExtender.beginEdit", function() {
 			it("When \"include\" and \"exclude\" options are not specified, begin edition of all the properties", function() {
 				model.shelby.beginEdit();
 
@@ -488,7 +488,7 @@
 			});
 		});
 
-		describe("Shelby.Extenders.edit.endEdit", function() {
+		describe("Shelby.editExtender.endEdit", function() {
 			describe("When is in edition", function() {
 				describe("Always end the edition of all the properties in edition", function() {
 					it("When no \"include\" or \"exclude\" options are specified", function() {
@@ -668,7 +668,7 @@
 			});
 		});
 
-		describe("Shelby.Extenders.edit.cancelEdit", function() {
+		describe("Shelby.editExtender.cancelEdit", function() {
 			describe("Always cancel the edition of all the properties in edition", function() {
 				it("When no \"include\" or \"exclude\" options are specified", function() {
 					spyOn(model.prop1.shelby, "cancelEdit");
@@ -724,7 +724,7 @@
 			});
 		});
 
-		describe("Shelby.Extenders.edit.resetEdit", function() {
+		describe("Shelby.editExtender.resetEdit", function() {
 			describe("Always reset the value of all the properties in edition", function() {
 				it("When no \"include\" or \"exclude\" options are specified", function() {
 					spyOn(model.prop1.shelby, "resetEdit");
@@ -780,7 +780,7 @@
 			});
 		});
 
-		describe("Shelby.Extenders.edit.hasMutated", function() {
+		describe("Shelby.editExtender.hasMutated", function() {
 			describe("When is in edition", function() {
 				it("When at least one value has changed, return true", function() {
 					model.shelby.beginEdit();

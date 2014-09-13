@@ -1,10 +1,10 @@
 (function($, undefined) {
 	"use strict";
 
-	describe("Shelby.Extenders.utility", function() {
+	describe("Shelby.utilityExtender", function() {
 		var model = null;
 
-		describe("Shelby.Extenders.utility.reset", function() {
+		describe("Shelby.utilityExtender.reset", function() {
 			beforeEach(function() {
 				model = {
 					prop1: ko.observable(dataSampler.generateString(10)),
@@ -23,7 +23,7 @@
 
 				Shelby.components.propertyExtender().addExtenders(model, {
 					"*": {
-						"utility": Shelby.Extenders.utility
+						"utility": Shelby.utilityExtender
 					}
 				});
 			});
@@ -110,7 +110,7 @@
 			});
 		});
 
-		describe("Shelby.Extenders.utility.updateFrom", function() {
+		describe("Shelby.utilityExtender.updateFrom", function() {
 			it("When the source is not an object, throw an exception", function() {
 				expect(function() { model.shelby.updateFrom(null); }).toThrow();
 				expect(function() { model.shelby.updateFrom(undefined); }).toThrow();
@@ -140,7 +140,7 @@
 
 					Shelby.components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.Extenders.utility
+							"utility": Shelby.utilityExtender
 						}
 					});
 				});
@@ -204,7 +204,7 @@
 
 					Shelby.components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.Extenders.utility
+							"utility": Shelby.utilityExtender
 						}
 					});
 				});

@@ -1,17 +1,17 @@
-// Shelby.Extenders - Utility
+// Shelby.utilityExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.Extenders.utility = function(target, type) {
+    Shelby.utilityExtender = function(target, type) {
         if (type !== PropertyType.Scalar) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.utility._ctor(target));
+            $.extend(target[namespace], new Shelby.utilityExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.utility._ctor = Shelby.Extenders.base.extend({
+    Shelby.utilityExtender._ctor = Shelby.baseExtender.extend({
         reset: function() {
             var value = null;
             var options = {};
@@ -57,7 +57,7 @@
         }
     });
     
-    Shelby.Extenders.utility._ctor.extend = extend;
+    Shelby.utilityExtender._ctor.extend = extend;
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);

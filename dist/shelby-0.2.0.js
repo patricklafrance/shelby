@@ -857,7 +857,7 @@ Shelby.debug = false;
 
     // ---------------------------------
     
-    Shelby.Extenders.base = function(target) {
+    Shelby.baseExtender = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -865,7 +865,7 @@ Shelby.debug = false;
         }
     };
     
-    Shelby.Extenders.base.extend = extend;
+    Shelby.baseExtender.extend = extend;
 
     // ---------------------------------
 
@@ -949,7 +949,7 @@ Shelby.debug = false;
    Shelby.extend,
    Shelby.utils);
 
-// Shelby.Extenders - Subscribe
+// Shelby.Shelby.subscribeExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -1057,7 +1057,7 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    Shelby.Extenders.subscribe = function(target, type) {
+    Shelby.subscribeExtender = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
             target.extend(this._observableExtenders["*"]);
@@ -1075,11 +1075,11 @@ Shelby.debug = false;
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.subscribe._ctor(target));
+            $.extend(target[namespace], new Shelby.subscribeExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.subscribe._ctor = Shelby.Extenders.base.extend({
+    Shelby.subscribeExtender._ctor = Shelby.baseExtender.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -1306,9 +1306,9 @@ Shelby.debug = false;
         }
     });
     
-    Shelby.Extenders.subscribe._ctor.extend = extend;
+    Shelby.subscribeExtender._ctor.extend = extend;
     
-    Shelby.Extenders.subscribe._observableExtenders = { 
+    Shelby.subscribeExtender._observableExtenders = { 
         "*": {
             shelbySubscribe: true
         },
@@ -1320,7 +1320,7 @@ Shelby.debug = false;
    Shelby.extend,
    Shelby.utils);
 
-// Shelby.Extenders - Edit
+// Shelby.editExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -1433,18 +1433,18 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    Shelby.Extenders.edit = function(target, type) {
+    Shelby.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
             target.extend(this._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
+            $.extend(target[namespace], new Shelby.editExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
+    Shelby.editExtender._ctor = Shelby.baseExtender.extend({
         _initialize: function() {
             this.isEditing = false;
         
@@ -1566,29 +1566,29 @@ Shelby.debug = false;
         }
     });
     
-    Shelby.Extenders.edit._ctor.extend = extend;
+    Shelby.editExtender._ctor.extend = extend;
     
-    Shelby.Extenders.edit._observableExtenders = {
+    Shelby.editExtender._observableExtenders = {
         shelbyEdit: true
     };
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);
 
-// Shelby.Extenders - Utility
+// Shelby.utilityExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.Extenders.utility = function(target, type) {
+    Shelby.utilityExtender = function(target, type) {
         if (type !== PropertyType.Scalar) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.utility._ctor(target));
+            $.extend(target[namespace], new Shelby.utilityExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.utility._ctor = Shelby.Extenders.base.extend({
+    Shelby.utilityExtender._ctor = Shelby.baseExtender.extend({
         reset: function() {
             var value = null;
             var options = {};
@@ -1634,7 +1634,7 @@ Shelby.debug = false;
         }
     });
     
-    Shelby.Extenders.utility._ctor.extend = extend;
+    Shelby.utilityExtender._ctor.extend = extend;
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);
@@ -1886,9 +1886,9 @@ Shelby._ViewModel = {};
         }
     };
 
-    Shelby.registerExtender("utility", Shelby.Extenders.utility, "*");
-    Shelby.registerExtender("subscribe", Shelby.Extenders.subscribe, "*");
-    Shelby.registerExtender("edit", Shelby.Extenders.edit, "*");
+    Shelby.registerExtender("utility", Shelby.utilityExtender, "*");
+    Shelby.registerExtender("subscribe", Shelby.subscribeExtender, "*");
+    Shelby.registerExtender("edit", Shelby.editExtender, "*");
 })(Shelby.namespace,
    Shelby.utils);
 

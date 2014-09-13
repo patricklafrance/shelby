@@ -1,4 +1,4 @@
-// Shelby.Extenders - Edit
+// Shelby.editExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -111,18 +111,18 @@
 
     // ---------------------------------
 
-    Shelby.Extenders.edit = function(target, type) {
+    Shelby.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
             target.extend(this._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.edit._ctor(target));
+            $.extend(target[namespace], new Shelby.editExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.edit._ctor = Shelby.Extenders.base.extend({
+    Shelby.editExtender._ctor = Shelby.baseExtender.extend({
         _initialize: function() {
             this.isEditing = false;
         
@@ -244,9 +244,9 @@
         }
     });
     
-    Shelby.Extenders.edit._ctor.extend = extend;
+    Shelby.editExtender._ctor.extend = extend;
     
-    Shelby.Extenders.edit._observableExtenders = {
+    Shelby.editExtender._observableExtenders = {
         shelbyEdit: true
     };
 })(Shelby.namespace,

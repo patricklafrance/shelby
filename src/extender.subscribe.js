@@ -1,4 +1,4 @@
-// Shelby.Extenders - Subscribe
+// Shelby.Shelby.subscribeExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -106,7 +106,7 @@
 
     // ---------------------------------
 
-    Shelby.Extenders.subscribe = function(target, type) {
+    Shelby.subscribeExtender = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
             target.extend(this._observableExtenders["*"]);
@@ -124,11 +124,11 @@
         
         if (type === PropertyType.Object) {
             // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.Extenders.subscribe._ctor(target));
+            $.extend(target[namespace], new Shelby.subscribeExtender._ctor(target));
         }
     };
     
-    Shelby.Extenders.subscribe._ctor = Shelby.Extenders.base.extend({
+    Shelby.subscribeExtender._ctor = Shelby.baseExtender.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -355,9 +355,9 @@
         }
     });
     
-    Shelby.Extenders.subscribe._ctor.extend = extend;
+    Shelby.subscribeExtender._ctor.extend = extend;
     
-    Shelby.Extenders.subscribe._observableExtenders = { 
+    Shelby.subscribeExtender._observableExtenders = { 
         "*": {
             shelbySubscribe: true
         },

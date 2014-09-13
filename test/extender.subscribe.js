@@ -383,7 +383,7 @@
 		});
 	});
 
-	describe("Shelby.Extenders.subscribe", function() {
+	describe("Shelby.subscribeExtender", function() {
 		var model = null,
 			modelPropertyCount = null;
 
@@ -406,7 +406,7 @@
 
 			Shelby.components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.Extenders.subscribe
+					"subscribe": Shelby.subscribeExtender
 				}
 			});
 
@@ -1027,7 +1027,7 @@
 
 					Shelby.components.propertyExtender().addExtenders(newItem, {
 						"*": {
-							"subscribe": Shelby.Extenders.subscribe
+							"subscribe": Shelby.subscribeExtender
 						}
 					});
 				});
@@ -1172,7 +1172,7 @@
 
 					Shelby.components.propertyExtender().addExtenders(newArrayItem, {
 						"*": {
-							"subscribe": Shelby.Extenders.subscribe
+							"subscribe": Shelby.subscribeExtender
 						}
 					});
 
