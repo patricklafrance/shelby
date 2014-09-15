@@ -25,7 +25,7 @@
 			it("Always set the \"isEditing\" flag to true", function() {
 				obs.shelby.beginEdit();
 
-				expect(obs.shelby.isEditing).toBeTruthy();
+				expect(obs.shelby.isEditing.peek()).toBeTruthy();
 			});
 
 			it("When the observable is already in edition, nothing happens", function() {
@@ -193,13 +193,13 @@
 			it("Always set the \"isEditing\" flag to false", function() {
 				obs.shelby.endEdit();
 
-				expect(obs.shelby.isEditing).toBeFalsy();
+				expect(obs.shelby.isEditing.peek()).toBeFalsy();
 			});
 
 			it("Always set the \"hasMutated\" flag to false", function() {
 				obs.shelby.endEdit();
 
-				expect(obs.shelby.hasMutated).toBeFalsy();
+				expect(obs.shelby.hasMutated.peek()).toBeFalsy();
 			});
 		});
 
@@ -252,13 +252,13 @@
 			it("Always set the \"isEditing\" flag to false", function() {
 				obs.shelby.cancelEdit();
 
-				expect(obs.shelby.isEditing).toBeFalsy();
+				expect(obs.shelby.isEditing.peek()).toBeFalsy();
 			});
 
 			it("Always set the \"hasMutated\" flag to false", function() {
 				obs.shelby.cancelEdit();
 
-				expect(obs.shelby.hasMutated).toBeFalsy();
+				expect(obs.shelby.hasMutated.peek()).toBeFalsy();
 			});
 		});
 
@@ -276,19 +276,19 @@
 			});
 
 			it("Never modify the \"isEditing\" flag", function() {
-				var before = obs.shelby.isEditing;
+				var before = obs.shelby.isEditing.peek();
 
 				obs.shelby.resetEdit();
 
-				expect(obs.shelby.isEditing).toBe(before);
+				expect(obs.shelby.isEditing.peek()).toBe(before);
 			});
 
 			it("Never modify the \"hasMutated\" flag", function() {
-				var before = obs.shelby.hasMutated;
+				var before = obs.shelby.hasMutated.peek();
 
 				obs.shelby.resetEdit();
 
-				expect(obs.shelby.hasMutated).toBe(before);
+				expect(obs.shelby.hasMutated.peek()).toBe(before);
 			});
 		});
 	});
@@ -356,16 +356,16 @@
 					include: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
-				expect(model.prop1.shelby.isEditing).toBeTruthy();
-				expect(model.prop2.shelby.isEditing).toBeFalsy();
-				expect(model.nestedProp.prop3.shelby.isEditing).toBeTruthy();
-				expect(model.nestedProp.prop4.shelby.isEditing).toBeFalsy();
-				expect(model.array.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeFalsy();
-				expect(model.iamtoken2.shelby.isEditing).toBeTruthy();
-				expect(model.nestedProp.iamtoken2.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].iamtoken2.shelby.isEditing).toBeTruthy();
+				expect(model.prop1.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.prop2.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.nestedProp.prop3.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.nestedProp.prop4.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.iamtoken2.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.nestedProp.iamtoken2.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].iamtoken2.shelby.isEditing.peek()).toBeTruthy();
 			});
 
 			it("When the \"include\" options is specified for an array, begin the edition of the array itself but do not begin the edition of the array items", function() {
@@ -373,9 +373,9 @@
 					include: ["{root}.array"]
 				});
 
-				expect(model.array.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeFalsy();
+				expect(model.array.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeFalsy();
 			});
 
 			it("When the \"include\" options is specified for the items of an array, begin the edition of the items of the array but do not begin the edition of the array itself", function() {
@@ -383,9 +383,9 @@
 					include: ["{root}.array[i]"]
 				});
 
-				expect(model.array.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeTruthy();
+				expect(model.array.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeTruthy();
 			});
 
 			it("When the \"exclude\" options is specified, begin the edition of the properties that are not excluded", function() {
@@ -393,16 +393,16 @@
 					exclude: ["{root}.prop1", "{root}.nestedProp.prop3", "{root}.array[i].prop5", "token"]
 				});
 
-				expect(model.prop1.shelby.isEditing).toBeFalsy();
-				expect(model.prop2.shelby.isEditing).toBeTruthy();
-				expect(model.nestedProp.prop3.shelby.isEditing).toBeFalsy();
-				expect(model.nestedProp.prop4.shelby.isEditing).toBeTruthy();
-				expect(model.array.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeTruthy();
-				expect(model.iamtoken2.shelby.isEditing).toBeFalsy();
-				expect(model.nestedProp.iamtoken2.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].iamtoken2.shelby.isEditing).toBeFalsy();
+				expect(model.prop1.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.prop2.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.nestedProp.prop3.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.nestedProp.prop4.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.iamtoken2.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.nestedProp.iamtoken2.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].iamtoken2.shelby.isEditing.peek()).toBeFalsy();
 			});
 
 			it("When the \"exclude\" options is specified for an array, do not begin the edition of the array itself but begin the edition of the items of the array", function() {
@@ -410,9 +410,9 @@
 					exclude: ["{root}.array"]
 				});
 
-				expect(model.array.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeTruthy();
+				expect(model.array.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeTruthy();
 			});
 
 			it("When the \"exclude\" options is specified for the items of an array, do not begin the edition of items of the array but begin the edition of the array itself", function() {
@@ -420,9 +420,9 @@
 					exclude: ["{root}.array[i]"]
 				});
 
-				expect(model.array.shelby.isEditing).toBeTruthy();
-				expect(model.array.peek()[0].prop5.shelby.isEditing).toBeFalsy();
-				expect(model.array.peek()[0].prop6.shelby.isEditing).toBeFalsy();
+				expect(model.array.shelby.isEditing.peek()).toBeTruthy();
+				expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeFalsy();
+				expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeFalsy();
 			});
 
 			it("When the \"include\" and \"exclude\" options are both specified, the \"include\" options is used", function() {
@@ -430,7 +430,7 @@
 					include: ["{root}.prop1"]
 				});
 
-				expect(model.prop1.shelby.isEditing).toBeTruthy();
+				expect(model.prop1.shelby.isEditing.peek()).toBeTruthy();
 			});
 
 			it("Always save the specified options", function() {
@@ -495,13 +495,13 @@
 						model.shelby.beginEdit();
 						model.shelby.endEdit();
 
-						expect(model.prop1.shelby.isEditing).toBeFalsy();
-						expect(model.prop2.shelby.isEditing).toBeFalsy();
-						expect(model.nestedProp.prop3.shelby.isEditing).toBeFalsy();
-						expect(model.nestedProp.prop4.shelby.isEditing).toBeFalsy();
-						expect(model.array.shelby.isEditing).toBeFalsy();
-						expect(model.array.peek()[0].prop5.shelby.isEditing).toBeFalsy();
-						expect(model.array.peek()[0].prop6.shelby.isEditing).toBeFalsy();
+						expect(model.prop1.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.prop2.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.nestedProp.prop3.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.nestedProp.prop4.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.array.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.array.peek()[0].prop5.shelby.isEditing.peek()).toBeFalsy();
+						expect(model.array.peek()[0].prop6.shelby.isEditing.peek()).toBeFalsy();
 					});
 
 					it("When \"include\" options are specified", function() {
@@ -641,7 +641,7 @@
 					model.shelby.beginEdit();
 					model.shelby.endEdit();
 
-					expect(model.shelby.isEditing).toBeFalsy();
+					expect(model.shelby.isEditing.peek()).toBeFalsy();
 				});
 			});
 
@@ -720,7 +720,7 @@
 				model.shelby.beginEdit();
 				model.shelby.cancelEdit();
 
-				expect(model.shelby.isEditing).toBeFalsy();
+				expect(model.shelby.isEditing.peek()).toBeFalsy();
 			});
 		});
 

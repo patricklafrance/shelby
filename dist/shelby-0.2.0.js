@@ -1336,12 +1336,12 @@ Shelby.debug = false;
         $.extend(target[namespace], {
             current: target.peek(),
             
-            hasMutated: false,
-            isEditing: false,
+            hasMutated: ko.observable(false),
+            isEditing: ko.observable(false),
             deferNotifications: false,
             
             beginEdit: function(deferNotifications) {
-                if (!this.isEditing) {
+                if (!this.isEditing.peek()) {
                     this.current = target.peek();
                     this.deferNotifications = deferNotifications !== false ? true : false;
 
@@ -1358,20 +1358,20 @@ Shelby.debug = false;
                     }
 
                     // Start edition.
-                    this.isEditing = true;
+                    this.isEditing(true);
                 }
             },
             
             endEdit: function(canNotify) {
                 var that = this;
 
-                if (this.isEditing && this.hasMutated) {
+                if (this.isEditing.peek() && this.hasMutated.peek()) {
                     this.current = target.peek();
                 }
                 
-                if (this.isEditing) {
+                if (this.isEditing.peek()) {
                     if (!wasPause && this.deferNotifications !== false) {
-                        var hasMutated = that.hasMutated;
+                        var hasMutated = that.hasMutated.peek();
 
                         // Defer the "resume" to prevent synchronization problem with the UI.
                         setTimeout(function() {
@@ -1390,12 +1390,12 @@ Shelby.debug = false;
                     }
                 }
                            
-                this.hasMutated = false;     
-                this.isEditing = false;
+                this.hasMutated(false);     
+                this.isEditing(false);
             },
 
             resetEdit: function() {
-                if (this.isEditing && this.hasMutated) {
+                if (this.isEditing.peek() && this.hasMutated.peek()) {
                     target(this.current);
                 }
             },
@@ -1403,7 +1403,7 @@ Shelby.debug = false;
             cancelEdit: function() {
                 target[namespace].resetEdit();
 
-                if (this.isEditing) {
+                if (this.isEditing.peek()) {
                     if (!wasPause && this.deferNotifications !== false) {
                         // Defer the "resume" to prevent synchronization problem with the UI.
                         setTimeout(function() {
@@ -1412,18 +1412,18 @@ Shelby.debug = false;
                     }
                 }
                 
-                this.isEditing = false;
-                this.hasMutated = false;
+                this.isEditing(false);
+                this.hasMutated(false);
             }
         });
         
         target.subscribe(function(value) {
-            if (!utils.isNull(target[namespace]) && target[namespace].isEditing && !target[namespace].hasMutated) {
+            if (!utils.isNull(target[namespace]) && target[namespace].isEditing.peek() && !target[namespace].hasMutated.peek()) {
                 if ($.isArray(value)) {
-                    target[namespace].hasMutated = ko.utils.compareArrays(target[namespace].current, value).length === 0;
+                    target[namespace].hasMutated(ko.utils.compareArrays(target[namespace].current, value).length === 0);
                 }
                 else {
-                    target[namespace].hasMutated = value !== target[namespace].current;
+                    target[namespace].hasMutated(value !== target[namespace].current);
                 }
             }
         });
@@ -1446,7 +1446,7 @@ Shelby.debug = false;
     
     Shelby.editExtender._ctor = Shelby.extenderBase.extend({
         _initialize: function() {
-            this.isEditing = false;
+            this.isEditing = ko.observable(false);
         
             // Options for the current edition. 
             // The object structure is:
@@ -1456,19 +1456,19 @@ Shelby.debug = false;
         },
         
         beginEdit: function(options) {
-            if (!this.isEditing) {
+            if (!this.isEditing.peek()) {
                 this._editOptions = options || {};
             
                 this._executeEditAction(function(property) {
                     property.value[namespace].beginEdit(this._editOptions.deferNotifications);
                 });
                 
-                this.isEditing = true;
+                this.isEditing(true);
             }
         },
 
         endEdit: function(notifyOnce) {
-            if (this.isEditing) {
+            if (this.isEditing.peek()) {
                 // Evaluator that handles the notifications count option.
                 var canNotify = null;
                 
@@ -1488,8 +1488,8 @@ Shelby.debug = false;
                 }
                 
                 var action = function(property, context) {
-                    if (property.value[namespace].isEditing === true) {
-                        if (property.value[namespace].hasMutated) {
+                    if (property.value[namespace].isEditing.peek() === true) {
+                        if (property.value[namespace].hasMutated.peek() === true) {
                             context.count += 1;
                         }
 
@@ -1501,14 +1501,14 @@ Shelby.debug = false;
                     count: 0
                 });
                 
-                this.isEditing = false;
+                this.isEditing(false);
             }
         },
 
         resetEdit: function() {
-            if (this.isEditing) {
+            if (this.isEditing.peek()) {
                 this._executeEditAction(function(property) {
-                    if (property.value[namespace].isEditing === true) {
+                    if (property.value[namespace].isEditing.peek() === true) {
                         property.value[namespace].resetEdit();
                     }
                 });
@@ -1518,21 +1518,21 @@ Shelby.debug = false;
         cancelEdit: function() {
             if (this.isEditing) {
                 this._executeEditAction(function(property) {
-                    if (property.value[namespace].isEditing === true) {
+                    if (property.value[namespace].isEditing.peek() === true) {
                         property.value[namespace].cancelEdit();
                     }
                 });
                 
-                this.isEditing = false;
+                this.isEditing(false);
             }
         },
         
         hasMutated: function() {
             var ret = false;
         
-            if (this.isEditing) {
+            if (this.isEditing.peek()) {
                 this._executeEditAction(function(property) {
-                    if (property.value[namespace].hasMutated) {
+                    if (property.value[namespace].hasMutated.peek() === true) {
                         ret = true;
                         
                         return false;
