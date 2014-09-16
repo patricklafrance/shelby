@@ -8,20 +8,19 @@
         Scalar: 2
     };
 
-    Shelby.Extenders = {
-    };
+    Shelby.Extenders = {};
 
     // ---------------------------------
     
-    Shelby.extenderBase = function(target) {
+    Shelby.ExtenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
             };
         }
     };
-    
-    Shelby.extenderBase.extend = extend;
+
+    Shelby.ExtenderBase.extend = extend;
 
     // ---------------------------------
 

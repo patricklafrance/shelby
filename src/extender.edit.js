@@ -111,18 +111,7 @@
 
     // ---------------------------------
 
-    Shelby.editExtender = function(target, type) {
-        if (type !== PropertyType.Object) {
-            target.extend(this._observableExtenders);
-        }
-        
-        if (type === PropertyType.Object) {
-            // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.editExtender._ctor(target));
-        }
-    };
-    
-    Shelby.editExtender._ctor = Shelby.extenderBase.extend({
+    Shelby.EditExtender = Shelby.ExtenderBase.extend({
         _initialize: function() {
             this.isEditing = ko.observable(false);
         
@@ -132,7 +121,7 @@
             //  - exclude: An array of property paths that will be exclude from the edition.
             this._editOptions = null;
         },
-        
+
         beginEdit: function(options) {
             if (!this.isEditing.peek()) {
                 this._editOptions = options || {};
@@ -182,7 +171,7 @@
                 this.isEditing(false);
             }
         },
-
+        
         resetEdit: function() {
             if (this.isEditing.peek()) {
                 this._executeEditAction(function(property) {
@@ -241,14 +230,60 @@
                 onArray: execute,
                 onFunction: execute
             });
-        }
+        }        
     });
-    
-    Shelby.editExtender._ctor.extend = extend;
-    
-    Shelby.editExtender._observableExtenders = {
+
+    Shelby.EditExtender._observableExtenders = {
         shelbyEdit: true
     };
+
+    Shelby.EditExtender.extend = extend;
+
+    // ---------------------------------
+
+    var addEditExtender = function(target, type) {
+        if (type !== PropertyType.Object) {
+            target.extend(Shelby.EditExtender._observableExtenders);
+        }
+        
+        if (type === PropertyType.Object) {
+            var editExtender = new Shelby.EditExtender(target);
+
+            // Copy all the functions to the target.
+            $.extend(target[namespace], {
+                _extender: editExtender,
+
+                isEditing: ko.pureComputed({
+                    read: function() {
+                        return editExtender.isEditing();
+                    },
+                    deferEvaluation: true
+                }),
+
+                beginEdit: function(options) {
+                    editExtender.beginEdit(options);
+                },
+
+                endEdit: function(notifyOnce) {
+                    editExtender.endEdit(notifyOnce);
+                },
+
+                resetEdit: function() {
+                    editExtender.resetEdit();
+                },
+
+                cancelEdit: function() {
+                    editExtender.cancelEdit();
+                },
+
+                hasMutated: function() {
+                    return editExtender.hasMutated();
+                }
+            });
+        }
+    };
+
+    Shelby.registerExtender("edit", addEditExtender, "*");
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);

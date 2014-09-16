@@ -56,6 +56,6 @@
 
     Shelby.registerExtender("utility", Shelby.utilityExtender, "*");
     Shelby.registerExtender("subscribe", Shelby.subscribeExtender, "*");
-    Shelby.registerExtender("edit", Shelby.editExtender, "*");
+    // Shelby.registerExtender("edit", Shelby.editExtender, "*");
 })(Shelby.namespace,
    Shelby.utils);
