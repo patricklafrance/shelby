@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(extend, utils) {
-    "use strict";
-
     var ComponentsFactory = Shelby.ComponentsFactory = function() {
         this._components = {};
         this._instances = {};
