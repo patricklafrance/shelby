@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(extend, utils) {
-    "use strict";
-
     var HttpEvent = Shelby.HttpEvent;
     var OperationContext = Shelby.OperationContext;
     var RequestError = Shelby.RequestError;
@@ -39,7 +37,7 @@
             }
 
             // Execute the AJAX request.
-            var promise = Shelby.components.ajax().send(request);
+            var promise = Shelby.Components.ajax().send(request);
 
             // Using a "proxy" deferred to add custom mapping / error handling logics through 
             // the AJAX promise handlers.
@@ -150,7 +148,7 @@
                 },
                 onResponse: function(response, requestOptions) {
                     if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
-                        Shelby.components.mapper().update(requestOptions.request.data, response);
+                        Shelby.Components.mapper().update(requestOptions.request.data, response);
                     }
 
                     return response;

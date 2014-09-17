@@ -2,12 +2,10 @@
 // ---------------------------------
 
 (function(namespace, utils) {
-    "use strict";
-
     Shelby._ViewModel.Extendable = {
         _fromJS: function(obj, mappingOptions, extenders) {
             // Convert properties to observables.
-            var mapped = Shelby.components.mapper().fromJS(obj, mappingOptions);
+            var mapped = Shelby.Components.mapper().fromJS(obj, mappingOptions);
             
             // Extend all the object properties.
             this._applyExtendersToObject(mapped, extenders);
@@ -17,7 +15,7 @@
         
         _toJS: function(obj) {
             // Convert observables back to primitive values.
-            var unmapped = Shelby.components.mapper().toJS(obj);
+            var unmapped = Shelby.Components.mapper().toJS(obj);
             
             // Remove all the extenders left on the object properties (ex. on objects).
             this._removeExtendersFromObject(unmapped);
@@ -27,16 +25,16 @@
 
         _applyExtendersToObject: function(obj, extenders) {
             if (utils.isNull(extenders)) {
-                extenders = Shelby.components.extenderRegistry().getExtenders();
+                extenders = Shelby.Components.extenderRegistry().getExtenders();
             }
 
             if (utils.objectSize(extenders) > 0) {
-                Shelby.components.propertyExtender().addExtenders(obj, extenders);
+                Shelby.Components.propertyExtender().addExtenders(obj, extenders);
             }
         },
         
         _removeExtendersFromObject: function(obj) {
-            Shelby.components.propertyExtender().removeExtenders(obj);
+            Shelby.Components.propertyExtender().removeExtenders(obj);
         },
 
         _disposeAllSubscriptions: function() {
@@ -47,15 +45,11 @@
             };
         
             // Iterate on the view model properties to dispose all the subscriptions.
-            Shelby.components.parser().parse(this, {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(this, {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onObject: action
             });
         }
     };
-
-    Shelby.registerExtender("utility", Shelby.utilityExtender, "*");
-    Shelby.registerExtender("subscribe", Shelby.subscribeExtender, "*");
-    // Shelby.registerExtender("edit", Shelby.editExtender, "*");
 })(Shelby.namespace,
    Shelby.utils);

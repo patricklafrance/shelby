@@ -1,4 +1,4 @@
-// Utils
+// Shelby.utils
 // ---------------------------------
 
 (function(namespace, undefined) {

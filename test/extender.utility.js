@@ -21,9 +21,9 @@
 					prop8: dataSampler.generateString(10)
 				};
 
-				Shelby.components.propertyExtender().addExtenders(model, {
+				Shelby.Components.propertyExtender().addExtenders(model, {
 					"*": {
-						"utility": Shelby.utilityExtender
+						"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
 					}
 				});
 			});
@@ -134,13 +134,13 @@
 						}]
 					};
 
-					// The updateFrom utility expect that the observables has been map
-					// created by the shelby mapper. 
-					model = Shelby.components.mapper().fromJS(model);
+					// The updateFrom utility expect that the observables has been map and
+					// by the shelby mapper. 
+					model = Shelby.Components.mapper().fromJS(model);
 
-					Shelby.components.propertyExtender().addExtenders(model, {
+					Shelby.Components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.utilityExtender
+							"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
 						}
 					});
 				});
@@ -202,9 +202,9 @@
 						}]
 					};
 
-					Shelby.components.propertyExtender().addExtenders(model, {
+					Shelby.Components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.utilityExtender
+							"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
 						}
 					});
 				});

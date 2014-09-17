@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(extend, Disposable, Extendable, Http) {
-    "use strict";
-
     Shelby.ComponentViewModel = function() {
     };
 

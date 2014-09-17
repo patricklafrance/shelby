@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(utils) {
-    "use strict";
-
     Shelby._ViewModel.Bindable = {
         _beforeBind: null,
         _afterBind: null,

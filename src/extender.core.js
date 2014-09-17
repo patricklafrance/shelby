@@ -7,9 +7,7 @@
         Array: 1,
         Scalar: 2
     };
-
-    Shelby.Extenders = {};
-
+    
     // ---------------------------------
     
     Shelby.ExtenderBase = function(target) {
@@ -48,8 +46,8 @@
                 };
                 
                 // Iterate on the target properties to extend all the objects and observables matching criterias.
-                Shelby.components.parser().parse(target, {
-                    filter: Shelby.components.filters().getExtendablePropertyFilter(),
+                Shelby.Components.parser().parse(target, {
+                    filter: Shelby.Components.filters().getExtendablePropertyFilter(),
                     onObject: action(PropertyType.Object),
                     onArray: action(PropertyType.Array),
                     onFunction: action(PropertyType.Scalar)
@@ -67,8 +65,8 @@
             };
         
             // Iterate on the target properties to remove shelby extenders.
-            Shelby.components.parser().parse(target, {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(target, {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onObject: action,
                 onArray: action,
                 onFunction: action
@@ -97,7 +95,7 @@
     Shelby.PropertyExtender.extend = extend;
 
     // Register the components.
-    Shelby.components.registerComponent("propertyExtender", function() {
+    Shelby.Components.registerComponent("propertyExtender", function() {
         return new Shelby.PropertyExtender();
     });
 })(Shelby.namespace,

@@ -180,7 +180,7 @@
     Shelby.Filters.extend = extend;
 
     // Register the components.
-    Shelby.components.registerComponent("filters", function() {
+    Shelby.Components.registerComponent("filters", function() {
         return new Shelby.Filters();
     });
 })(Shelby.namespace,

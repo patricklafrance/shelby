@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(extend, Bindable, Disposable, Extendable, Http, HttpEvent) {
-    "use strict";
-
     Shelby.ViewModel = function() {
         // This is used by the binding functions.
         this.element = null;

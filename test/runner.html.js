@@ -20,6 +20,8 @@
     }
 
     $(document).ready(function() {
+        Shelby.test = true;
+
         runJasmine();
     });
 })(jQuery);

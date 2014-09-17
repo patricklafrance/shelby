@@ -404,9 +404,9 @@
 				}])
 			};
 
-			Shelby.components.propertyExtender().addExtenders(model, {
+			Shelby.Components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.subscribeExtender
+					"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
 				}
 			});
 
@@ -428,7 +428,7 @@
 			 	model.prop1(dataSampler.generateString(10));
 
 			 	expect(works).toBeTruthy();
-			 	expect(model.shelby._delegatedSubscriptions[keys(model.shelby._delegatedSubscriptions)[0]].members.length).toBe(modelPropertyCount);
+			 	expect(model.shelby._subscribeExtender._delegatedSubscriptions[keys(model.shelby._subscribeExtender._delegatedSubscriptions)[0]].members.length).toBe(modelPropertyCount);
 			});
 
 			it("Can subscribe to deep properties", function() {
@@ -1005,16 +1005,16 @@
 
 				subscription1.dispose();
 
-				expect(model.shelby._delegatedSubscriptions[subscription1.id]).toBeUndefined();
-				expect(model.shelby._delegatedSubscriptions[subscription2.id]).not.toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription1.id]).toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription2.id]).not.toBeUndefined();
 			});
 
 			it("Always save the subscription informations", function() {
 				var subscription1 = model.shelby.subscribe($.noop),
 					subscription2 = model.shelby.subscribe($.noop);
 
-				expect(model.shelby._delegatedSubscriptions[subscription1.id]).not.toBeUndefined();
-				expect(model.shelby._delegatedSubscriptions[subscription2.id]).not.toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription1.id]).not.toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription2.id]).not.toBeUndefined();
 			});
 
 			describe("Array automatic subscription", function() {
@@ -1025,9 +1025,9 @@
 						prop1: ko.observable(dataSampler.generateString(10))
 					};
 
-					Shelby.components.propertyExtender().addExtenders(newItem, {
+					Shelby.Components.propertyExtender().addExtenders(newItem, {
 						"*": {
-							"subscribe": Shelby.subscribeExtender
+							"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
 						}
 					});
 				});
@@ -1170,9 +1170,9 @@
 						array2: ko.observableArray([])
 					};
 
-					Shelby.components.propertyExtender().addExtenders(newArrayItem, {
+					Shelby.Components.propertyExtender().addExtenders(newArrayItem, {
 						"*": {
-							"subscribe": Shelby.subscribeExtender
+							"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
 						}
 					});
 
@@ -1203,9 +1203,9 @@
 			it("All the model subscriptions are cleared", function() {
 				model.shelby.unsuscribeAll();
 
-				expect(model.shelby._delegatedSubscriptions[subscription1.id]).toBeUndefined();
-				expect(model.shelby._delegatedSubscriptions[subscription2.id]).toBeUndefined();
-				expect(model.shelby._delegatedSubscriptions[subscription3.id]).toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription1.id]).toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription2.id]).toBeUndefined();
+				expect(model.shelby._subscribeExtender._delegatedSubscriptions[subscription3.id]).toBeUndefined();
 			});
 
 			it("All the subscription members are cleared", function() {

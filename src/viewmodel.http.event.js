@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(utils) {
-    "use strict";
-
     function call(handler, args) {
         if ($.isFunction(handler)) {
             /* jshint -W040 */
@@ -51,7 +49,7 @@
                     break;
             }
 
-            Shelby.components.eventManager().notifyHandlers(eventName, args, this);
+            Shelby.Components.eventManager().notifyHandlers(eventName, args, this);
         }
     };
 

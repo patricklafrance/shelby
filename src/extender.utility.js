@@ -1,18 +1,11 @@
-// Shelby.utilityExtender
+// Shelby.UtilityExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.utilityExtender = function(target, type) {
-        if (type !== PropertyType.Scalar) {
-            // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.utilityExtender._ctor(target));
-        }
-    };
-    
-    Shelby.utilityExtender._ctor = Shelby.ExtenderBase.extend({
-        reset: function() {
+    Shelby.UtilityExtender = Shelby.ExtenderBase.extend({
+        reset: function(/* resetValue, options */) {
             var value = null;
             var options = {};
             
@@ -37,8 +30,8 @@
             };
         
             // Iterate on the target properties to reset all the observables matching criterias.
-            Shelby.components.parser().parse(this._target(), {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(this._target(), {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onFunction: action
             });
         },
@@ -49,15 +42,43 @@
             }
 
             try {
-                Shelby.components.mapper().update(this._target(), obj);
+                Shelby.Components.mapper().update(this._target(), obj);
             }
             catch (e) {
                 throw new Error("An error occurred while updating the target object. Make sure that all the observables properties of the target object has been created by the Shelby mapper.");
             }
-        }
+        }        
     });
-    
-    Shelby.utilityExtender._ctor.extend = extend;
+
+    Shelby.UtilityExtender.extend = extend;
+
+    // Register the components.
+    Shelby.Components.registerTransientComponent("utilityExtender", function(target) {
+        return new Shelby.UtilityExtender(target);
+    });
+
+    // ---------------------------------
+
+    Shelby.Extenders.utilityExtender = function(target, type) {
+        if (type !== PropertyType.Scalar) {
+            var utilityExtender = Shelby.Components.utilityExtender(target);
+
+            var facade = {
+                reset: function() {
+                    utilityExtender.reset.apply(utilityExtender, arguments);
+                },
+
+                updateFrom: function(obj) {
+                    utilityExtender.updateFrom(obj);
+                }
+            };
+
+            // Copy all the functions and properties to the target.
+            $.extend(target[namespace], facade);
+        }
+    };
+
+    Shelby.Extenders.registerExtender("utility", Shelby.Extenders.utilityExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);

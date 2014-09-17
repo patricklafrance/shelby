@@ -76,7 +76,7 @@
     Ajax.extend = extend;
 
     // Register the components.
-    Shelby.components.registerComponent("ajax", function() {
+    Shelby.Components.registerComponent("ajax", function() {
         return new Ajax();
     });
 })(Shelby.debug,

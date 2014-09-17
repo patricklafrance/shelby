@@ -1,4 +1,4 @@
-// Shelby.editExtender
+// Shelby.EditExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -216,7 +216,7 @@
             // Filter that handles the include / exclude options by evaluating the property
             // paths against the specified options and filter out the paths that doesn't match the 
             // options.
-            var propertyEvaluator = Shelby.components.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
+            var propertyEvaluator = Shelby.Components.filters().getPathFilter(this._editOptions.include, this._editOptions.exclude);
         
             var execute = function(property) {
                 if (propertyEvaluator(property.path).isPerfectMatch) {
@@ -225,8 +225,8 @@
             };
         
             // Iterate on the target properties to execute the action on all the observables matching criterias.
-            Shelby.components.parser().parse(this._target(), {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(this._target(), {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onArray: execute,
                 onFunction: execute
             });
@@ -239,20 +239,22 @@
 
     Shelby.EditExtender.extend = extend;
 
+    // Register the components.
+    Shelby.Components.registerTransientComponent("editExtender", function(target) {
+        return new Shelby.EditExtender(target);
+    });
+
     // ---------------------------------
 
-    var addEditExtender = function(target, type) {
+    Shelby.Extenders.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
             target.extend(Shelby.EditExtender._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
-            var editExtender = new Shelby.EditExtender(target);
+            var editExtender = Shelby.Components.editExtender(target);
 
-            // Copy all the functions to the target.
-            $.extend(target[namespace], {
-                _extender: editExtender,
-
+            var facade = {
                 isEditing: ko.pureComputed({
                     read: function() {
                         return editExtender.isEditing();
@@ -279,11 +281,18 @@
                 hasMutated: function() {
                     return editExtender.hasMutated();
                 }
-            });
+            };
+
+            if (Shelby.test === true) {
+                facade._editExtender = editExtender;
+            }
+
+            // Copy all the facade functions and properties to the target.
+            $.extend(target[namespace], facade);
         }
     };
 
-    Shelby.registerExtender("edit", addEditExtender, "*");
+    Shelby.Extenders.registerExtender("edit", Shelby.Extenders.editExtender, "*");
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);

@@ -1,4 +1,4 @@
-// Shelby.Shelby.subscribeExtender
+// Shelby.SubscribeExtender
 // ---------------------------------
 
 (function(namespace, extend, utils) {
@@ -106,29 +106,7 @@
 
     // ---------------------------------
 
-    Shelby.subscribeExtender = function(target, type) {
-        // Apply the observable extenders to everything that is an observable.
-        if (type !== PropertyType.Object) {
-            target.extend(this._observableExtenders["*"]);
-            
-            if (type === PropertyType.Array) {
-                var arrayExtenders = this._observableExtenders["array"];
-
-                if (!utils.isNull(arrayExtenders)) {
-                    target.extend(arrayExtenders);
-                }
-            }
-            
-            target[namespace]._subscriptions = {};
-        }
-        
-        if (type === PropertyType.Object) {
-            // Copy all the functions to the target.
-            $.extend(target[namespace], new Shelby.subscribeExtender._ctor(target));
-        }
-    };
-    
-    Shelby.subscribeExtender._ctor = Shelby.ExtenderBase.extend({
+    Shelby.SubscribeExtender = Shelby.ExtenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -143,7 +121,7 @@
             options = options || {};
             options.array = options.array || {};
 
-            var propertyFilter = Shelby.components.filters().getPathFilter(options.include, options.exclude);
+            var propertyFilter = Shelby.Components.filters().getPathFilter(options.include, options.exclude);
             
             var subscription = {
                 // Unique identifier of the subscription.
@@ -248,8 +226,8 @@
             };
             
             // Iterate on the target properties to subscribe on all the observables matching criterias.
-            Shelby.components.parser().parse(target, {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(target, {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -272,8 +250,8 @@
             };
         
             // Iterate on the target properties to dispose the subscriptions from all the observables matching criterias.
-            Shelby.components.parser().parse(target, {
-                filter: Shelby.components.filters().getExtendedPropertyFilter(),
+            Shelby.Components.parser().parse(target, {
+                filter: Shelby.Components.filters().getExtendedPropertyFilter(),
                 onArray: action,
                 onFunction: action
             });
@@ -354,10 +332,8 @@
             });
         }
     });
-    
-    Shelby.subscribeExtender._ctor.extend = extend;
-    
-    Shelby.subscribeExtender._observableExtenders = { 
+
+    Shelby.SubscribeExtender._observableExtenders = {
         "*": {
             shelbySubscribe: true
         },
@@ -365,6 +341,63 @@
             shelbyArraySubscribe: true
         }
     };
+
+    Shelby.SubscribeExtender.extend = extend;
+
+    // Register the components.
+    Shelby.Components.registerTransientComponent("subscribeExtender", function(target) {
+        return new Shelby.SubscribeExtender(target);
+    });
+
+    // ---------------------------------
+
+    Shelby.Extenders.subscribeExtender = function(target, type) {
+        // Apply the observable extenders to everything that is an observable.
+        if (type !== PropertyType.Object) {
+            target.extend(Shelby.SubscribeExtender._observableExtenders["*"]);
+            
+            if (type === PropertyType.Array) {
+                var arrayExtenders = Shelby.SubscribeExtender._observableExtenders["array"];
+
+                if (!utils.isNull(arrayExtenders)) {
+                    target.extend(arrayExtenders);
+                }
+            }
+            
+            target[namespace]._subscriptions = {};
+        }
+        
+        if (type === PropertyType.Object) {
+            var subscribeExtender = Shelby.Components.subscribeExtender(target);
+
+            var facade = {
+                subscribe: function(callback, options) {
+                    return subscribeExtender.subscribe(callback, options);
+                },
+
+                unsuscribeAll: function() {
+                    subscribeExtender.unsuscribeAll();
+                },
+
+                mute: function() {
+                    subscribeExtender.mute();
+                },
+
+                unmute: function() {
+                    subscribeExtender.unmute();
+                }
+            };
+
+            if (Shelby.test === true) {
+                facade._subscribeExtender = subscribeExtender;
+            }
+
+            // Copy all the functions and properties to the target.
+            $.extend(target[namespace], facade);
+        }
+    };
+
+    Shelby.Extenders.registerExtender("subscribe", Shelby.Extenders.subscribeExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);

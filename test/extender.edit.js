@@ -314,10 +314,10 @@
 				}])
 			};
 
-			Shelby.components.propertyExtender().addExtenders(model, {
+			Shelby.Components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.components.extenderRegistry().getExtenders()["*"]["subscribe"],
-					"edit": Shelby.components.extenderRegistry().getExtenders()["*"]["edit"]
+					"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"],
+					"edit": Shelby.Components.extenderRegistry().getExtenders()["*"]["edit"]
 				}
 			});
 
@@ -440,7 +440,7 @@
 
 				model.shelby.beginEdit(options);
 
-				expect(areEquals(options, model.shelby._extender._editOptions)).toBeTruthy();
+				expect(areEquals(options, model.shelby._editExtender._editOptions)).toBeTruthy();
 			});
 
 			it("Always set the \"isEditing\" flag to true", function() {
@@ -483,7 +483,7 @@
 						include: ["{root}.prop2"]
 					});
 
-					expect(areEquals(options, model.shelby._extender._editOptions)).toBeTruthy();
+					expect(areEquals(options, model.shelby._editExtender._editOptions)).toBeTruthy();
 				});
 			});
 		});

@@ -2,8 +2,6 @@
 // ---------------------------------
 
 (function(extend, utils) {
-    "use strict";
-
     Shelby.EventManager = function() {
         this._eventHandlers = {};
     };
@@ -81,18 +79,18 @@
     Shelby.EventManager.extend = extend;
 
     // Register the components.
-    Shelby.components.registerComponent("eventManager", function() {
+    Shelby.Components.registerComponent("eventManager", function() {
         return new Shelby.EventManager();
     });
 
     // ---------------------------------
 
     Shelby.registerEventHandler = function(eventName, callback) {
-        Shelby.components.eventManager().registerEventHandler(eventName, callback);
+        Shelby.Components.eventManager().registerEventHandler(eventName, callback);
     };
 
     Shelby.removeEventHandler = function(eventName) {
-        Shelby.components.eventManager().removeEventHandler(eventName);
+        Shelby.Components.eventManager().removeEventHandler(eventName);
     };
 })(Shelby.extend,
    Shelby.utils);
