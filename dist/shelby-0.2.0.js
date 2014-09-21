@@ -363,7 +363,9 @@ Shelby.debug = false;
 // ---------------------------------
 
 (function(extend, utils) {
-    "use strict";
+    Shelby.Components = {};
+
+    // ---------------------------------
 
     var ComponentsFactory = Shelby.ComponentsFactory = function() {
         this._components = {};
@@ -420,42 +422,42 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    Shelby.Components = {
-        _factory: null,
+    $.extend(true, Shelby, {
+        _componentsFactory: null,
 
         setComponentFactory: function(factory) {
             if (utils.isNull(factory)) {
                 throw new Error("\"factory\" must be an object.");
             }
 
-            this._factory = factory;
+            this._componentsFactory = factory;
         },
 
         registerComponent: function(name, factory) {
             var that = this;
 
-            this._factory.registerComponent(name, factory);
+            this._componentsFactory.registerComponent(name, factory);
 
             // Define a shortcut function to access the component.
-            this[name] = function(args) {
-                return that._factory.getComponent(name, args);
+            Shelby.Components[name] = function(args) {
+                return that._componentsFactory.getComponent(name, args);
             };
         },
 
         registerTransientComponent: function(name, factory) {
             var that = this;
 
-            this._factory.registerTransientComponent(name, factory);
+            this._componentsFactory.registerTransientComponent(name, factory);
 
             // Define a shortcut function to access the component.
-            this[name] = function(args) {
-                return that._factory.getComponent(name, args);
+            Shelby.Components[name] = function(args) {
+                return that._componentsFactory.getComponent(name, args);
             };          
         }
-    };
+    });
 
     // Register a default factory.
-    Shelby.Components.setComponentFactory(new ComponentsFactory()); 
+    Shelby.setComponentFactory(new ComponentsFactory()); 
 })(Shelby.extend,
    Shelby.utils);
 
@@ -591,7 +593,7 @@ Shelby.debug = false;
     Shelby.Parser.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("parser", function() {
+    Shelby.registerComponent("parser", function() {
         return new Shelby.Parser();
     });
 })(Shelby.extend,
@@ -779,7 +781,7 @@ Shelby.debug = false;
     Shelby.Filters.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("filters", function() {
+    Shelby.registerComponent("filters", function() {
         return new Shelby.Filters();
     });
 })(Shelby.namespace,
@@ -851,20 +853,18 @@ Shelby.debug = false;
     Shelby.ExtenderRegistry.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("extenderRegistry", function() {
+    Shelby.registerComponent("extenderRegistry", function() {
         return new Shelby.ExtenderRegistry();
     });
 
     // ---------------------------------
 
-    Shelby.Extenders = {
-        registerExtender: function(name, extender, path) {
-            Shelby.Components.extenderRegistry().add(name, extender, path);
-        },
+    Shelby.registerExtender = function(name, extender, path) {
+        Shelby.Components.extenderRegistry().add(name, extender, path);
+    };
 
-        removeExtender: function(name, path) {
-            Shelby.Components.extenderRegistry().remove(name, path);
-        }
+    Shelby.removeExtender = function(name, path) {
+        Shelby.Components.extenderRegistry().remove(name, path);
     };
 })(Shelby.extend,
    Shelby.utils);
@@ -873,6 +873,10 @@ Shelby.debug = false;
 // ---------------------------------
 
 (function(namespace, extend, utils) {
+    Shelby.Extenders = {};
+
+    // ---------------------------------
+
     var PropertyType = Shelby.PropertyType = {
         Object: 0,
         Array: 1,
@@ -881,7 +885,7 @@ Shelby.debug = false;
     
     // ---------------------------------
     
-    Shelby.ExtenderBase = function(target) {
+    Shelby.ObjectExtenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -889,7 +893,7 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.ExtenderBase.extend = extend;
+    Shelby.ObjectExtenderBase.extend = extend;
 
     // ---------------------------------
 
@@ -966,7 +970,7 @@ Shelby.debug = false;
     Shelby.PropertyExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("propertyExtender", function() {
+    Shelby.registerComponent("propertyExtender", function() {
         return new Shelby.PropertyExtender();
     });
 })(Shelby.namespace,
@@ -1081,7 +1085,7 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    Shelby.SubscribeExtender = Shelby.ExtenderBase.extend({
+    Shelby.SubscribeObjectExtender = Shelby.ObjectExtenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -1308,7 +1312,7 @@ Shelby.debug = false;
         }
     });
 
-    Shelby.SubscribeExtender._observableExtenders = {
+    Shelby.SubscribeObjectExtender._observableExtenders = {
         "*": {
             shelbySubscribe: true
         },
@@ -1317,11 +1321,11 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.SubscribeExtender.extend = extend;
+    Shelby.SubscribeObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("subscribeExtender", function(target) {
-        return new Shelby.SubscribeExtender(target);
+    Shelby.registerTransientComponent("subscribeObjectExtender", function(target) {
+        return new Shelby.SubscribeObjectExtender(target);
     });
 
     // ---------------------------------
@@ -1329,10 +1333,10 @@ Shelby.debug = false;
     Shelby.Extenders.subscribeExtender = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.SubscribeExtender._observableExtenders["*"]);
+            target.extend(Shelby.SubscribeObjectExtender._observableExtenders["*"]);
             
             if (type === PropertyType.Array) {
-                var arrayExtenders = Shelby.SubscribeExtender._observableExtenders["array"];
+                var arrayExtenders = Shelby.SubscribeObjectExtender._observableExtenders["array"];
 
                 if (!utils.isNull(arrayExtenders)) {
                     target.extend(arrayExtenders);
@@ -1343,28 +1347,28 @@ Shelby.debug = false;
         }
         
         if (type === PropertyType.Object) {
-            var subscribeExtender = Shelby.Components.subscribeExtender(target);
+            var objectExtender = Shelby.Components.subscribeObjectExtender(target);
 
             var facade = {
                 subscribe: function(callback, options) {
-                    return subscribeExtender.subscribe(callback, options);
+                    return objectExtender.subscribe(callback, options);
                 },
 
                 unsuscribeAll: function() {
-                    subscribeExtender.unsuscribeAll();
+                    objectExtender.unsuscribeAll();
                 },
 
                 mute: function() {
-                    subscribeExtender.mute();
+                    objectExtender.mute();
                 },
 
                 unmute: function() {
-                    subscribeExtender.unmute();
+                    objectExtender.unmute();
                 }
             };
 
             if (Shelby.test === true) {
-                facade._subscribeExtender = subscribeExtender;
+                facade._subscribeExtender = objectExtender;
             }
 
             // Copy all the functions and properties to the target.
@@ -1372,7 +1376,7 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.Extenders.registerExtender("subscribe", Shelby.Extenders.subscribeExtender, "*");
+    Shelby.registerExtender("subscribe", Shelby.Extenders.subscribeExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);
@@ -1490,7 +1494,7 @@ Shelby.debug = false;
 
     // ---------------------------------
 
-    Shelby.EditExtender = Shelby.ExtenderBase.extend({
+    Shelby.EditObjectExtender = Shelby.ObjectExtenderBase.extend({
         _initialize: function() {
             this.isEditing = ko.observable(false);
         
@@ -1612,58 +1616,58 @@ Shelby.debug = false;
         }        
     });
 
-    Shelby.EditExtender._observableExtenders = {
+    Shelby.EditObjectExtender._observableExtenders = {
         shelbyEdit: true
     };
 
-    Shelby.EditExtender.extend = extend;
+    Shelby.EditObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("editExtender", function(target) {
-        return new Shelby.EditExtender(target);
+    Shelby.registerTransientComponent("editObjectExtender", function(target) {
+        return new Shelby.EditObjectExtender(target);
     });
 
     // ---------------------------------
 
     Shelby.Extenders.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.EditExtender._observableExtenders);
+            target.extend(Shelby.EditObjectExtender._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
-            var editExtender = Shelby.Components.editExtender(target);
+            var objectExtender = Shelby.Components.editObjectExtender(target);
 
             var facade = {
                 isEditing: ko.pureComputed({
                     read: function() {
-                        return editExtender.isEditing();
+                        return objectExtender.isEditing();
                     },
                     deferEvaluation: true
                 }),
 
                 beginEdit: function(options) {
-                    editExtender.beginEdit(options);
+                    objectExtender.beginEdit(options);
                 },
 
                 endEdit: function(notifyOnce) {
-                    editExtender.endEdit(notifyOnce);
+                    objectExtender.endEdit(notifyOnce);
                 },
 
                 resetEdit: function() {
-                    editExtender.resetEdit();
+                    objectExtender.resetEdit();
                 },
 
                 cancelEdit: function() {
-                    editExtender.cancelEdit();
+                    objectExtender.cancelEdit();
                 },
 
                 hasMutated: function() {
-                    return editExtender.hasMutated();
+                    return objectExtender.hasMutated();
                 }
             };
 
             if (Shelby.test === true) {
-                facade._editExtender = editExtender;
+                facade._editExtender = objectExtender;
             }
 
             // Copy all the facade functions and properties to the target.
@@ -1671,7 +1675,7 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.Extenders.registerExtender("edit", Shelby.Extenders.editExtender, "*");
+    Shelby.registerExtender("edit", Shelby.Extenders.editExtender, "*");
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);
@@ -1682,7 +1686,7 @@ Shelby.debug = false;
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.UtilityExtender = Shelby.ExtenderBase.extend({
+    Shelby.UtilityObjectExtender = Shelby.ObjectExtenderBase.extend({
         reset: function(/* resetValue, options */) {
             var value = null;
             var options = {};
@@ -1728,26 +1732,26 @@ Shelby.debug = false;
         }        
     });
 
-    Shelby.UtilityExtender.extend = extend;
+    Shelby.UtilityObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("utilityExtender", function(target) {
-        return new Shelby.UtilityExtender(target);
+    Shelby.registerTransientComponent("utilityObjectExtender", function(target) {
+        return new Shelby.UtilityObjectExtender(target);
     });
 
     // ---------------------------------
 
     Shelby.Extenders.utilityExtender = function(target, type) {
         if (type !== PropertyType.Scalar) {
-            var utilityExtender = Shelby.Components.utilityExtender(target);
+            var objectExtender = Shelby.Components.utilityObjectExtender(target);
 
             var facade = {
                 reset: function() {
-                    utilityExtender.reset.apply(utilityExtender, arguments);
+                    objectExtender.reset.apply(objectExtender, arguments);
                 },
 
                 updateFrom: function(obj) {
-                    utilityExtender.updateFrom(obj);
+                    objectExtender.updateFrom(obj);
                 }
             };
 
@@ -1756,7 +1760,7 @@ Shelby.debug = false;
         }
     };
 
-    Shelby.Extenders.registerExtender("utility", Shelby.Extenders.utilityExtender, "*");
+    Shelby.registerExtender("utility", Shelby.Extenders.utilityExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);
@@ -1839,7 +1843,7 @@ Shelby.debug = false;
     Ajax.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("ajax", function() {
+    Shelby.registerComponent("ajax", function() {
         return new Ajax();
     });
 })(Shelby.debug,
@@ -1870,7 +1874,7 @@ Shelby.debug = false;
     Shelby.Mapper.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("mapper", function() {
+    Shelby.registerComponent("mapper", function() {
         return new Shelby.Mapper();
     });
 })(Shelby.extend);
@@ -2564,7 +2568,7 @@ Shelby._ViewModel = {};
     Shelby.EventManager.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("eventManager", function() {
+    Shelby.registerComponent("eventManager", function() {
         return new Shelby.EventManager();
     });
 

@@ -63,20 +63,18 @@
     Shelby.ExtenderRegistry.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("extenderRegistry", function() {
+    Shelby.registerComponent("extenderRegistry", function() {
         return new Shelby.ExtenderRegistry();
     });
 
     // ---------------------------------
 
-    Shelby.Extenders = {
-        registerExtender: function(name, extender, path) {
-            Shelby.Components.extenderRegistry().add(name, extender, path);
-        },
+    Shelby.registerExtender = function(name, extender, path) {
+        Shelby.Components.extenderRegistry().add(name, extender, path);
+    };
 
-        removeExtender: function(name, path) {
-            Shelby.Components.extenderRegistry().remove(name, path);
-        }
+    Shelby.removeExtender = function(name, path) {
+        Shelby.Components.extenderRegistry().remove(name, path);
     };
 })(Shelby.extend,
    Shelby.utils);

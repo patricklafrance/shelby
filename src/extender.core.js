@@ -2,6 +2,10 @@
 // ---------------------------------
 
 (function(namespace, extend, utils) {
+    Shelby.Extenders = {};
+
+    // ---------------------------------
+
     var PropertyType = Shelby.PropertyType = {
         Object: 0,
         Array: 1,
@@ -10,7 +14,7 @@
     
     // ---------------------------------
     
-    Shelby.ExtenderBase = function(target) {
+    Shelby.ObjectExtenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -18,7 +22,7 @@
         }
     };
 
-    Shelby.ExtenderBase.extend = extend;
+    Shelby.ObjectExtenderBase.extend = extend;
 
     // ---------------------------------
 
@@ -95,7 +99,7 @@
     Shelby.PropertyExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("propertyExtender", function() {
+    Shelby.registerComponent("propertyExtender", function() {
         return new Shelby.PropertyExtender();
     });
 })(Shelby.namespace,

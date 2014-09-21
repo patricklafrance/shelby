@@ -22,7 +22,7 @@
     Shelby.Mapper.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("mapper", function() {
+    Shelby.registerComponent("mapper", function() {
         return new Shelby.Mapper();
     });
 })(Shelby.extend);

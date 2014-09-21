@@ -79,7 +79,7 @@
     Shelby.EventManager.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("eventManager", function() {
+    Shelby.registerComponent("eventManager", function() {
         return new Shelby.EventManager();
     });
 

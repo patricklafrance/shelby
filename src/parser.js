@@ -130,7 +130,7 @@
     Shelby.Parser.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerComponent("parser", function() {
+    Shelby.registerComponent("parser", function() {
         return new Shelby.Parser();
     });
 })(Shelby.extend,

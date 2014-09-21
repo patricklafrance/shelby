@@ -2,6 +2,10 @@
 // ---------------------------------
 
 (function(extend, utils) {
+    Shelby.Components = {};
+
+    // ---------------------------------
+
     var ComponentsFactory = Shelby.ComponentsFactory = function() {
         this._components = {};
         this._instances = {};
@@ -57,41 +61,41 @@
 
     // ---------------------------------
 
-    Shelby.Components = {
-        _factory: null,
+    $.extend(true, Shelby, {
+        _componentsFactory: null,
 
         setComponentFactory: function(factory) {
             if (utils.isNull(factory)) {
                 throw new Error("\"factory\" must be an object.");
             }
 
-            this._factory = factory;
+            this._componentsFactory = factory;
         },
 
         registerComponent: function(name, factory) {
             var that = this;
 
-            this._factory.registerComponent(name, factory);
+            this._componentsFactory.registerComponent(name, factory);
 
             // Define a shortcut function to access the component.
-            this[name] = function(args) {
-                return that._factory.getComponent(name, args);
+            Shelby.Components[name] = function(args) {
+                return that._componentsFactory.getComponent(name, args);
             };
         },
 
         registerTransientComponent: function(name, factory) {
             var that = this;
 
-            this._factory.registerTransientComponent(name, factory);
+            this._componentsFactory.registerTransientComponent(name, factory);
 
             // Define a shortcut function to access the component.
-            this[name] = function(args) {
-                return that._factory.getComponent(name, args);
+            Shelby.Components[name] = function(args) {
+                return that._componentsFactory.getComponent(name, args);
             };          
         }
-    };
+    });
 
     // Register a default factory.
-    Shelby.Components.setComponentFactory(new ComponentsFactory()); 
+    Shelby.setComponentFactory(new ComponentsFactory()); 
 })(Shelby.extend,
    Shelby.utils);

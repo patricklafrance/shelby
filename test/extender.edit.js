@@ -316,8 +316,8 @@
 
 			Shelby.Components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"],
-					"edit": Shelby.Components.extenderRegistry().getExtenders()["*"]["edit"]
+					"subscribe": Shelby.Extenders.subscribeExtender,
+					"edit": Shelby.Extenders.editExtender
 				}
 			});
 

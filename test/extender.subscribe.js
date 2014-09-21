@@ -406,7 +406,7 @@
 
 			Shelby.Components.propertyExtender().addExtenders(model, {
 				"*": {
-					"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
+					"subscribe": Shelby.Extenders.subscribeExtender
 				}
 			});
 
@@ -1027,7 +1027,7 @@
 
 					Shelby.Components.propertyExtender().addExtenders(newItem, {
 						"*": {
-							"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
+							"subscribe": Shelby.Extenders.subscribeExtender
 						}
 					});
 				});
@@ -1172,7 +1172,7 @@
 
 					Shelby.Components.propertyExtender().addExtenders(newArrayItem, {
 						"*": {
-							"subscribe": Shelby.Components.extenderRegistry().getExtenders()["*"]["subscribe"]
+							"subscribe": Shelby.Extenders.subscribeExtender
 						}
 					});
 

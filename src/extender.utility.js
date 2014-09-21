@@ -4,7 +4,7 @@
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.UtilityExtender = Shelby.ExtenderBase.extend({
+    Shelby.UtilityObjectExtender = Shelby.ObjectExtenderBase.extend({
         reset: function(/* resetValue, options */) {
             var value = null;
             var options = {};
@@ -50,26 +50,26 @@
         }        
     });
 
-    Shelby.UtilityExtender.extend = extend;
+    Shelby.UtilityObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("utilityExtender", function(target) {
-        return new Shelby.UtilityExtender(target);
+    Shelby.registerTransientComponent("utilityObjectExtender", function(target) {
+        return new Shelby.UtilityObjectExtender(target);
     });
 
     // ---------------------------------
 
     Shelby.Extenders.utilityExtender = function(target, type) {
         if (type !== PropertyType.Scalar) {
-            var utilityExtender = Shelby.Components.utilityExtender(target);
+            var objectExtender = Shelby.Components.utilityObjectExtender(target);
 
             var facade = {
                 reset: function() {
-                    utilityExtender.reset.apply(utilityExtender, arguments);
+                    objectExtender.reset.apply(objectExtender, arguments);
                 },
 
                 updateFrom: function(obj) {
-                    utilityExtender.updateFrom(obj);
+                    objectExtender.updateFrom(obj);
                 }
             };
 
@@ -78,7 +78,7 @@
         }
     };
 
-    Shelby.Extenders.registerExtender("utility", Shelby.Extenders.utilityExtender, "*");
+    Shelby.registerExtender("utility", Shelby.Extenders.utilityExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);

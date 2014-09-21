@@ -111,7 +111,7 @@
 
     // ---------------------------------
 
-    Shelby.EditExtender = Shelby.ExtenderBase.extend({
+    Shelby.EditObjectExtender = Shelby.ObjectExtenderBase.extend({
         _initialize: function() {
             this.isEditing = ko.observable(false);
         
@@ -233,58 +233,58 @@
         }        
     });
 
-    Shelby.EditExtender._observableExtenders = {
+    Shelby.EditObjectExtender._observableExtenders = {
         shelbyEdit: true
     };
 
-    Shelby.EditExtender.extend = extend;
+    Shelby.EditObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("editExtender", function(target) {
-        return new Shelby.EditExtender(target);
+    Shelby.registerTransientComponent("editObjectExtender", function(target) {
+        return new Shelby.EditObjectExtender(target);
     });
 
     // ---------------------------------
 
     Shelby.Extenders.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.EditExtender._observableExtenders);
+            target.extend(Shelby.EditObjectExtender._observableExtenders);
         }
         
         if (type === PropertyType.Object) {
-            var editExtender = Shelby.Components.editExtender(target);
+            var objectExtender = Shelby.Components.editObjectExtender(target);
 
             var facade = {
                 isEditing: ko.pureComputed({
                     read: function() {
-                        return editExtender.isEditing();
+                        return objectExtender.isEditing();
                     },
                     deferEvaluation: true
                 }),
 
                 beginEdit: function(options) {
-                    editExtender.beginEdit(options);
+                    objectExtender.beginEdit(options);
                 },
 
                 endEdit: function(notifyOnce) {
-                    editExtender.endEdit(notifyOnce);
+                    objectExtender.endEdit(notifyOnce);
                 },
 
                 resetEdit: function() {
-                    editExtender.resetEdit();
+                    objectExtender.resetEdit();
                 },
 
                 cancelEdit: function() {
-                    editExtender.cancelEdit();
+                    objectExtender.cancelEdit();
                 },
 
                 hasMutated: function() {
-                    return editExtender.hasMutated();
+                    return objectExtender.hasMutated();
                 }
             };
 
             if (Shelby.test === true) {
-                facade._editExtender = editExtender;
+                facade._editExtender = objectExtender;
             }
 
             // Copy all the facade functions and properties to the target.
@@ -292,7 +292,7 @@
         }
     };
 
-    Shelby.Extenders.registerExtender("edit", Shelby.Extenders.editExtender, "*");
+    Shelby.registerExtender("edit", Shelby.Extenders.editExtender, "*");
 })(Shelby.namespace,
    Shelby.extend,
    Shelby.utils);

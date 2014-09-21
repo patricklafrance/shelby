@@ -23,7 +23,7 @@
 
 				Shelby.Components.propertyExtender().addExtenders(model, {
 					"*": {
-						"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
+						"utility": Shelby.Extenders.utilityExtender
 					}
 				});
 			});
@@ -140,7 +140,7 @@
 
 					Shelby.Components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
+							"utility": Shelby.Extenders.utilityExtender
 						}
 					});
 				});
@@ -204,7 +204,7 @@
 
 					Shelby.Components.propertyExtender().addExtenders(model, {
 						"*": {
-							"utility": Shelby.Components.extenderRegistry().getExtenders()["*"]["utility"]
+							"utility": Shelby.Extenders.utilityExtender
 						}
 					});
 				});

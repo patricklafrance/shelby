@@ -13,7 +13,7 @@
                     return null;
                 };
 
-                Shelby.Components.registerComponent(componentName, factory);
+                Shelby.registerComponent(componentName, factory);
 
                 Shelby.Components[componentName]();
                 Shelby.Components[componentName]();
@@ -31,7 +31,7 @@
                     works = (argumentToPass === argument);
                 };
 
-                Shelby.Components.registerComponent(componentName, factory);
+                Shelby.registerComponent(componentName, factory);
 
                 Shelby.Components[componentName](argumentToPass);
 
@@ -48,7 +48,7 @@
                     callCount += 1;
                 };
 
-                Shelby.Components.registerTransientComponent(componentName, factory);
+                Shelby.registerTransientComponent(componentName, factory);
 
                 Shelby.Components[componentName]();
                 Shelby.Components[componentName]();
@@ -66,7 +66,7 @@
                     works = (argumentToPass === argument);
                 };
 
-                Shelby.Components.registerTransientComponent(componentName, factory);
+                Shelby.registerTransientComponent(componentName, factory);
 
                 Shelby.Components[componentName](argumentToPass);
 
@@ -98,18 +98,18 @@
             var nativeComponentFactory = null;
 
             beforeEach(function() {
-                nativeComponentFactory = Shelby.Components._factory._components["ajax"];
-                delete Shelby.Components._factory._instances["ajax"];
+                nativeComponentFactory = Shelby._componentsFactory._components["ajax"];
+                delete Shelby._componentsFactory._instances["ajax"];
             });
 
             afterEach(function() {
-                Shelby.Components.registerComponent("ajax", nativeComponentFactory);
+                Shelby.registerComponent("ajax", nativeComponentFactory);
             });
 
             it("With a custom component", function() {
                 var works = false;
 
-                Shelby.Components.registerComponent("ajax", function() {
+                Shelby.registerComponent("ajax", function() {
                     return {
                         send: function() {
                             works = true;
@@ -127,17 +127,17 @@
             var nativeFactory = null;
 
             beforeEach(function() {
-                nativeFactory = Shelby.Components._factory;
+                nativeFactory = Shelby._componentsFactory;
             });
 
             afterEach(function() {
-                Shelby.Components.setComponentFactory(nativeFactory);
+                Shelby.setComponentFactory(nativeFactory);
             });
 
             it("With a custom factory", function() {
                 var works = false;
 
-                Shelby.Components.setComponentFactory({
+                Shelby.setComponentFactory({
                     getComponent: function() {
                         works = true;
                     }

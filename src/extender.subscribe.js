@@ -106,7 +106,7 @@
 
     // ---------------------------------
 
-    Shelby.SubscribeExtender = Shelby.ExtenderBase.extend({
+    Shelby.SubscribeObjectExtender = Shelby.ObjectExtenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -333,7 +333,7 @@
         }
     });
 
-    Shelby.SubscribeExtender._observableExtenders = {
+    Shelby.SubscribeObjectExtender._observableExtenders = {
         "*": {
             shelbySubscribe: true
         },
@@ -342,11 +342,11 @@
         }
     };
 
-    Shelby.SubscribeExtender.extend = extend;
+    Shelby.SubscribeObjectExtender.extend = extend;
 
     // Register the components.
-    Shelby.Components.registerTransientComponent("subscribeExtender", function(target) {
-        return new Shelby.SubscribeExtender(target);
+    Shelby.registerTransientComponent("subscribeObjectExtender", function(target) {
+        return new Shelby.SubscribeObjectExtender(target);
     });
 
     // ---------------------------------
@@ -354,10 +354,10 @@
     Shelby.Extenders.subscribeExtender = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.SubscribeExtender._observableExtenders["*"]);
+            target.extend(Shelby.SubscribeObjectExtender._observableExtenders["*"]);
             
             if (type === PropertyType.Array) {
-                var arrayExtenders = Shelby.SubscribeExtender._observableExtenders["array"];
+                var arrayExtenders = Shelby.SubscribeObjectExtender._observableExtenders["array"];
 
                 if (!utils.isNull(arrayExtenders)) {
                     target.extend(arrayExtenders);
@@ -368,28 +368,28 @@
         }
         
         if (type === PropertyType.Object) {
-            var subscribeExtender = Shelby.Components.subscribeExtender(target);
+            var objectExtender = Shelby.Components.subscribeObjectExtender(target);
 
             var facade = {
                 subscribe: function(callback, options) {
-                    return subscribeExtender.subscribe(callback, options);
+                    return objectExtender.subscribe(callback, options);
                 },
 
                 unsuscribeAll: function() {
-                    subscribeExtender.unsuscribeAll();
+                    objectExtender.unsuscribeAll();
                 },
 
                 mute: function() {
-                    subscribeExtender.mute();
+                    objectExtender.mute();
                 },
 
                 unmute: function() {
-                    subscribeExtender.unmute();
+                    objectExtender.unmute();
                 }
             };
 
             if (Shelby.test === true) {
-                facade._subscribeExtender = subscribeExtender;
+                facade._subscribeExtender = objectExtender;
             }
 
             // Copy all the functions and properties to the target.
@@ -397,7 +397,7 @@
         }
     };
 
-    Shelby.Extenders.registerExtender("subscribe", Shelby.Extenders.subscribeExtender, "*");
+    Shelby.registerExtender("subscribe", Shelby.Extenders.subscribeExtender, "*");
 })(Shelby.namespace, 
    Shelby.extend,
    Shelby.utils);
