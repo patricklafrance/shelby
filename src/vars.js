@@ -1,5 +1,7 @@
 /* jshint -W079 */
-var Shelby = {};
+var Shelby = {
+    _: {}
+};
 /* jshint +W079 */
 
 // Current version.

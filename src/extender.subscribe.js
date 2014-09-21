@@ -106,7 +106,7 @@
 
     // ---------------------------------
 
-    Shelby.SubscribeObjectExtender = Shelby.ObjectExtenderBase.extend({
+    var SubscribeObjectExtender = Shelby.Extenders.SubscribeObjectExtender = Shelby.Extenders.ObjectExtenderBase.extend({
         _initialize: function() {
             this._delegatedSubscriptions = {};
         },
@@ -333,7 +333,7 @@
         }
     });
 
-    Shelby.SubscribeObjectExtender._observableExtenders = {
+    SubscribeObjectExtender._observableExtenders = {
         "*": {
             shelbySubscribe: true
         },
@@ -342,11 +342,11 @@
         }
     };
 
-    Shelby.SubscribeObjectExtender.extend = extend;
+    SubscribeObjectExtender.extend = extend;
 
     // Register the components.
     Shelby.registerTransientComponent("subscribeObjectExtender", function(target) {
-        return new Shelby.SubscribeObjectExtender(target);
+        return new SubscribeObjectExtender(target);
     });
 
     // ---------------------------------
@@ -354,10 +354,10 @@
     Shelby.Extenders.subscribeExtender = function(target, type) {
         // Apply the observable extenders to everything that is an observable.
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.SubscribeObjectExtender._observableExtenders["*"]);
+            target.extend(SubscribeObjectExtender._observableExtenders["*"]);
             
             if (type === PropertyType.Array) {
-                var arrayExtenders = Shelby.SubscribeObjectExtender._observableExtenders["array"];
+                var arrayExtenders = SubscribeObjectExtender._observableExtenders["array"];
 
                 if (!utils.isNull(arrayExtenders)) {
                     target.extend(arrayExtenders);

@@ -32,9 +32,9 @@
     Shelby.ViewModel.prototype = prototype;
     Shelby.ViewModel.extend = extend;
 })(Shelby.extend,
-   Shelby._ViewModel.Bindable,
-   Shelby._ViewModel.Disposable,
-   Shelby._ViewModel.Extendable,
-   Shelby._ViewModel.Http,
-   Shelby._ViewModel.HttpEvent);
+   Shelby._.ViewModel.Bindable,
+   Shelby._.ViewModel.Disposable,
+   Shelby._.ViewModel.Extendable,
+   Shelby._.ViewModel.Http,
+   Shelby._.ViewModel.HttpEvent);
 

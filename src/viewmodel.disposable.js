@@ -1,8 +1,8 @@
-// Shelby._ViewModel.Disposable
+// Shelby._._ViewModel.Disposable
 // ---------------------------------
 
 (function() {
-    Shelby._ViewModel.Disposable = {
+    Shelby._.ViewModel.Disposable = {
         _handleDispose: null
     };
 })();

@@ -4,7 +4,7 @@
 (function(namespace, extend, utils) {
     var PropertyType = Shelby.PropertyType;
 
-    Shelby.UtilityObjectExtender = Shelby.ObjectExtenderBase.extend({
+    var UtilityObjectExtender = Shelby.Extenders.UtilityObjectExtender = Shelby.Extenders.ObjectExtenderBase.extend({
         reset: function(/* resetValue, options */) {
             var value = null;
             var options = {};
@@ -50,11 +50,11 @@
         }        
     });
 
-    Shelby.UtilityObjectExtender.extend = extend;
+    UtilityObjectExtender.extend = extend;
 
     // Register the components.
     Shelby.registerTransientComponent("utilityObjectExtender", function(target) {
-        return new Shelby.UtilityObjectExtender(target);
+        return new UtilityObjectExtender(target);
     });
 
     // ---------------------------------

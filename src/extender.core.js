@@ -14,7 +14,7 @@
     
     // ---------------------------------
     
-    Shelby.ObjectExtenderBase = function(target) {
+    Shelby.Extenders.ObjectExtenderBase = function(target) {
         if (utils.isNull(this._target)) {
             this._target = function() {
                 return target;
@@ -22,14 +22,14 @@
         }
     };
 
-    Shelby.ObjectExtenderBase.extend = extend;
+    Shelby.Extenders.ObjectExtenderBase.extend = extend;
 
     // ---------------------------------
 
-    Shelby.PropertyExtender = function() {
+    var PropertyExtender = Shelby.PropertyExtender = function() {
     };
     
-    Shelby.PropertyExtender.prototype = {
+    PropertyExtender.prototype = {
         addExtenders: function(target, extenders) {
             if (utils.isNull(target)) {
                 throw new Error("\"target\" must be an object.");
@@ -96,11 +96,11 @@
         }
     };
     
-    Shelby.PropertyExtender.extend = extend;
+    PropertyExtender.extend = extend;
 
     // Register the components.
     Shelby.registerComponent("propertyExtender", function() {
-        return new Shelby.PropertyExtender();
+        return new PropertyExtender();
     });
 })(Shelby.namespace,
    Shelby.extend,

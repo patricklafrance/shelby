@@ -1,4 +1,4 @@
-// Shelby._ViewModel.Http
+// Shelby._.ViewModel.Http
 // ---------------------------------
 
 (function(extend, utils) {
@@ -6,7 +6,7 @@
     var OperationContext = Shelby.OperationContext;
     var RequestError = Shelby.RequestError;
 
-    Shelby._ViewModel.Http = {
+    Shelby._.ViewModel.Http = {
         _url: null,
 
         _send: function(options, handlers) {

@@ -111,7 +111,7 @@
 
     // ---------------------------------
 
-    Shelby.EditObjectExtender = Shelby.ObjectExtenderBase.extend({
+    var EditObjectExtender = Shelby.Extenders.EditObjectExtender = Shelby.Extenders.ObjectExtenderBase.extend({
         _initialize: function() {
             this.isEditing = ko.observable(false);
         
@@ -233,22 +233,22 @@
         }        
     });
 
-    Shelby.EditObjectExtender._observableExtenders = {
+    EditObjectExtender._observableExtenders = {
         shelbyEdit: true
     };
 
-    Shelby.EditObjectExtender.extend = extend;
+    EditObjectExtender.extend = extend;
 
     // Register the components.
     Shelby.registerTransientComponent("editObjectExtender", function(target) {
-        return new Shelby.EditObjectExtender(target);
+        return new EditObjectExtender(target);
     });
 
     // ---------------------------------
 
     Shelby.Extenders.editExtender = function(target, type) {
         if (type !== PropertyType.Object) {
-            target.extend(Shelby.EditObjectExtender._observableExtenders);
+            target.extend(EditObjectExtender._observableExtenders);
         }
         
         if (type === PropertyType.Object) {

@@ -11,7 +11,7 @@
         this._instances = {};
     };
 
-    Shelby.ComponentsFactory.prototype = {
+    ComponentsFactory.prototype = {
         registerComponent: function(name, factory) {
             var that = this;
 
@@ -62,35 +62,37 @@
     // ---------------------------------
 
     $.extend(true, Shelby, {
-        _componentsFactory: null,
-
+        _: {
+            componentsFactory: null
+        },
+        
         setComponentFactory: function(factory) {
             if (utils.isNull(factory)) {
                 throw new Error("\"factory\" must be an object.");
             }
 
-            this._componentsFactory = factory;
+            this._.componentsFactory = factory;
         },
 
         registerComponent: function(name, factory) {
             var that = this;
 
-            this._componentsFactory.registerComponent(name, factory);
+            this._.componentsFactory.registerComponent(name, factory);
 
             // Define a shortcut function to access the component.
             Shelby.Components[name] = function(args) {
-                return that._componentsFactory.getComponent(name, args);
+                return that._.componentsFactory.getComponent(name, args);
             };
         },
 
         registerTransientComponent: function(name, factory) {
             var that = this;
 
-            this._componentsFactory.registerTransientComponent(name, factory);
+            this._.componentsFactory.registerTransientComponent(name, factory);
 
             // Define a shortcut function to access the component.
             Shelby.Components[name] = function(args) {
-                return that._componentsFactory.getComponent(name, args);
+                return that._.componentsFactory.getComponent(name, args);
             };          
         }
     });

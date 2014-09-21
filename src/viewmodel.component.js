@@ -27,6 +27,6 @@
     Shelby.ComponentViewModel.prototype = prototype;
     Shelby.ComponentViewModel.extend = extend;
 })(Shelby.extend,
-   Shelby._ViewModel.Disposable,
-   Shelby._ViewModel.Extendable,
-   Shelby._ViewModel.Http);
+   Shelby._.ViewModel.Disposable,
+   Shelby._.ViewModel.Extendable,
+   Shelby._.ViewModel.Http);

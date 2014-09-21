@@ -98,8 +98,8 @@
             var nativeComponentFactory = null;
 
             beforeEach(function() {
-                nativeComponentFactory = Shelby._componentsFactory._components["ajax"];
-                delete Shelby._componentsFactory._instances["ajax"];
+                nativeComponentFactory = Shelby._.componentsFactory._components["ajax"];
+                delete Shelby._.componentsFactory._instances["ajax"];
             });
 
             afterEach(function() {
@@ -127,7 +127,7 @@
             var nativeFactory = null;
 
             beforeEach(function() {
-                nativeFactory = Shelby._componentsFactory;
+                nativeFactory = Shelby._.componentsFactory;
             });
 
             afterEach(function() {

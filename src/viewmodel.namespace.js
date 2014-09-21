@@ -1,1 +1,1 @@
-Shelby._ViewModel = {};
+Shelby._.ViewModel = {};

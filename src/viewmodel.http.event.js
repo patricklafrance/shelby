@@ -1,4 +1,4 @@
-// Shelby._ViewModel.HttpEvent
+// Shelby._.ViewModel.HttpEvent
 // ---------------------------------
 
 (function(utils) {
@@ -10,7 +10,7 @@
         }
     }
 
-    Shelby._ViewModel.HttpEvent = {
+    Shelby._.ViewModel.HttpEvent = {
         _beforeFetch: null,
         _beforeSave: null,
         _beforeRemove: null,

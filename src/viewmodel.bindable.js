@@ -1,8 +1,8 @@
-// Shelby._ViewModel.Bindable
+// Shelby._.ViewModel.Bindable
 // ---------------------------------
 
 (function(utils) {
-    Shelby._ViewModel.Bindable = {
+    Shelby._.ViewModel.Bindable = {
         _beforeBind: null,
         _afterBind: null,
 

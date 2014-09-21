@@ -1,8 +1,8 @@
-// Shelby._ViewModel.Extendable
+// Shelby._.ViewModel.Extendable
 // ---------------------------------
 
 (function(namespace, utils) {
-    Shelby._ViewModel.Extendable = {
+    Shelby._.ViewModel.Extendable = {
         _fromJS: function(obj, mappingOptions, extenders) {
             // Convert properties to observables.
             var mapped = Shelby.Components.mapper().fromJS(obj, mappingOptions);
