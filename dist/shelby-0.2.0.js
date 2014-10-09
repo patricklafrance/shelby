@@ -2186,22 +2186,19 @@ Shelby._.ViewModel = {};
                 if (!utils.isNull(response)) {
                     options.response = options.response || {};
 
-                    // If the caller did NOT specify to NOT process the response, process the response. 
-                    if (options.response.process !== false) {
-                        if ($.isFunction(options.response.extractor)) {
-                            response = options.response.extractor.call(that, response);
-                        }
+                    if ($.isFunction(options.response.extractor)) {
+                        response = options.response.extractor.apply(that, [response, options]);
+                    }
 
-                        if ($.isFunction(handlers.onResponse)) {
-                            response = handlers.onResponse.apply(that, [response, options]);
-                        }
+                    if ($.isFunction(handlers.onResponse)) {
+                        response = handlers.onResponse.apply(that, [response, options]);
                     }
                 }
             
                 deferred.resolveWith(this, [response]);
 
                 if ($.isFunction(that._notify)) {
-                    that._notify.call(that, HttpEvent.OperationSuccess, [operationContext]);
+                    that._notify.apply(that, [HttpEvent.OperationSuccess, [operationContext]]);
                 }
             });
 
@@ -2211,7 +2208,7 @@ Shelby._.ViewModel = {};
                 deferred.rejectWith(this, error);
 
                 if ($.isFunction(that._notify)) {
-                    that._notify.call(that, HttpEvent.OperationError, error);
+                    that._notify.apply(that, [HttpEvent.OperationError, error]);
                 }
             });
 
@@ -2244,17 +2241,22 @@ Shelby._.ViewModel = {};
             return this._send(options, {
                 onBefore: function() {
                     if ($.isFunction(this._notify)) {
-                        that._notify.call(that, HttpEvent.BeforeFetch, arguments);
+                        that._notify.apply(that, [HttpEvent.BeforeFetch, arguments]);
                     }
                 },
                 onAfter: function() {
                     if ($.isFunction(this._notify)) {
-                        that._notify.call(that, HttpEvent.AfterFetch, arguments);
+                        that._notify.apply(that, [HttpEvent.AfterFetch, arguments]);
                     }
                 },
                 onResponse: function(response) {
-                    // Convert the response properties to observables.
-                    return this._fromJS(response, options.response.mapping, options.response.extenders);
+                    // If the caller did NOT specify to NOT map the response, map the response. 
+                    if (options.response.map !== false) {
+                        // Convert the response properties to observables.
+                        return this._fromJS(response, options.response.mapping, options.response.extenders);
+                    }
+
+                    return response;
                 }
             });
         },
@@ -2277,17 +2279,20 @@ Shelby._.ViewModel = {};
             return this._send(options, {
                 onBefore: function() {
                     if ($.isFunction(that._notify)) {
-                        that._notify.call(that, HttpEvent.BeforeSave, arguments);
+                        that._notify.apply(that, [HttpEvent.BeforeSave, arguments]);
                     }
                 },
                 onAfter: function() {
                     if ($.isFunction(that._notify)) {
-                        that._notify.call(that, HttpEvent.AfterSave, arguments);
+                        that._notify.apply(that, [HttpEvent.AfterSave, arguments]);
                     }
                 },
                 onResponse: function(response, requestOptions) {
-                    if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
-                        Shelby.Components.mapper().update(requestOptions.request.data, response);
+                    // If the caller did NOT specify to NOT map the response, map the response. 
+                    if (options.response.map !== false) {
+                        if (utils.isObject(requestOptions.request.data) && utils.isObject(response)) {
+                            Shelby.Components.mapper().update(requestOptions.request.data, response);
+                        }
                     }
 
                     return response;
@@ -2311,12 +2316,12 @@ Shelby._.ViewModel = {};
             return this._send(options, {
                 onBefore: function() {
                     if ($.isFunction(that._notify)) {
-                        that._notify.call(that, HttpEvent.BeforeRemove, arguments);
+                        that._notify.apply(that, [HttpEvent.BeforeRemove, arguments]);
                     }
                 },
                 onAfter: function() {
                     if ($.isFunction(that._notify)) {
-                        that._notify.call(that, HttpEvent.AfterRemove, arguments);
+                        that._notify.apply(that, [HttpEvent.AfterRemove, arguments]);
                     }
                 }
             });
