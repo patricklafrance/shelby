@@ -43,7 +43,7 @@
         
         // Stringify excluded functions so we must do a property count to get more accurate results.
         return keys(expected).length === keys(actual).length && JSON.stringify(expected) === JSON.stringify(actual);
-    }
+    };
     
     window.keys = function(obj) {
         var propertyKeys = [];
@@ -55,7 +55,7 @@
         }
         
         return propertyKeys;
-    }
+    };
 
     window.waits = function(waitFor, timeout, callback) {
         var done = false;
@@ -71,5 +71,5 @@
         }, "", timeout);
 
         runs(callback);
-    }
+    };
 })();

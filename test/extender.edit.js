@@ -201,6 +201,25 @@
 
 				expect(obs.shelby.hasMutated.peek()).toBeFalsy();
 			});
+
+
+			it("Support subscription with the beforeChange event", function() {
+				var works = false;
+
+				obs(1);
+
+				obs.shelby.subscribe(function(value) {
+					works = value === 1;
+				}, null, "beforeChange");
+
+				obs.shelby.beginEdit();
+				obs(2);
+				obs.shelby.endEdit();
+
+				waits(20, 40, function() {
+					expect(works).toBeTruthy();
+				});
+			});
 		});
 
 		describe("cancelEdit", function() {
