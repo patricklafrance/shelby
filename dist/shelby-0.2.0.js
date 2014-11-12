@@ -1438,19 +1438,16 @@ Shelby.debug = false;
                 if (this.isEditing.peek() && (!wasPause && this.deferNotifications !== false)) {
                     var hasMutated = that.hasMutated.peek();
 
-                    // Defer the "resume" to prevent synchronization problem with the UI.
-                    setTimeout(function() {
-                        target[namespace].resume();
+                    target[namespace].resume();
 
-                        // When the notifications are resumed, if the observable has been edited and the mute options
-                        // is not specified, force a notification since the previous notifications has been "eat" because
-                        // the notifications were paused.
-                        if (hasMutated && canNotify !== false) {
-                            // Cannot use the function valueWillMutate because the previous value cannot be specified.
-                            target.notifySubscribers(previousValue, "beforeChange");
-                            target.valueHasMutated();
-                        }
-                    }, 1);
+                    // When the notifications are resumed, if the observable has been edited and the mute options
+                    // is not specified, force a notification since the previous notifications has been "eat" because
+                    // the notifications were paused.
+                    if (hasMutated && canNotify !== false) {
+                        // Cannot use the function valueWillMutate because the previous value cannot be specified.
+                        target.notifySubscribers(previousValue, "beforeChange");
+                        target.valueHasMutated();
+                    }
                 }
 
                 this.hasMutated(false);     
