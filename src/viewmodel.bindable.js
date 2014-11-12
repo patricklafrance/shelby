@@ -6,8 +6,6 @@
         _beforeBind: null,
         _afterBind: null,
 
-        // Apply the KO bindings with the view model.
-        //  - element : a DOM or jQuery element to use as the root.
         bind: function(element) {
             var that = this;
             var deferred = new $.Deferred();
@@ -51,7 +49,6 @@
 
         _disposeBindings: function() {
             if (utils.isDomElement(this.element)) {
-                // Clean the KO bindings on the specified DOM element.
                 if (ko.dataFor(this.element)) {
                     ko.cleanNode(this.element);
                 }

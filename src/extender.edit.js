@@ -95,12 +95,7 @@
         
         target.subscribe(function(value) {
             if (!utils.isNull(target[namespace]) && target[namespace].isEditing.peek() && !target[namespace].hasMutated.peek()) {
-                if ($.isArray(value)) {
-                    target[namespace].hasMutated(ko.utils.compareArrays(target[namespace].current, value).length === 0);
-                }
-                else {
-                    target[namespace].hasMutated(value !== target[namespace].current);
-                }
+                target[namespace].hasMutated(target.isDifferent(target[namespace].current, value));
             }
         });
         

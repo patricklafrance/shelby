@@ -1482,12 +1482,7 @@ Shelby.debug = false;
         
         target.subscribe(function(value) {
             if (!utils.isNull(target[namespace]) && target[namespace].isEditing.peek() && !target[namespace].hasMutated.peek()) {
-                if ($.isArray(value)) {
-                    target[namespace].hasMutated(ko.utils.compareArrays(target[namespace].current, value).length === 0);
-                }
-                else {
-                    target[namespace].hasMutated(value !== target[namespace].current);
-                }
+                target[namespace].hasMutated(target.isDifferent(target[namespace].current, value));
             }
         });
         
@@ -1891,8 +1886,6 @@ Shelby._.ViewModel = {};
         _beforeBind: null,
         _afterBind: null,
 
-        // Apply the KO bindings with the view model.
-        //  - element : a DOM or jQuery element to use as the root.
         bind: function(element) {
             var that = this;
             var deferred = new $.Deferred();
@@ -1936,7 +1929,6 @@ Shelby._.ViewModel = {};
 
         _disposeBindings: function() {
             if (utils.isDomElement(this.element)) {
-                // Clean the KO bindings on the specified DOM element.
                 if (ko.dataFor(this.element)) {
                     ko.cleanNode(this.element);
                 }
